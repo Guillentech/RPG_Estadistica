@@ -1,43 +1,192 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { 
-  BookOpen, Award, ClipboardList, Send, Clock, 
-  MessageSquare, Check, Swords, Shield, Sparkles, 
-  Map, ScrollText, Trophy, Zap, ArrowUp, ArrowDown, 
-  ArrowLeft, ArrowRight, Eye
+  Map, Backpack, Scroll, Users, Trophy, Swords, CloudLightning, 
+  Send, Clock, MessageSquare, Check, Eye, X, Sparkles
 } from 'lucide-react';
 
-export default function PanelEstudiante() {
-  const { user } = useAuth();
+// ============================================================================
+// SPRITES PIXEL ART EN SVG PURO (crispEdges = Pixel Art 2D nítido sin borrosidad)
+// ============================================================================
+const PixelCastleBoss = ({ derrotado }) => (
+  <svg width="110" height="105" viewBox="0 0 22 21" shapeRendering="crispEdges">
+    {/* Demonio Rojo (Jefe Final) asomándose sobre la muralla igual a 7468.jpg */}
+    {!derrotado && (
+      <g>
+        <rect x="6" y="1" width="2" height="2" fill="#fca5a5" />
+        <rect x="14" y="1" width="2" height="2" fill="#fca5a5" />
+        <rect x="7" y="2" width="8" height="6" fill="#dc2626" />
+        <rect x="6" y="3" width="10" height="4" fill="#ef4444" />
+        <rect x="8" y="4" width="2" height="1" fill="#fef08a" />
+        <rect x="12" y="4" width="2" height="1" fill="#fef08a" />
+        <rect x="9" y="6" width="4" height="1" fill="#450a0a" />
+      </g>
+    )}
+    {/* Torres y almenas de piedra gris */}
+    <rect x="2" y="6" width="1" height="2" fill="#94a3b8" />
+    <rect x="4" y="6" width="1" height="2" fill="#94a3b8" />
+    <rect x="17" y="6" width="1" height="2" fill="#94a3b8" />
+    <rect x="19" y="6" width="1" height="2" fill="#94a3b8" />
+    <rect x="2" y="8" width="4" height="11" fill="#64748b" />
+    <rect x="16" y="8" width="4" height="11" fill="#64748b" />
+    <rect x="6" y="9" width="10" height="10" fill="#475569" />
+    <rect x="7" y="8" width="2" height="1" fill="#94a3b8" />
+    <rect x="10" y="8" width="2" height="1" fill="#94a3b8" />
+    <rect x="13" y="8" width="2" height="1" fill="#94a3b8" />
+    {/* Detalles de ladrillos y portón oscuro */}
+    <rect x="3" y="10" width="2" height="2" fill="#1e293b" />
+    <rect x="17" y="10" width="2" height="2" fill="#1e293b" />
+    <rect x="9" y="13" width="4" height="6" fill="#0f172a" />
+    <rect x="10" y="12" width="2" height="1" fill="#0f172a" />
+    <rect x="10" y="13" width="1" height="6" fill="#334155" />
+  </svg>
+);
 
-  // Datos del servidor
+const PixelRuins = () => (
+  <svg width="92" height="82" viewBox="0 0 18 16" shapeRendering="crispEdges">
+    {/* Base y columnas antiguas en ruinas */}
+    <rect x="2" y="13" width="14" height="2" fill="#64748b" />
+    <rect x="3" y="4" width="3" height="9" fill="#94a3b8" />
+    <rect x="8" y="6" width="2" height="7" fill="#94a3b8" />
+    <rect x="13" y="8" width="2" height="5" fill="#64748b" />
+    <rect x="2" y="3" width="8" height="2" fill="#cbd5e1" />
+    {/* Enredaderas verdes sobre la piedra */}
+    <rect x="3" y="5" width="2" height="2" fill="#10b981" />
+    <rect x="7" y="4" width="2" height="2" fill="#059669" />
+    <rect x="12" y="12" width="3" height="1" fill="#10b981" />
+  </svg>
+);
+
+const PixelForestCamp = () => (
+  <svg width="96" height="86" viewBox="0 0 18 16" shapeRendering="crispEdges">
+    {/* Árboles frondosos Pixel Art + Cofre de Pergaminos */}
+    <rect x="4" y="10" width="2" height="4" fill="#78350f" />
+    <rect x="12" y="11" width="2" height="3" fill="#78350f" />
+    <rect x="2" y="4" width="6" height="6" fill="#059669" />
+    <rect x="3" y="2" width="4" height="3" fill="#10b981" />
+    <rect x="10" y="5" width="6" height="6" fill="#047857" />
+    <rect x="11" y="3" width="4" height="3" fill="#10b981" />
+    {/* Cofre dorado en el centro */}
+    <rect x="7" y="11" width="4" height="3" fill="#d97706" />
+    <rect x="7" y="11" width="4" height="1" fill="#fbbf24" />
+    <rect x="8" y="12" width="2" height="1" fill="#fef08a" />
+  </svg>
+);
+
+const PixelLabTower = () => (
+  <svg width="92" height="92" viewBox="0 0 18 18" shapeRendering="crispEdges">
+    {/* Torre de alquimia / Laboratorio con cristal flotante */}
+    <rect x="8" y="1" width="2" height="3" fill="#38bdf8" />
+    <rect x="6" y="4" width="6" height="3" fill="#6d28d9" />
+    <rect x="5" y="7" width="8" height="9" fill="#475569" />
+    <rect x="7" y="9" width="4" height="3" fill="#38bdf8" />
+    <rect x="8" y="13" width="2" height="3" fill="#1e1b4b" />
+    <rect x="4" y="16" width="10" height="1" fill="#94a3b8" />
+  </svg>
+);
+
+const PixelHeroWizard = ({ caminando }) => (
+  <svg 
+    width="48" 
+    height="54" 
+    viewBox="0 0 14 16" 
+    shapeRendering="crispEdges"
+    style={{ transform: caminando ? 'translateY(-3px)' : 'none', transition: 'transform 0.15s' }}
+  >
+    {/* Sombrero de Mago Morado */}
+    <rect x="5" y="1" width="4" height="2" fill="#7e22ce" />
+    <rect x="4" y="3" width="6" height="2" fill="#9333ea" />
+    <rect x="2" y="5" width="10" height="1" fill="#a855f7" />
+    <rect x="4" y="4" width="6" height="1" fill="#fbbf24" />
+    {/* Rostro */}
+    <rect x="4" y="6" width="6" height="3" fill="#fed7aa" />
+    <rect x="5" y="7" width="1" height="1" fill="#0f172a" />
+    <rect x="8" y="7" width="1" height="1" fill="#0f172a" />
+    {/* Túnica Azul/Morada y Báculo */}
+    <rect x="3" y="9" width="8" height="5" fill="#2563eb" />
+    <rect x="5" y="9" width="4" height="5" fill="#7e22ce" />
+    <rect x="11" y="6" width="1" height="9" fill="#92400e" />
+    <rect x="10" y="4" width="3" height="2" fill="#38bdf8" />
+    {/* Botas */}
+    <rect x="4" y="14" width="2" height="2" fill="#1e293b" />
+    <rect x="8" y="14" width="2" height="2" fill="#1e293b" />
+  </svg>
+);
+
+const PixelOwlAlchemist = () => (
+  <svg width="78" height="86" viewBox="0 0 16 18" shapeRendering="crispEdges">
+    {/* Sombrero de Mago del Búho con estrella dorada */}
+    <rect x="6" y="0" width="4" height="2" fill="#6b21a8" />
+    <rect x="5" y="2" width="6" height="2" fill="#7e22ce" />
+    <rect x="2" y="4" width="12" height="2" fill="#9333ea" />
+    <rect x="7" y="3" width="2" height="2" fill="#fbbf24" />
+    {/* Cuerpo del Búho */}
+    <rect x="4" y="6" width="8" height="9" fill="#b45309" />
+    <rect x="3" y="8" width="2" height="5" fill="#92400e" />
+    <rect x="11" y="8" width="2" height="5" fill="#92400e" />
+    {/* Ojos grandes sabios y pico */}
+    <rect x="5" y="7" width="2" height="2" fill="#ffffff" />
+    <rect x="9" y="7" width="2" height="2" fill="#ffffff" />
+    <rect x="6" y="8" width="1" height="1" fill="#000000" />
+    <rect x="10" y="8" width="1" height="1" fill="#000000" />
+    <rect x="7" y="9" width="2" height="2" fill="#fbbf24" />
+    {/* Pecho emplumado y patas */}
+    <rect x="6" y="11" width="4" height="3" fill="#fde68a" />
+    <rect x="5" y="15" width="2" height="2" fill="#f59e0b" />
+    <rect x="9" y="15" width="2" height="2" fill="#f59e0b" />
+  </svg>
+);
+
+export default function PanelEstudiante() {
+  const { user, refrescarEstudiante } = useAuth();
+  const navigate = useNavigate();
+
+  // Hotbar inferior
+  const [vistaHotbar, setVistaHotbar] = useState('mapa'); // 'mapa' | 'inventario' | 'pergaminos' | 'gremio' | 'logros'
+
+  // Datos del backend
   const [temas, setTemas] = useState([]);
   const [evaluaciones, setEvaluaciones] = useState([]);
   const [calificaciones, setCalificaciones] = useState([]);
   const [tareas, setTareas] = useState([]);
   const [misEntregas, setMisEntregas] = useState([]);
+  const [gremio, setGremio] = useState([]);
 
-  // Estados de entrega de misiones (tareas)
+  // Posición 2D del Héroe en el Mapa (Porcentajes X: 0-100, Y: 0-100)
+  const [heroPos, setHeroPos] = useState({ x: 50, y: 54 });
+  const [caminando, setCaminando] = useState(false);
+  const [zonaActivaModal, setZonaActivaModal] = useState(null);
+  const [calificacionDetalle, setCalificacionDetalle] = useState(null);
+
+  // Entregas
   const [entregaTexto, setEntregaTexto] = useState({});
   const [enviandoTarea, setEnviandoTarea] = useState(false);
 
-  // Estados del Motor 2D RPG
-  const [modoVista, setModoVista] = useState('mapa'); // 'mapa' | 'lista'
-  const [heroPos, setHeroPos] = useState({ x: 1, y: 2 });
-  const [zonaActiva, setZonaActiva] = useState(null); // { tipo: 'bioma' | 'jefes' | 'gremio' | 'fama', data: ... }
+  // Búho Sabio Alquimista AI
+  const [dialogoBuhoAbierto, setDialogoBuhoAbierto] = useState(false);
+  const [preguntaAlquimista, setPreguntaAlquimista] = useState('');
+  const [respuestaAlquimista, setRespuestaAlquimista] = useState('');
+  const [cargandoAlquimista, setCargandoAlquimista] = useState(false);
+
+  // Coordenadas 2D fijas estilo Mockup 7468.jpg para los biomas del curso
+  const coordenadasMapa = [
+    { x: 26, y: 30, biomaDefault: 'mazmorra' },    // Arriba-Izquierda (Castillo Mazmorra)
+    { x: 27, y: 74, biomaDefault: 'ruinas' },      // Abajo-Izquierda (Ruinas)
+    { x: 67, y: 55, biomaDefault: 'bosque' },      // Derecha-Centro (Bosque tras el puente)
+    { x: 73, y: 26, biomaDefault: 'laboratorio' }, // Arriba-Derecha (Lab: El Algoritmo)
+    { x: 52, y: 80, biomaDefault: 'bosque' },
+    { x: 82, y: 72, biomaDefault: 'mazmorra' }
+  ];
 
   const cargarDatos = () => {
-    fetch('http://localhost:4000/api/temas').then(r => r.json()).then(data => {
-      setTemas(data);
-      if (data.length > 0 && !zonaActiva) {
-        setZonaActiva({ tipo: 'bioma', data: data[0] });
-      }
-    });
+    fetch('http://localhost:4000/api/temas').then(r => r.json()).then(setTemas);
     fetch('http://localhost:4000/api/evaluaciones').then(r => r.json()).then(setEvaluaciones);
     fetch('http://localhost:4000/api/tareas').then(r => r.json()).then(setTareas);
+    fetch('http://localhost:4000/api/gremio').then(r => r.json()).then(setGremio);
 
     if (user?.id) {
+      refrescarEstudiante();
       fetch(`http://localhost:4000/api/calificaciones/estudiante/${user.id}`)
         .then(r => r.json())
         .then(setCalificaciones);
@@ -57,119 +206,57 @@ export default function PanelEstudiante() {
     cargarDatos();
   }, [user?.id]);
 
-  // --- CÁLCULO DINÁMICO DE XP, NIVEL Y RANGO (REQUISITO 14) ---
-  const xpExamenes = calificaciones.reduce((acc, c) => acc + (c.puntaje * 5), 0);
-  const xpTareas = misEntregas.reduce((acc, e) => acc + ((e.calificacion || 20) * 3), 0);
-  const xpTotal = xpExamenes + xpTareas;
-  const nivelActual = Math.floor(xpTotal / 500) + 1;
-  const xpEnNivelActual = xpTotal % 500;
-  const porcentajeNivel = Math.min(100, Math.round((xpEnNivelActual / 500) * 100));
-
-  const obtenerRango = (lvl) => {
-    if (lvl === 1) return 'Novato del Gremio';
-    if (lvl === 2) return 'Aprendiz de Código';
-    if (lvl === 3) return 'Caballero Lógico';
-    if (lvl === 4) return 'Paladín de Algoritmos';
-    return 'Gran Maestro Arcano';
-  };
-
-  // --- DEFINICIÓN DEL MAPA 2D (10 Columnas x 6 Filas) ---
-  // Construimos puntos de interés dinámicos según los temas y misiones
-  const puntosDeInteres = {};
-
-  // Biomas (Temas) ubicados en la parte superior y media del camino
-  const coordenadasBiomas = [
-    { x: 2, y: 1 }, { x: 5, y: 1 }, { x: 8, y: 1 },
-    { x: 2, y: 4 }, { x: 5, y: 4 }
-  ];
-
-  temas.slice(0, 5).forEach((tema, idx) => {
-    const coord = coordenadasBiomas[idx];
-    puntosDeInteres[`${coord.x},${coord.y}`] = {
-      icono: '🏰',
-      etiqueta: `Bioma ${idx + 1}`,
-      clase: 'tile-biome',
-      accion: () => setZonaActiva({ tipo: 'bioma', data: tema })
-    };
-  });
-
-  // Bastión de Jefes Finales (Evaluaciones)
-  puntosDeInteres['8,2'] = {
-    icono: '🐉',
-    etiqueta: 'Jefes (Exámenes)',
-    clase: 'tile-boss',
-    accion: () => setZonaActiva({ tipo: 'jefes' })
-  };
-
-  // Gremio de Misiones (Trabajos Prácticos)
-  puntosDeInteres['4,2'] = {
-    icono: '🛡️',
-    etiqueta: 'Gremio (Tareas)',
-    clase: 'tile-guild',
-    accion: () => setZonaActiva({ tipo: 'gremio' })
-  };
-
-  // Salón de la Fama (Calificaciones y XP)
-  puntosDeInteres['8,4'] = {
-    icono: '🏆',
-    etiqueta: 'Salón de Fama',
-    clase: 'tile-biome',
-    accion: () => setZonaActiva({ tipo: 'fama' })
-  };
-
-  // Caminos transitables
-  const esCamino = (x, y) => {
-    if (y === 2 && x >= 1 && x <= 8) return true;
-    if (y === 3 && (x === 2 || x === 5 || x === 8)) return true;
-    if (y === 1 && (x === 2 || x === 5 || x === 8)) return true;
-    if (y === 4 && (x === 2 || x === 5 || x === 8)) return true;
-    return false;
-  };
-
-  const esAgua = (x, y) => {
-    return (x === 0 || x === 9 || y === 0 || y === 5);
-  };
-
-  // Mover personaje y activar casilla si es un edificio
-  const moverPersonaje = useCallback((nuevoX, nuevoY) => {
-    if (nuevoX < 1 || nuevoX > 8 || nuevoY < 1 || nuevoY > 4) return;
-    setHeroPos({ x: nuevoX, y: nuevoY });
-
-    const poi = puntosDeInteres[`${nuevoX},${nuevoY}`];
-    if (poi && poi.accion) {
-      poi.accion();
-    }
-  }, [temas]);
-
-  // Escuchar teclado (WASD y Flechas)
+  // Movimiento 2D con Teclado (WASD o Flechas)
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (modoVista !== 'mapa') return;
-      // No interceptar teclas si el estudiante está escribiendo en un textarea
-      if (['TEXTAREA', 'INPUT'].includes(document.activeElement?.tagName)) return;
+    if (vistaHotbar !== 'mapa' || zonaActivaModal || dialogoBuhoAbierto) return;
 
-      if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
-        e.preventDefault();
-        moverPersonaje(heroPos.x, heroPos.y - 1);
-      } else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
-        e.preventDefault();
-        moverPersonaje(heroPos.x, heroPos.y + 1);
-      } else if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
-        e.preventDefault();
-        moverPersonaje(heroPos.x - 1, heroPos.y);
-      } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
-        e.preventDefault();
-        moverPersonaje(heroPos.x + 1, heroPos.y);
-      }
+    const manejarTecla = (e) => {
+      const tecla = e.key.toLowerCase();
+      const paso = 3.5;
+      let dx = 0;
+      let dy = 0;
+
+      if (tecla === 'w' || tecla === 'arrowup') dy = -paso;
+      else if (tecla === 's' || tecla === 'arrowdown') dy = paso;
+      else if (tecla === 'a' || tecla === 'arrowleft') dx = -paso;
+      else if (tecla === 'd' || tecla === 'arrowright') dx = paso;
+      else return;
+
+      e.preventDefault();
+      setCaminando(true);
+      setHeroPos(prev => ({
+        x: Math.max(8, Math.min(92, prev.x + dx)),
+        y: Math.max(14, Math.min(88, prev.y + dy))
+      }));
+      setTimeout(() => setCaminando(false), 160);
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [heroPos, modoVista, moverPersonaje]);
+    window.addEventListener('keydown', manejarTecla);
+    return () => window.removeEventListener('keydown', manejarTecla);
+  }, [vistaHotbar, zonaActivaModal, dialogoBuhoAbierto]);
+
+  // Mover héroe con botones táctiles o al hacer clic en un Bioma
+  const moverHeroePaso = (dx, dy) => {
+    setCaminando(true);
+    setHeroPos(prev => ({
+      x: Math.max(8, Math.min(92, prev.x + dx)),
+      y: Math.max(14, Math.min(88, prev.y + dy))
+    }));
+    setTimeout(() => setCaminando(false), 180);
+  };
+
+  const viajarABioma = (tema, coords) => {
+    setCaminando(true);
+    setHeroPos({ x: coords.x + 4, y: coords.y + 8 });
+    setTimeout(() => {
+      setCaminando(false);
+      setZonaActivaModal(tema);
+    }, 320);
+  };
 
   const enviarTrabajo = async (tareaId) => {
     const contenido = entregaTexto[tareaId];
-    if (!contenido?.trim()) return alert('Debes redactar la solución de tu misión antes de enviarla.');
+    if (!contenido?.trim()) return alert('Redacta el pergamino de tu entrega antes de enviarlo.');
 
     setEnviandoTarea(true);
     try {
@@ -184,7 +271,7 @@ export default function PanelEstudiante() {
       });
       const data = await res.json();
       if (res.ok) {
-        alert('⚔️ ¡Misión entregada al Game Master! Has ganado puntos de progreso.');
+        alert(data.mensaje || '¡Misión entregada al Gremio!');
         cargarDatos();
       }
     } catch {
@@ -194,457 +281,702 @@ export default function PanelEstudiante() {
     }
   };
 
+  const consultarSabioAlquimista = async (e) => {
+    e.preventDefault();
+    if (!preguntaAlquimista.trim()) return;
+    setCargandoAlquimista(true);
+    try {
+      const titulosTemas = temas.map(t => t.titulo).join(', ');
+      const res = await fetch('http://localhost:4000/api/ia/asistente', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          mensaje: preguntaAlquimista.trim(),
+          modo: 'alquimista',
+          contexto: `Biomas del mapa: ${titulosTemas}`
+        })
+      });
+      const data = await res.json();
+      if (res.ok) setRespuestaAlquimista(data.resultado);
+    } catch {
+      setRespuestaAlquimista('🦉 El Sabio Alquimista consulta los astros... intenta de nuevo.');
+    } finally {
+      setCargandoAlquimista(false);
+    }
+  };
+
+  // Estadísticas del HUD
+  const xpActual = user?.xp || 150;
+  const nivelActual = user?.nivel || 1;
+  const progresoNivel = ((xpActual % 250) / 250) * 100;
+  const examenesPendientes = evaluaciones.filter(ev => !calificaciones.some(c => c.evaluacion_id === ev.id));
+  const tareasPendientes = tareas.filter(t => !misEntregas.some(e => e.tarea_id === t.id));
+  const hayTormenta = examenesPendientes.length > 0 || tareasPendientes.length > 0;
+  const companerosParty = gremio.filter(m => m.id !== user?.id).slice(0, 3);
+
   return (
-    <div className="container">
-      
-      {/* HUD SUPERIOR DEL PERSONAJE (NIVEL, RANGO Y BARRA DE XP) */}
-      <div className="rpg-box" style={{ 
-        marginBottom: '1.75rem', 
-        background: 'linear-gradient(135deg, #111827 0%, #1e1b4b 100%)' 
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.25rem' }}>
-          
-          {/* Avatar y Datos del Héroe */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <div style={{ 
-              width: '64px', 
-              height: '64px', 
-              borderRadius: '14px', 
-              background: 'rgba(251, 191, 36, 0.15)', 
-              border: '2px solid #fbbf24', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center',
-              fontSize: '2.2rem',
-              boxShadow: '0 0 15px rgba(251, 191, 36, 0.3)'
-            }}>
-              🧙‍♂️
+    <div className="container" style={{ maxWidth: '1180px', paddingTop: '0.75rem' }}>
+      {/* =====================================================================
+          1. BARRA SUPERIOR HUD (IDÉNTICA AL MOCKUP: JUGADOR | PARTY | CLIMA)
+         ===================================================================== */}
+      <div className="rpg-hud-top">
+        {/* Jugador */}
+        <div className="rpg-hud-box">
+          <div style={{
+            width: '52px', height: '52px', borderRadius: '10px',
+            background: 'linear-gradient(135deg, #581c87 0%, #1e3a8a 100%)',
+            border: '2px solid #e879f9', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            overflow: 'hidden', flexShrink: 0
+          }}>
+            <PixelHeroWizard caminando={false} />
+          </div>
+          <div style={{ flex: 1 }}>
+            <span style={{ fontSize: '0.68rem', color: '#38bdf8', fontWeight: '800', textTransform: 'uppercase' }}>
+              Gremio
+            </span>
+            <div style={{ fontWeight: '800', fontSize: '1.02rem', color: '#fff', lineHeight: 1.15 }}>
+              {user?.nombre}
             </div>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
-                <span className="badge" style={{ background: '#fbbf24', color: '#090d16', fontWeight: '800' }}>
-                  NIVEL {nivelActual}
-                </span>
-                <span style={{ color: '#c4b5fd', fontSize: '0.85rem', fontWeight: '700' }}>
-                  • {obtenerRango(nivelActual)}
-                </span>
+            <div style={{ fontSize: '0.74rem', color: '#cbd5e1', marginTop: '2px' }}>
+              {user?.clase_rpg || 'Mago de Código'}, Nvl {nivelActual}
+            </div>
+            <div className="rpg-stat-bar">
+              <div className="rpg-stat-fill-xp" style={{ width: `${Math.max(18, progresoNivel)}%` }} />
+            </div>
+          </div>
+        </div>
+
+        {/* Party: Leo, Sofía, Ana */}
+        <div className="rpg-hud-box" style={{ justifyContent: 'space-around', flexWrap: 'wrap' }}>
+          {companerosParty.map((comp, idx) => (
+            <div key={comp.id} style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', minWidth: '100px' }}>
+              <div style={{
+                width: '34px', height: '34px', borderRadius: '8px',
+                background: '#1e1b4b', border: '1px solid #a855f7',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem'
+              }}>
+                {idx === 0 ? '🧑🏽‍💻' : idx === 1 ? '👩🏻' : '👩🏻‍🦰'}
               </div>
-              <h2 style={{ fontSize: '1.5rem', marginTop: '0.25rem', color: '#fff' }}>{user?.nombre}</h2>
-              <span style={{ fontSize: '0.8rem', color: '#38bdf8', fontFamily: 'monospace' }}>
-                Token de Gremio: {user?.codigo_unico}
-              </span>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: '0.76rem', fontWeight: '800', color: '#fff' }}>{comp.nombre.split(' ')[0]}</div>
+                <div className="rpg-stat-bar" style={{ height: '5px' }}>
+                  <div className="rpg-stat-fill-hp" style={{ width: `${comp.hp || 90}%` }} />
+                </div>
+                <div className="rpg-stat-bar" style={{ height: '5px' }}>
+                  <div className="rpg-stat-fill-xp" style={{ width: `${Math.min(100, ((comp.xp || 200) % 250) / 2.5)}%` }} />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Clima: Tormenta de Fechas (24h) */}
+        <div className="rpg-hud-box" style={{ borderColor: '#a855f7' }}>
+          <div style={{
+            width: '44px', height: '44px', borderRadius: '10px',
+            background: 'rgba(251, 191, 36, 0.14)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: '#fbbf24', flexShrink: 0
+          }}>
+            <CloudLightning size={26} />
+          </div>
+          <div>
+            <span style={{ fontSize: '0.68rem', color: '#94a3b8', fontWeight: '700' }}>TIEMPO:</span>
+            <div style={{ fontSize: '0.84rem', fontWeight: '800', color: '#f8fafc' }}>
+              {hayTormenta ? 'TORMENTA DE FECHAS (24h)' : 'CLIMA DESPEJADO'}
             </div>
           </div>
-
-          {/* Barra de Experiencia (XP) */}
-          <div style={{ flex: 1, minWidth: '260px', maxWidth: '420px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', marginBottom: '0.4rem', fontWeight: '700' }}>
-              <span style={{ color: '#fbbf24', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                <Zap size={15} /> Experiencia Total: {xpTotal} XP
-              </span>
-              <span style={{ color: 'var(--text-muted)' }}>{xpEnNivelActual} / 500 XP (Sig. Nivel)</span>
-            </div>
-            <div className="xp-bar-container">
-              <div className="xp-bar-fill" style={{ width: `${porcentajeNivel}%` }} />
-            </div>
-          </div>
-
-          {/* Selector de Modo: Mapa 2D vs Vista Completa */}
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <button 
-              onClick={() => setModoVista('mapa')}
-              className="btn-pro"
-              style={{ 
-                background: modoVista === 'mapa' ? '#fbbf24' : 'rgba(255,255,255,0.06)', 
-                color: modoVista === 'mapa' ? '#090d16' : '#fff',
-                fontWeight: '800'
-              }}
-            >
-
-<Map size={16} />
-Mapa 2D
-            </button>
-            <button 
-              onClick={() => setModoVista('lista')}
-              className="btn-pro"
-              style={{ 
-                background: modoVista === 'lista' ? '#3b82f6' : 'rgba(255,255,255,0.06)', 
-                color: '#fff' 
-              }}
-            >
-              <ScrollText size={16} /> Vista Clásica
-            </button>
-          </div>
-
         </div>
       </div>
 
-      {/* =================================================================
-          MODO 1: EXPLORACIÓN EN MAPA 2D INTERACTIVO (REQUISITO 5, 8, 9, 10)
-          ================================================================= */}
-      {modoVista === 'mapa' && (
-        <div className="grid-2" style={{ alignItems: 'start' }}>
-          
-          {/* COLUMNA IZQUIERDA: MOTOR DE MAPA 2D */}
-          <div className="card-pro" style={{ textAlign: 'center' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.85rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-              <h3 style={{ fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#fbbf24' }}>
+      {/* =====================================================================
+          2. LIENZO DEL VIDEOJUEGO 2D PIXEL ART (CON MOVIMIENTO REAL)
+         ===================================================================== */}
+      {vistaHotbar === 'mapa' && (
+        <div 
+          style={{
+            position: 'relative',
+            width: '100%',
+            height: '530px',
+            borderRadius: '18px',
+            border: '3px solid #a855f7',
+            boxShadow: '0 0 35px rgba(168, 85, 247, 0.35), inset 0 0 50px rgba(0,0,0,0.8)',
+            overflow: 'hidden',
+            backgroundColor: '#071324',
+            userSelect: 'none'
+          }}
+        >
+          {/* Banner Superior Central "MAPA DEL SEMESTRE" */}
+          <div style={{
+            position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)',
+            zIndex: 25, background: 'linear-gradient(180deg, #2e1065 0%, #170d36 100%)',
+            border: '2px solid #c084fc', borderTop: 'none',
+            padding: '0.45rem 1.8rem', borderRadius: '0 0 16px 16px',
+            fontFamily: "'Press Start 2P', monospace", fontSize: '0.78rem', color: '#fff',
+            boxShadow: '0 6px 20px rgba(0,0,0,0.7)'
+          }}>
+            MAPA DEL SEMESTRE
+          </div>
 
-<Map size={20} />
-Mapa del Semestre (2D Grid)
-              </h3>
-              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                Usa <strong>WASD / Flechas</strong> o haz <strong>clic en una casilla</strong>
-              </span>
+          {/* Indicador "Semestre 1" y Controles en Esquina Superior Izquierda */}
+          <div style={{ position: 'absolute', top: '14px', left: '18px', zIndex: 20 }}>
+            <div style={{ fontSize: '1.25rem', fontWeight: '800', color: '#fff', textShadow: '0 2px 6px #000' }}>
+              Semestre 1
             </div>
-
-            {/* Cuadrícula 10x6 */}
-            <div className="rpg-map-grid">
-              {Array.from({ length: 6 }).map((_, filaY) =>
-                Array.from({ length: 10 }).map((__, colX) => {
-                  const clave = `${colX},${filaY}`;
-                  const poi = puntosDeInteres[clave];
-                  const estaElHeroe = heroPos.x === colX && heroPos.y === filaY;
-                  const agua = esAgua(colX, filaY);
-                  const camino = esCamino(colX, filaY);
-
-                  let claseTile = 'tile-grass';
-                  if (agua) claseTile = 'tile-water';
-                  else if (poi) claseTile = poi.clase;
-                  else if (camino) claseTile = 'tile-path';
-
-                  return (
-                    <div
-                      key={clave}
-                      className={`rpg-tile ${claseTile}`}
-                      onClick={() => !agua && moverPersonaje(colX, filaY)}
-                      title={poi ? poi.etiqueta : agua ? 'Mar Inexplorable' : `Casilla (${colX}, ${filaY})`}
-                    >
-                      {/* Decoración de fondo */}
-                      {!poi && !estaElHeroe && agua && <span style={{ opacity: 0.45, fontSize: '1rem' }}>🌊</span>}
-                      {!poi && !estaElHeroe && !agua && !camino && (colX + filaY) % 3 === 0 && (
-                        <span style={{ opacity: 0.5, fontSize: '1.1rem' }}>🌲</span>
-                      )}
-
-                      {/* Icono del Edificio / Bioma / Jefe */}
-                      {poi && !estaElHeroe && <span>{poi.icono}</span>}
-
-                      {/* Sprite del Personaje Jugador */}
-                      {estaElHeroe && <span className="hero-sprite">🧙‍♂️</span>}
-
-                      {/* Etiqueta de la ubicación */}
-                      {poi && <span className="tile-label">{poi.etiqueta}</span>}
-                    </div>
-                  );
-                })
-              )}
+            <div style={{ fontSize: '0.72rem', color: '#a5f3fc', background: 'rgba(0,0,0,0.55)', padding: '3px 8px', borderRadius: '6px', marginTop: '3px' }}>
+              🎮 Usa <strong>WASD / Flechas</strong> o haz clic en un Bioma para caminar
             </div>
+          </div>
 
-            {/* Controles Táctiles (D-Pad para Móviles - Requisito 17) y Accesos Rápidos */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.25rem', flexWrap: 'wrap', gap: '1rem' }}>
-              
-              {/* Cruceta D-Pad */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', margin: '0 auto' }}>
-                <button onClick={() => moverPersonaje(heroPos.x - 1, heroPos.y)} className="btn-pro" style={{ padding: '0.6rem', background: 'var(--bg-input)', color: '#fff' }}>
-                  <ArrowLeft size={18} />
-                </button>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                  <button onClick={() => moverPersonaje(heroPos.x, heroPos.y - 1)} className="btn-pro" style={{ padding: '0.6rem', background: 'var(--bg-input)', color: '#fff' }}>
-                    <ArrowUp size={18} />
-                  </button>
-                  <button onClick={() => moverPersonaje(heroPos.x, heroPos.y + 1)} className="btn-pro" style={{ padding: '0.6rem', background: 'var(--bg-input)', color: '#fff' }}>
-                    <ArrowDown size={18} />
-                  </button>
+          {/* CAPA 1: MUNDO 2D PIXEL ART (ISLAS, RÍO, PUENTE DE MADERA Y CAMINOS MORADOS) */}
+          <svg 
+            viewBox="0 0 1000 530" 
+            preserveAspectRatio="none"
+            shapeRendering="crispEdges"
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', zIndex: 1 }}
+          >
+            {/* Agua profunda y río central */}
+            <rect width="1000" height="530" fill="#081c2e" />
+            <path d="M 460 0 L 560 0 L 520 530 L 410 530 Z" fill="#0e3a5c" />
+            <path d="M 480 0 L 535 0 L 495 530 L 435 530 Z" fill="#165b8a" />
+
+            {/* Isla Izquierda (Acantilado de piedra + Pasto pixelado) */}
+            <polygon points="40,120 450,90 480,470 60,495" fill="#1e293b" />
+            <polygon points="40,95 450,70 475,445 60,470" fill="#065f46" />
+            <polygon points="65,115 430,90 455,425 85,445" fill="#10b981" />
+
+            {/* Isla Derecha (Bosque de la Programación y Lab) */}
+            <polygon points="530,95 955,85 940,475 515,465" fill="#1e293b" />
+            <polygon points="530,75 955,65 940,450 515,440" fill="#065f46" />
+            <polygon points="555,95 930,85 915,425 540,415" fill="#10b981" />
+
+            {/* Caminos Morados estilo RPG conectando las zonas igual a 7468.jpg */}
+            <path 
+              d="M 260 175 L 340 280 L 270 395 M 340 280 L 500 265 L 670 290 L 730 145 M 670 290 L 820 380" 
+              fill="none" 
+              stroke="#7e22ce" 
+              strokeWidth="34" 
+              strokeLinecap="square"
+            />
+            <path 
+              d="M 260 175 L 340 280 L 270 395 M 340 280 L 500 265 L 670 290 L 730 145 M 670 290 L 820 380" 
+              fill="none" 
+              stroke="#a855f7" 
+              strokeWidth="22" 
+              strokeLinecap="square"
+            />
+
+            {/* Puente de Madera Pixel Art cruzando el río central */}
+            <rect x="440" y="242" width="115" height="44" fill="#78350f" />
+            <rect x="440" y="236" width="115" height="6" fill="#b45309" />
+            <rect x="440" y="286" width="115" height="6" fill="#b45309" />
+            <rect x="455" y="242" width="10" height="44" fill="#92400e" />
+            <rect x="475" y="242" width="10" height="44" fill="#92400e" />
+            <rect x="495" y="242" width="10" height="44" fill="#92400e" />
+            <rect x="515" y="242" width="10" height="44" fill="#92400e" />
+            <rect x="535" y="242" width="10" height="44" fill="#92400e" />
+
+            {/* Árboles decorativos Pixel Art distribuidos por el mapa */}
+            {[
+              { x: 95, y: 150 }, { x: 135, y: 210 }, { x: 85, y: 310 },
+              { x: 400, y: 130 }, { x: 585, y: 120 }, { x: 865, y: 140 },
+              { x: 880, y: 250 }, { x: 600, y: 360 }, { x: 410, y: 375 }
+            ].map((arb, i) => (
+              <g key={i} transform={`translate(${arb.x}, ${arb.y})`}>
+                <rect x="12" y="28" width="10" height="12" fill="#78350f" />
+                <rect x="2" y="10" width="30" height="20" fill="#047857" />
+                <rect x="6" y="2" width="22" height="14" fill="#10b981" />
+              </g>
+            ))}
+          </svg>
+
+          {/* CAPA 2: ESTRUCTURAS 2D INTERACTIVAS (CADA TEMA DE LA BD ES UN EDIFICIO EN EL MAPA) */}
+          {temas.map((tema, idx) => {
+            const coord = coordenadasMapa[idx % coordenadasMapa.length];
+            const tipoBioma = tema.bioma || coord.biomaDefault;
+            const evalsDeTema = evaluaciones.filter(ev => ev.tema_id === tema.id);
+            const jefeActivo = evalsDeTema[0];
+            const yaDerrotado = jefeActivo && calificaciones.some(c => c.evaluacion_id === jefeActivo.id);
+
+            return (
+              <div
+                key={tema.id}
+                onClick={() => viajarABioma(tema, coord)}
+                style={{
+                  position: 'absolute',
+                  left: `${coord.x}%`,
+                  top: `${coord.y}%`,
+                  transform: 'translate(-50%, -50%)',
+                  zIndex: 10,
+                  textAlign: 'center',
+                  cursor: 'pointer',
+                  transition: 'transform 0.2s ease'
+                }}
+                title="Haz clic para caminar hacia este Bioma"
+              >
+                {/* Cartel Rojo de Jefe Final sobre el Castillo (Igual a "¡Befe Final: Examen 2!") */}
+                {jefeActivo && (
+                  <div className="rpg-boss-tag" style={{
+                    marginBottom: '-6px',
+                    position: 'relative',
+                    zIndex: 12,
+                    background: yaDerrotado 
+                      ? 'linear-gradient(90deg, #065f46 0%, #10b981 100%)' 
+                      : 'linear-gradient(90deg, #7f1d1d 0%, #dc2626 100%)'
+                  }}>
+                    {yaDerrotado 
+                      ? `✓ ${jefeActivo.titulo} Superado` 
+                      : `¡${jefeActivo.nombre_jefe || `Befe Final: ${jefeActivo.titulo}`}!`}
+                  </div>
+                )}
+
+                {/* Sprite 2D Pixel Art según el Bioma */}
+                <div style={{ filter: 'drop-shadow(0 8px 10px rgba(0,0,0,0.75))' }}>
+                  {tipoBioma === 'mazmorra' && <PixelCastleBoss derrotado={yaDerrotado} />}
+                  {tipoBioma === 'ruinas' && <PixelRuins />}
+                  {tipoBioma === 'laboratorio' && <PixelLabTower />}
+                  {tipoBioma === 'bosque' && <PixelForestCamp />}
                 </div>
-                <button onClick={() => moverPersonaje(heroPos.x + 1, heroPos.y)} className="btn-pro" style={{ padding: '0.6rem', background: 'var(--bg-input)', color: '#fff' }}>
-                  <ArrowRight size={18} />
-                </button>
-              </div>
 
-              {/* Leyenda Rápida */}
-              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'center', width: '100%', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                <span>🏰 <strong>Biomas:</strong> Temas y Pergaminos</span> •
-                <span>🛡️ <strong>Gremio:</strong> Trabajos Prácticos</span> •
-                <span>🐉 <strong>Jefes:</strong> Exámenes</span> •
-                <span>🏆 <strong>Fama:</strong> Notas</span>
+                {/* Etiqueta morada oscura con nombre del Bioma igual a 7468.jpg */}
+                <div style={{
+                  marginTop: '-4px',
+                  background: 'rgba(15, 23, 42, 0.92)',
+                  border: '2px solid #a855f7',
+                  color: '#ffffff',
+                  padding: '0.25rem 0.75rem',
+                  borderRadius: '8px',
+                  fontSize: '0.78rem',
+                  fontWeight: '800',
+                  whiteSpace: 'nowrap',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.8)'
+                }}>
+                  {tema.titulo}
+                </div>
+              </div>
+            );
+          })}
+
+          {/* CAPA 3: PERSONAJE JUGABLE 2D CON GLOBO DE EXCLAMACIÓN [ ! ] */}
+          <div
+            style={{
+              position: 'absolute',
+              left: `${heroPos.x}%`,
+              top: `${heroPos.y}%`,
+              transform: 'translate(-50%, -50%)',
+              zIndex: 18,
+              transition: 'left 0.22s linear, top 0.22s linear',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              pointerEvents: 'none'
+            }}
+          >
+            {/* Globo blanco con signo de exclamación dorado igual al centro del mapa en 7468.jpg */}
+            <div style={{
+              background: '#ffffff',
+              color: '#d97706',
+              border: '2px solid #0f172a',
+              borderRadius: '8px',
+              padding: '1px 8px',
+              fontWeight: '900',
+              fontSize: '0.85rem',
+              marginBottom: '2px',
+              boxShadow: '0 4px 8px rgba(0,0,0,0.5)'
+            }}>
+              !
+            </div>
+            <PixelHeroWizard caminando={caminando} />
+            <span style={{
+              background: 'rgba(0,0,0,0.75)',
+              color: '#fde047',
+              fontSize: '0.65rem',
+              fontWeight: '800',
+              padding: '1px 6px',
+              borderRadius: '4px',
+              marginTop: '2px'
+            }}>
+              {user?.nombre?.split(' ')[0]}
+            </span>
+          </div>
+
+          {/* CAPA 4: BÚHO "SABIO ALQUIMISTA AI" EN LA ESQUINA INFERIOR DERECHA (IGUAL A 7468.jpg) */}
+          <div
+            style={{
+              position: 'absolute',
+              right: '18px',
+              bottom: '14px',
+              zIndex: 22,
+              display: 'flex',
+              alignItems: 'flex-end',
+              gap: '0.6rem'
+            }}
+          >
+            {/* Bocadillo de diálogo blanco estilo cómic RPG */}
+            <div 
+              onClick={() => setDialogoBuhoAbierto(true)}
+              style={{
+                background: '#ffffff',
+                color: '#0f172a',
+                border: '3px solid #1e1b4b',
+                borderRadius: '12px',
+                padding: '0.65rem 0.9rem',
+                maxWidth: '250px',
+                fontSize: '0.78rem',
+                fontWeight: '800',
+                lineHeight: 1.35,
+                boxShadow: '0 8px 20px rgba(0,0,0,0.65)',
+                cursor: 'pointer'
+              }}
+            >
+              {examenesPendientes.length > 0 
+                ? `¡Atención! El Boss de "${examenesPendientes[0].titulo}" acecha. ¿Invocamos un consejo táctico? (Clic aquí)`
+                : `¡Mazmorras despejadas! Haz clic sobre mí si necesitas ayuda con algún pergamino o tarea.`}
+            </div>
+
+            {/* Sprite del Búho con Sombrero de Mago */}
+            <div 
+              onClick={() => setDialogoBuhoAbierto(true)}
+              style={{ textAlign: 'center', cursor: 'pointer' }}
+            >
+              <div style={{ filter: 'drop-shadow(0 6px 12px rgba(0,0,0,0.8))' }}>
+                <PixelOwlAlchemist />
+              </div>
+              <div style={{
+                background: '#1e1b4b',
+                border: '2px solid #a855f7',
+                color: '#f8fafc',
+                fontSize: '0.7rem',
+                fontWeight: '800',
+                padding: '2px 8px',
+                borderRadius: '6px',
+                marginTop: '-4px'
+              }}>
+                Sabio Alquimista AI
               </div>
             </div>
           </div>
 
-          {/* COLUMNA DERECHA: INSPECTOR DE LA ZONA ACTUAL DEL MAPA */}
-          <div>
-            {!zonaActiva && (
-              <div className="card-pro" style={{ textAlign: 'center', padding: '3rem 1.5rem' }}>
-                <Sparkles size={42} color="#fbbf24" style={{ margin: '0 auto 1rem auto' }} />
-                <h3>Explora el Mapa del Semestre</h3>
-                <p style={{ color: 'var(--text-muted)', marginTop: '0.5rem', fontSize: '0.92rem' }}>
-                  Camina hacia un <strong>🏰 Bioma</strong> para estudiar pergaminos de código, al <strong>🛡️ Gremio</strong> para entregar tareas, o a la guarida del <strong>🐉 Jefe</strong> para rendir tus exámenes.
-                </p>
-              </div>
-            )}
+          {/* D-PAD TÁCTIL EN LA ESQUINA INFERIOR IZQUIERDA (Para Móviles o Mouse) */}
+          <div style={{
+            position: 'absolute', left: '16px', bottom: '14px', zIndex: 22,
+            display: 'grid', gridTemplateColumns: 'repeat(3, 32px)', gap: '4px',
+            background: 'rgba(15, 23, 42, 0.75)', padding: '6px', borderRadius: '12px',
+            border: '1px solid rgba(168, 85, 247, 0.5)'
+          }}>
+            <div />
+            <button onClick={() => moverHeroePaso(0, -6)} style={{ background: '#1e293b', color: '#fff', border: '1px solid #a855f7', borderRadius: '6px', cursor: 'pointer', height: '28px' }}>▲</button>
+            <div />
+            <button onClick={() => moverHeroePaso(-6, 0)} style={{ background: '#1e293b', color: '#fff', border: '1px solid #a855f7', borderRadius: '6px', cursor: 'pointer', height: '28px' }}>◀</button>
+            <button onClick={() => temas[0] && setZonaActivaModal(temas[0])} title="Explorar zona" style={{ background: '#7e22ce', color: '#fde047', border: '1px solid #f0abfc', borderRadius: '6px', cursor: 'pointer', height: '28px', fontWeight: '900', fontSize: '0.7rem' }}>OK</button>
+            <button onClick={() => moverHeroePaso(6, 0)} style={{ background: '#1e293b', color: '#fff', border: '1px solid #a855f7', borderRadius: '6px', cursor: 'pointer', height: '28px' }}>▶</button>
+            <div />
+            <button onClick={() => moverHeroePaso(0, 6)} style={{ background: '#1e293b', color: '#fff', border: '1px solid #a855f7', borderRadius: '6px', cursor: 'pointer', height: '28px' }}>▼</button>
+            <div />
+          </div>
 
-            {/* ZONA: BIOMA DE ESTUDIO Y PERGAMINOS (REQ 8 y 9) */}
-            {zonaActiva?.tipo === 'bioma' && zonaActiva.data && (
-              <div className="card-pro" style={{ border: '2px solid #3b82f6' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-                  <span className="badge" style={{ background: 'rgba(59, 130, 246, 0.2)', color: '#60a5fa' }}>
-                    🏰 BIOMA ACADÉMICO EXPLORADO
+          {/* =================================================================
+              MODAL FLOTANTE 2D AL ENTRAR A UN BIOMA (COFRES, MISIONES Y JEFE)
+             ================================================================= */}
+          {zonaActivaModal && (
+            <div style={{
+              position: 'absolute', inset: '18px', zIndex: 40,
+              background: 'rgba(10, 14, 29, 0.96)', border: '3px solid #fbbf24',
+              borderRadius: '16px', padding: '1.25rem 1.5rem', overflowY: 'auto',
+              boxShadow: '0 0 40px rgba(0,0,0,0.9)'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '0.75rem', marginBottom: '1rem' }}>
+                <div>
+                  <span style={{ fontSize: '0.72rem', color: '#fbbf24', fontWeight: '800', textTransform: 'uppercase' }}>
+                    📍 Zona Explorable del Mapa
                   </span>
-                  {temas.length > 1 && (
-                    <select 
-                      className="input-pro" 
-                      style={{ width: 'auto', padding: '0.35rem 0.7rem', fontSize: '0.8rem' }}
-                      value={zonaActiva.data.id}
-                      onChange={(e) => {
-                        const t = temas.find(item => item.id === Number(e.target.value));
-                        if (t) setZonaActiva({ tipo: 'bioma', data: t });
-                      }}
-                    >
-                      {temas.map(t => <option key={t.id} value={t.id}>Ir a: {t.titulo}</option>)}
-                    </select>
+                  <h3 className="pixel-font" style={{ fontSize: '1rem', color: '#fff', marginTop: '4px' }}>
+                    {zonaActivaModal.titulo}
+                  </h3>
+                </div>
+                <button 
+                  onClick={() => setZonaActivaModal(null)}
+                  className="btn-danger"
+                  style={{ padding: '0.4rem 0.75rem', borderRadius: '8px', display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: '700' }}
+                >
+                  <X size={16} /> Salir al Mapa
+                </button>
+              </div>
+
+              <p style={{ color: '#cbd5e1', fontSize: '0.9rem', marginBottom: '1.1rem' }}>
+                {zonaActivaModal.descripcion}
+              </p>
+
+              <div className="grid-2">
+                {/* Pergaminos / Cofres de Teoría del Bioma */}
+                <div style={{ background: 'var(--bg-input)', padding: '1rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+                  <h4 style={{ color: '#fde047', marginBottom: '0.65rem', fontSize: '0.95rem' }}>
+                    📜 Pergaminos y Cofres de Teoría
+                  </h4>
+                  {zonaActivaModal.ejemplos && zonaActivaModal.ejemplos.length > 0 ? (
+                    zonaActivaModal.ejemplos.map(ej => (
+                      <div key={ej.id} style={{ marginBottom: '0.75rem', background: '#070a14', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--border)' }}>
+                        <strong style={{ color: '#38bdf8', fontSize: '0.85rem' }}>{ej.titulo}</strong>
+                        <pre style={{ marginTop: '0.4rem', fontSize: '0.78rem', color: '#a5f3fc', overflowX: 'auto', whiteSpace: 'pre-wrap' }}>
+                          {ej.contenido}
+                        </pre>
+                      </div>
+                    ))
+                  ) : (
+                    <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>No hay pergaminos en este bioma todavía.</p>
                   )}
                 </div>
 
-                <h3 style={{ fontSize: '1.4rem', color: '#38bdf8' }}>{zonaActiva.data.titulo}</h3>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.92rem', margin: '0.6rem 0 1.25rem 0' }}>
-                  {zonaActiva.data.descripcion}
-                </p>
+                {/* Jefes Finales y Misiones de este Bioma */}
+                <div style={{ background: 'var(--bg-input)', padding: '1rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+                  <h4 style={{ color: '#f87171', marginBottom: '0.65rem', fontSize: '0.95rem' }}>
+                    👹 Enfrentamientos contra Jefes
+                  </h4>
+                  {evaluaciones.filter(ev => ev.tema_id === zonaActivaModal.id).length === 0 ? (
+                    <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>Sin Jefe Final en esta zona.</p>
+                  ) : (
+                    evaluaciones.filter(ev => ev.tema_id === zonaActivaModal.id).map(ev => {
+                      const intento = calificaciones.find(c => c.evaluacion_id === ev.id);
+                      return (
+                        <div key={ev.id} style={{ background: 'rgba(0,0,0,0.35)', padding: '0.85rem', borderRadius: '10px', marginBottom: '0.65rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <div>
+                            <strong style={{ color: '#fff', fontSize: '0.9rem' }}>{ev.titulo}</strong>
+                            <div style={{ fontSize: '0.75rem', color: '#fca5a5' }}>{ev.total_preguntas} conjuros • +{ev.xp_recompensa || 300} XP</div>
+                          </div>
+                          {intento ? (
+                            <span className="badge badge-success">Derrotado ({intento.puntaje}%)</span>
+                          ) : (
+                            <button
+                              onClick={() => navigate(`/evaluacion/${ev.id}`)}
+                              className="btn-pro btn-pro-primary"
+                              style={{ background: 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)', padding: '0.45rem 0.85rem', fontSize: '0.8rem' }}
+                            >
+                              <Swords size={15} /> ¡Atacar Jefe!
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })
+                  )}
 
-                <h4 style={{ fontSize: '0.9rem', color: '#fbbf24', textTransform: 'uppercase', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <ScrollText size={16} /> Pergaminos y Cofres de Sabiduría ({zonaActiva.data.ejemplos?.length || 0}):
-                </h4>
-
-                {(!zonaActiva.data.ejemplos || zonaActiva.data.ejemplos.length === 0) ? (
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem' }}>Aún no hay pergaminos ocultos en este bioma.</p>
-                ) : (
-                  zonaActiva.data.ejemplos.map(ej => (
-                    <div key={ej.id} style={{ background: 'var(--bg-input)', padding: '1rem', borderRadius: '10px', border: '1px solid rgba(251, 191, 36, 0.3)', marginBottom: '0.85rem' }}>
-                      <strong style={{ color: '#fde68a', fontSize: '0.92rem' }}>📜 {ej.titulo}</strong>
-                      <pre style={{ marginTop: '0.6rem', padding: '0.75rem', background: '#090d16', borderRadius: '8px', color: '#a5f3fc', fontSize: '0.84rem', overflowX: 'auto', border: '1px solid var(--border)' }}>
-                        {ej.contenido}
-                      </pre>
+                  <h4 style={{ color: '#c084fc', margin: '1rem 0 0.65rem 0', fontSize: '0.95rem' }}>
+                    ⚔️ Misiones de Laboratorio en esta Zona
+                  </h4>
+                  {tareas.filter(t => t.tema_id === zonaActivaModal.id).map(tar => (
+                    <div key={tar.id} style={{ background: 'rgba(0,0,0,0.35)', padding: '0.75rem', borderRadius: '10px', marginBottom: '0.5rem' }}>
+                      <strong style={{ fontSize: '0.85rem' }}>{tar.titulo}</strong>
+                      <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: '4px 0' }}>{tar.descripcion}</p>
+                      <button 
+                        onClick={() => { setZonaActivaModal(null); setVistaHotbar('inventario'); }}
+                        className="btn-pro btn-pro-ai"
+                        style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', marginTop: '4px' }}
+                      >
+                        Entregar Misión
+                      </button>
                     </div>
-                  ))
-                )}
-
-                <div style={{ marginTop: '1.25rem', display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
-                  <button onClick={() => setZonaActiva({ tipo: 'jefes' })} className="btn-pro" style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.4)' }}>
-                    🐉 Ir a los Jefes Finales
-                  </button>
-                  <button onClick={() => setZonaActiva({ tipo: 'gremio' })} className="btn-pro" style={{ background: 'rgba(139, 92, 246, 0.2)', color: '#c4b5fd', border: '1px solid rgba(139, 92, 246, 0.4)' }}>
-                    🛡️ Ir al Tablón de Misiones
-                  </button>
+                  ))}
                 </div>
               </div>
-            )}
+            </div>
+          )}
 
-            {/* ZONA: GUARIDA DE JEFES FINALES (EVALUACIONES - REQ 10) */}
-            {zonaActiva?.tipo === 'jefes' && (
-              <div className="card-pro" style={{ border: '2px solid #ef4444' }}>
-                <span className="badge badge-danger" style={{ marginBottom: '0.5rem' }}>
-                  🐉 GUARIDA DE JEFES FINALES
-                </span>
-                <h3 style={{ fontSize: '1.35rem', marginBottom: '0.4rem' }}>Desafíos de Evaluación</h3>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', marginBottom: '1.25rem' }}>
-                  Cada Jefe custodia un Bioma. Solo tienes <strong>un intento único</strong> para derrotarlo antes de que el reloj llegue a cero.
-                </p>
-
-                {evaluaciones.length === 0 ? (
-                  <p style={{ color: 'var(--text-muted)' }}>No hay Jefes activos en este momento.</p>
-                ) : (
-                  evaluaciones.map(ev => {
-                    const intentoPrevio = calificaciones.find(c => c.evaluacion_id === ev.id);
-                    const yaCompletado = !!intentoPrevio;
-
-                    return (
-                      <div key={ev.id} style={{ background: 'var(--bg-input)', padding: '1rem', borderRadius: '12px', marginBottom: '0.85rem', border: yaCompletado ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid rgba(239, 68, 68, 0.35)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
-                        <div>
-                          <h4 style={{ color: '#fff', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                            {yaCompletado ? '🏆' : '🐉'} Jefe: {ev.titulo}
-                          </h4>
-                          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                            Bioma: {ev.tema_titulo} • {ev.total_preguntas} ataques (preguntas)
-                          </span>
-                        </div>
-
-                        {yaCompletado ? (
-                          <span className="badge badge-success" style={{ padding: '0.5rem 0.85rem' }}>
-                            ✓ Derrotado ({intentoPrevio.puntaje}% • +{intentoPrevio.puntaje * 5} XP)
-                          </span>
-                        ) : (
-                          <Link to={`/evaluacion/${ev.id}`} className="btn-pro" style={{ background: 'linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)', color: '#fff' }}>
-                            <Swords size={16} /> ¡Enfrentar Jefe!
-                          </Link>
-                        )}
-                      </div>
-                    );
-                  })
-                )}
+          {/* MODAL DE DIÁLOGO CON EL BÚHO SABIO ALQUIMISTA AI */}
+          {dialogoBuhoAbierto && (
+            <div style={{
+              position: 'absolute', inset: '24px', zIndex: 45,
+              background: 'rgba(14, 17, 38, 0.96)', border: '3px solid #a855f7',
+              borderRadius: '16px', padding: '1.25rem 1.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <PixelOwlAlchemist />
+                  <div>
+                    <span className="badge" style={{ background: 'rgba(251, 191, 36, 0.2)', color: '#fde047', border: '1px solid #fbbf24' }}>
+                      Oráculo del Mapa
+                    </span>
+                    <h3 className="pixel-font" style={{ fontSize: '0.95rem', marginTop: '4px' }}>Sabio Alquimista AI</h3>
+                  </div>
+                </div>
+                <button onClick={() => setDialogoBuhoAbierto(false)} className="btn-danger" style={{ padding: '0.4rem 0.75rem', borderRadius: '8px' }}>
+                  ✕ Cerrar
+                </button>
               </div>
-            )}
 
-            {/* ZONA: GREMIO DE MISIONES (TRABAJOS PRÁCTICOS) */}
-            {zonaActiva?.tipo === 'gremio' && (
-              <div className="card-pro" style={{ border: '2px solid #8b5cf6' }}>
-                <span className="badge" style={{ background: 'rgba(139, 92, 246, 0.2)', color: '#c4b5fd', marginBottom: '0.5rem' }}>
-                  🛡️ TABLÓN DEL GREMIO
-                </span>
-                <h3 style={{ fontSize: '1.35rem', marginBottom: '0.4rem' }}>Misiones y Trabajos Prácticos</h3>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', marginBottom: '1.25rem' }}>
-                  Envía tu código o reporte para que el Game Master lo califique y te otorgue bonificaciones de XP.
-                </p>
-
-                {tareas.length === 0 ? (
-                  <p style={{ color: 'var(--text-muted)' }}>No hay misiones publicadas en el tablón.</p>
-                ) : (
-                  tareas.map(tar => {
-                    const entrega = misEntregas.find(e => e.tarea_id === tar.id);
-                    const estaEntregada = !!entrega;
-                    const tieneCalificacion = entrega && entrega.calificacion !== null;
-
-                    return (
-                      <div key={tar.id} style={{ background: 'var(--bg-input)', padding: '1.1rem', borderRadius: '12px', marginBottom: '1rem', border: estaEntregada ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid var(--border)' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                          <h4>📜 {tar.titulo}</h4>
-                          <span className={`badge ${estaEntregada ? 'badge-success' : 'badge-danger'}`}>
-                            {estaEntregada ? 'Misión Entregada' : 'En Curso'}
-                          </span>
-                        </div>
-
-                        <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)', margin: '0.5rem 0' }}>{tar.descripcion}</p>
-
-                        {tar.fecha_limite && (
-                          <div style={{ fontSize: '0.78rem', color: '#fbbf24', marginBottom: '0.6rem' }}>
-                            ⏳ Plazo: {tar.fecha_limite}
-                          </div>
-                        )}
-
-                        {tieneCalificacion && (
-                          <div style={{ background: 'rgba(16, 185, 129, 0.12)', padding: '0.75rem', borderRadius: '8px', border: '1px solid rgba(16, 185, 129, 0.3)', marginBottom: '0.75rem' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                              <span style={{ fontSize: '0.8rem', color: '#34d399', fontWeight: '700' }}>Recompensa del Game Master:</span>
-                              <strong style={{ color: '#10b981' }}>{entrega.calificacion} / 100 pts</strong>
-                            </div>
-                            {entrega.retroalimentacion && (
-                              <p style={{ fontSize: '0.84rem', marginTop: '0.35rem', color: '#fff' }}>
-                                💬 <strong>Feedback:</strong> {entrega.retroalimentacion}
-                              </p>
-                            )}
-                          </div>
-                        )}
-
-                        <textarea 
-                          className="input-pro"
-                          rows="3"
-                          placeholder="Escribe aquí tu código o solución para esta misión..."
-                          value={entregaTexto[tar.id] || ''}
-                          onChange={(e) => setEntregaTexto({ ...entregaTexto, [tar.id]: e.target.value })}
-                        />
-                        <button 
-                          onClick={() => enviarTrabajo(tar.id)}
-                          disabled={enviandoTarea}
-                          className="btn-pro btn-pro-primary"
-                          style={{ width: '100%', marginTop: '0.5rem' }}
-                        >
-                          <Send size={15} /> {estaEntregada ? 'Actualizar Entrega de Misión' : 'Entregar Misión al Gremio'}
-                        </button>
-                      </div>
-                    );
-                  })
-                )}
+              <div style={{
+                background: '#ffffff', color: '#0f172a', padding: '1rem', borderRadius: '12px',
+                fontWeight: '700', fontSize: '0.9rem', lineHeight: 1.5, margin: '1rem 0', flex: 1, overflowY: 'auto'
+              }}>
+                {respuestaAlquimista || `🦉 "¡Saludos, ${user?.nombre}! Soy el Sabio Alquimista AI. Pregúntame cualquier duda sobre tus temas de estudio, código o cómo prepararte para vencer al Jefe Final de la mazmorra."`}
               </div>
-            )}
 
-            {/* ZONA: SALÓN DE LA FAMA (CALIFICACIONES Y RESULTADOS - REQ 14 y 15) */}
-            {zonaActiva?.tipo === 'fama' && (
-              <div className="card-pro" style={{ border: '2px solid #fbbf24' }}>
-                <span className="badge" style={{ background: 'rgba(251, 191, 36, 0.2)', color: '#fbbf24', marginBottom: '0.5rem' }}>
-                  🏆 SALÓN DE LA FAMA
-                </span>
-                <h3 style={{ fontSize: '1.35rem', marginBottom: '0.4rem' }}>Registro de Victorias y Calificaciones</h3>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', marginBottom: '1rem' }}>
-                  Historial oficial de combates contra Jefes y puntos de experiencia obtenidos.
-                </p>
-
-                {calificaciones.length === 0 ? (
-                  <p style={{ color: 'var(--text-muted)' }}>Aún no has registrado combates contra Jefes.</p>
-                ) : (
-                  calificaciones.map(cal => (
-                    <div key={cal.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.8rem 0', borderBottom: '1px solid var(--border)' }}>
-                      <div>
-                        <div style={{ fontWeight: '700' }}>{cal.evaluacion_titulo}</div>
-                        <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                          Aciertos: {cal.aciertos}/{cal.total_preguntas} • {cal.fecha}
-                        </span>
-                      </div>
-                      <div style={{ textAlign: 'right' }}>
-                        <div style={{ fontSize: '1.15rem', fontWeight: '800', color: cal.puntaje >= 60 ? '#10b981' : '#ef4444' }}>
-                          {cal.puntaje}% <span style={{ fontSize: '0.8rem', color: '#fbbf24' }}>(+{cal.puntaje * 5} XP)</span>
-                        </div>
-                        <span className={`badge ${cal.puntaje >= 60 ? 'badge-success' : 'badge-danger'}`}>
-                          {cal.puntaje >= 60 ? 'Jefe Derrotado' : 'No Superado'}
-                        </span>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            )}
-
-          </div>
+              <form onSubmit={consultarSabioAlquimista} style={{ display: 'flex', gap: '0.6rem' }}>
+                <input
+                  type="text"
+                  className="input-pro"
+                  placeholder="Escribe tu duda académica para el Sabio Alquimista..."
+                  value={preguntaAlquimista}
+                  onChange={(e) => setPreguntaAlquimista(e.target.value)}
+                />
+                <button type="submit" disabled={cargandoAlquimista} className="btn-pro btn-pro-ai">
+                  <Send size={16} /> {cargandoAlquimista ? 'Consultando...' : 'Preguntar'}
+                </button>
+              </form>
+            </div>
+          )}
         </div>
       )}
 
-      {/* =================================================================
-          MODO 2: VISTA CLÁSICA COMPLETA (TODOS LOS MÓDULOS EN PANTALLA)
-          ================================================================= */}
-      {modoVista === 'lista' && (
-        <div className="grid-2">
-          <div>
-            <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <BookOpen size={20} color="#38bdf8" /> Biomas y Pergaminos de Estudio
-            </h3>
-            {temas.map(t => (
-              <div key={t.id} className="card-pro">
-                <h4 style={{ color: '#38bdf8' }}>🏰 {t.titulo}</h4>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', margin: '0.5rem 0' }}>{t.descripcion}</p>
-                {t.ejemplos?.map(ej => (
-                  <div key={ej.id} style={{ background: 'var(--bg-input)', padding: '0.85rem', borderRadius: '8px', marginTop: '0.6rem' }}>
-                    <strong style={{ color: '#fde68a', fontSize: '0.85rem' }}>📜 {ej.titulo}</strong>
-                    <pre style={{ marginTop: '0.4rem', padding: '0.6rem', background: '#090d16', borderRadius: '6px', color: '#a5f3fc', fontSize: '0.82rem', overflowX: 'auto' }}>
-                      {ej.contenido}
-                    </pre>
+      {/* =====================================================================
+          3. SUB-VISTAS DE LA HOTBAR (INVENTARIO, PERGAMINOS, GREMIO, LOGROS)
+         ===================================================================== */}
+      {vistaHotbar === 'inventario' && (
+        <div className="card-pro" style={{ border: '2px solid #a855f7' }}>
+          <h3 style={{ marginBottom: '1rem' }}>🎒 Inventario de Misiones y Entregas ({tareas.length})</h3>
+          {tareas.map(tar => {
+            const entrega = misEntregas.find(e => e.tarea_id === tar.id);
+            return (
+              <div key={tar.id} style={{ background: 'var(--bg-input)', padding: '1rem', borderRadius: '12px', marginBottom: '1rem', border: '1px solid var(--border)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <h4>⚔️ {tar.titulo} ({tar.tema_titulo})</h4>
+                  <span className={`badge ${entrega ? 'badge-success' : 'badge-danger'}`}>
+                    {entrega ? 'Entregada' : 'Pendiente'}
+                  </span>
+                </div>
+                <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)', margin: '0.5rem 0' }}>{tar.descripcion}</p>
+                {entrega?.calificacion !== null && entrega?.calificacion !== undefined && (
+                  <div style={{ color: '#34d399', fontSize: '0.85rem', marginBottom: '0.5rem', fontWeight: '700' }}>
+                    Calificación del Game Master: {entrega.calificacion}/100 • {entrega.retroalimentacion}
                   </div>
-                ))}
+                )}
+                <textarea
+                  className="input-pro"
+                  rows="3"
+                  placeholder="Escribe tu solución o código para entregar la misión..."
+                  value={entregaTexto[tar.id] || ''}
+                  onChange={(e) => setEntregaTexto({ ...entregaTexto, [tar.id]: e.target.value })}
+                />
+                <button onClick={() => enviarTrabajo(tar.id)} disabled={enviandoTarea} className="btn-pro btn-pro-primary" style={{ marginTop: '0.5rem', width: '100%' }}>
+                  <Send size={15} /> {entrega ? 'Actualizar Misión' : 'Enviar Misión'}
+                </button>
               </div>
-            ))}
-          </div>
+            );
+          })}
+        </div>
+      )}
 
-          <div>
-            <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Swords size={20} color="#ef4444" /> Jefes Finales (Exámenes)
-            </h3>
-            {evaluaciones.map(ev => {
-              const intentoPrevio = calificaciones.find(c => c.evaluacion_id === ev.id);
-              const yaCompletado = !!intentoPrevio;
+      {vistaHotbar === 'pergaminos' && (
+        <div className="card-pro" style={{ border: '2px solid #fbbf24' }}>
+          <h3 style={{ marginBottom: '1rem' }}>📜 Pergaminos de Estudio Desbloqueados</h3>
+          {temas.map(t => (
+            <div key={t.id} style={{ marginBottom: '1.25rem', paddingBottom: '1rem', borderBottom: '1px solid var(--border)' }}>
+              <h4 style={{ color: '#fde047' }}>{t.titulo}</h4>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>{t.descripcion}</p>
+              {t.ejemplos?.map(ej => (
+                <pre key={ej.id} style={{ background: '#070a14', padding: '0.85rem', borderRadius: '8px', color: '#a5f3fc', fontSize: '0.82rem', overflowX: 'auto', marginTop: '0.4rem' }}>
+                  <strong>// {ej.titulo}</strong>{'\n'}{ej.contenido}
+                </pre>
+              ))}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {vistaHotbar === 'gremio' && (
+        <div className="card-pro" style={{ border: '2px solid #38bdf8' }}>
+          <h3 style={{ marginBottom: '1rem' }}>🛡️ Clasificación del Gremio (Classroom)</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Aventurero</th>
+                <th>Clase</th>
+                <th>Nivel</th>
+                <th>XP</th>
+              </tr>
+            </thead>
+            <tbody>
+              {gremio.map((m, i) => (
+                <tr key={m.id}>
+                  <td>#{i + 1}</td>
+                  <td style={{ fontWeight: '800' }}>{m.nombre}</td>
+                  <td style={{ color: '#c084fc' }}>{m.clase_rpg}</td>
+                  <td>Nvl {m.nivel || 1}</td>
+                  <td style={{ color: '#34d399', fontWeight: '700' }}>{m.xp || 150} XP</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {vistaHotbar === 'logros' && (
+        <div className="card-pro" style={{ border: '2px solid #10b981' }}>
+          <h3 style={{ marginBottom: '1rem' }}>🏆 Historial de Jefes Derrotados y Retroalimentación</h3>
+          {calificaciones.length === 0 ? (
+            <p style={{ color: 'var(--text-muted)' }}>Aún no has derrotado a ningún Jefe Final en el mapa.</p>
+          ) : (
+            calificaciones.map(cal => {
+              let detalle = [];
+              try { detalle = JSON.parse(cal.detalle_respuestas || '[]'); } catch { detalle = []; }
+              const abierto = calificacionDetalle === cal.id;
               return (
-                <div key={ev.id} className="card-pro" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <h4>🐉 {ev.titulo}</h4>
-                    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Bioma: {ev.tema_titulo}</span>
+                <div key={cal.id} style={{ padding: '0.85rem 0', borderBottom: '1px solid var(--border)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                      <strong>{cal.evaluacion_titulo}</strong>
+                      <div style={{ fontSize: '0.78rem', color: '#34d399' }}>+{cal.xp_ganada || 150} XP • {cal.aciertos}/{cal.total_preguntas} aciertos</div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <span style={{ fontSize: '1.2rem', fontWeight: '800', color: cal.puntaje >= 60 ? '#10b981' : '#ef4444' }}>{cal.puntaje}%</span>
+                      {detalle.length > 0 && (
+                        <div>
+                          <button onClick={() => setCalificacionDetalle(abierto ? null : cal.id)} style={{ background: 'none', border: 'none', color: '#38bdf8', fontSize: '0.75rem', cursor: 'pointer' }}>
+                            <Eye size={12} /> {abierto ? 'Ocultar' : 'Ver Retroalimentación'}
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  {yaCompletado ? (
-                    <span className="badge badge-success">✓ Derrotado ({intentoPrevio.puntaje}%)</span>
-                  ) : (
-                    <Link to={`/evaluacion/${ev.id}`} className="btn-pro btn-pro-primary">Enfrentar Jefe</Link>
+                  {abierto && (
+                    <div style={{ marginTop: '0.6rem', background: 'var(--bg-input)', padding: '0.75rem', borderRadius: '8px', fontSize: '0.8rem' }}>
+                      {detalle.map((d, idx) => (
+                        <div key={idx} style={{ marginBottom: '0.4rem' }}>
+                          <strong>{idx + 1}. {d.enunciado}</strong> — Tu respuesta: {d.respuesta_estudiante} (Correcta: {d.opcion_correcta})
+                        </div>
+                      ))}
+                    </div>
                   )}
                 </div>
               );
-            })}
-          </div>
+            })
+          )}
         </div>
       )}
 
+      {/* =====================================================================
+          4. HOTBAR INFERIOR DE 5 SLOTS (IDÉNTICA A 7468.jpg)
+         ===================================================================== */}
+      <div className="rpg-hotbar">
+        <button className={`rpg-hotbar-slot ${vistaHotbar === 'mapa' ? 'active' : ''}`} onClick={() => setVistaHotbar('mapa')}>
+          <Map size={20} color="#34d399" />
+          <span>Map</span>
+        </button>
+        <button className={`rpg-hotbar-slot ${vistaHotbar === 'inventario' ? 'active' : ''}`} onClick={() => setVistaHotbar('inventario')}>
+          <Backpack size={20} color="#f97316" />
+          <span>Inventario</span>
+        </button>
+        <button className={`rpg-hotbar-slot ${vistaHotbar === 'pergaminos' ? 'active' : ''}`} onClick={() => setVistaHotbar('pergaminos')}>
+          <Scroll size={20} color="#fde047" />
+          <span>Pergaminos</span>
+        </button>
+        <button className={`rpg-hotbar-slot ${vistaHotbar === 'gremio' ? 'active' : ''}`} onClick={() => setVistaHotbar('gremio')}>
+          <Users size={20} color="#38bdf8" />
+          <span>Gremio</span>
+        </button>
+        <button className={`rpg-hotbar-slot ${vistaHotbar === 'logros' ? 'active' : ''}`} onClick={() => setVistaHotbar('logros')}>
+          <Trophy size={20} color="#fbbf24" />
+          <span>Logros</span>
+        </button>
+      </div>
     </div>
   );
 }
