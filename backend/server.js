@@ -494,8 +494,8 @@ app.post('/api/ia/asistente', async (req, res) => {
       return res.json({
         tipo: 'ejemplo',
         resultado: {
-          titulo: `Pergamino Práctico: ${mensaje.slice(0, 35)}`,
-          contenido: `// Ejemplo didáctico generado por el Oráculo IA\n// Tema: ${mensaje}\n\n#include <iostream>\nusing namespace std;\n\nclass ModuloAcademico {\npublic:\n    void ejecutar() {\n        cout << "Demostracion ejecutada correctamente." << endl;\n    }\n};\n\nint main() {\n    ModuloAcademico obj;\n    obj.ejecutar();\n    return 0;\n}`
+          titulo: `Pergamino Ancestral: ${mensaje.slice(0, 38)}`,
+          contenido: `// 📜 Pergamino de Estudio generado por el Sabio Alquimista AI\n// Tema: ${mensaje}\n\n#include <iostream>\n#include <vector>\nusing namespace std;\n\nclass MisionAcademica {\nprivate:\n    string nombreBioma;\n    int xpRecompensa;\npublic:\n    MisionAcademica(string n, int xp) : nombreBioma(n), xpRecompensa(xp) {}\n    void ejecutarConjuro() {\n        cout << "Bioma dominado: " << nombreBioma << " (+" << xpRecompensa << " XP)" << endl;\n    }\n};\n\nint main() {\n    MisionAcademica reto("${mensaje.slice(0, 25)}", 300);\n    reto.ejecutarConjuro();\n    return 0;\n}`
         }
       });
     }
@@ -504,62 +504,103 @@ app.post('/api/ia/asistente', async (req, res) => {
       return res.json({
         tipo: 'tarea',
         resultado: {
-          titulo: `Misión de Gremio: ${mensaje.slice(0, 35)}`,
-          descripcion: `Objetivo de la Misión:\nDesarrollar una solución en código aplicando "${mensaje}".\n\nRequisitos de entrega:\n1. Implementar la lógica modularizada y documentada.\n2. Incluir al menos un caso de prueba funcional.\n3. Explicar brevemente cómo se gestionan los datos en memoria.`
+          titulo: `Misión de Gremio: ${mensaje.slice(0, 38)}`,
+          descripcion: `⚔️ OBJETIVO DE LA MISIÓN:\nDesarrollar e implementar una solución aplicada sobre "${mensaje}".\n\n📜 REQUISITOS DEL PERGAMINO DE ENTREGA:\n1. Explicación clara del planteamiento o código fuente comentado.\n2. Aplicación práctica de los conceptos vistos en el bioma actual.\n3. Conclusión o verificación con al menos un caso de prueba.\n\n🏆 RECOMPENSA: Hasta +200 XP al ser calificada por el Game Master.`
         }
+      });
+    }
+
+    if (modo === 'alquimista') {
+      return res.json({
+        tipo: 'alquimista',
+        resultado: `🦉 **Sabio Alquimista AI:** ¡Saludos, aventurero! He consultado los pergaminos sobre *"${mensaje}"*.\n\nMi consejo táctico para tu misión:\n1. **Concepto Clave:** Asegúrate de comprender la lógica paso a paso antes de entrar a la mazmorra; no memorices, analiza el porqué de cada estructura.\n2. **Estrategia contra el Jefe:** Lee con cuidado cada opción del examen (tienes 5 minutos en el reloj de arena) y descarta primero las opciones que contradigan la teoría del Pergamino.\n3. **Tip de Gremio:** Si tienes una tarea pendiente en este bioma, entrégala pronto para evitar la *Tormenta de Fechas* y ganar XP extra.`
       });
     }
 
     return res.json({
       tipo: 'chat',
-      resultado: `### Análisis Didáctico del Oráculo IA\n**Consulta:** *"${mensaje}"*\n\n#### 1. Explicación Conceptual y Técnica\nEste concepto permite estructurar programas eficientes separando las responsabilidades del código y controlando de forma segura el ciclo de vida de las variables en memoria (Stack y Heap).\n\n\`\`\`cpp\n#include <iostream>\nusing namespace std;\n\nint main() {\n    int* recurso = new int(100); // Reserva dinámica\n    cout << "Valor en memoria: " << *recurso << endl;\n    delete recurso;              // Liberación segura\n    recurso = nullptr;           // Prevención de puntero colgante\n    return 0;\n}\n\`\`\`\n\n#### 2. Errores Comunes de los Estudiantes\n* **Fugas de memoria (Memory Leaks):** Olvidar liberar memoria dinámica con \`delete\`.\n* **Variables sin inicializar:** Usar punteros o atributos antes de asignarles un valor válido.\n\n#### 3. Sugerencia para tu Clase\nPuedes cambiar arriba a la pestaña **"🐉 Generar Preguntas"** o **"📜 Crear Pergamino"** para transformar este mismo tema en material evaluable con un solo clic.`
+      resultado: `🧙‍♂️ **Copiloto Game Master:** He analizado tu solicitud sobre *"${mensaje}"*.\n\n**Ruta pedagógica sugerida para Saga Académica:**\n1. **Bioma del Mapa:** Crea el tema asignándole el bioma de *Bosque* (introductorio) o *Mazmorra* (avanzado).\n2. **Pergamino de Estudio:** Publica un ejemplo corto y comentado para que los alumnos lo desbloqueen antes del examen.\n3. **Jefe Final:** Usa las pestañas de arriba (*Generar Preguntas* o *Diseñar Trabajo*) para crear los reactivos automáticamente con un solo clic.`
     });
   }
 
+  // CON API KEY DE GEMINI ACTIVA (Usando gemini-2.5-flash actualizado)
   try {
     let systemInstruction = "";
     let forceJson = false;
 
     if (modo === 'preguntas') {
       forceJson = true;
-      systemInstruction = `Genera exactamente 3 preguntas de opción múltiple sobre el tema dado. Responde ÚNICAMENTE un arreglo JSON con: [{"enunciado":"","opcion_a":"","opcion_b":"","opcion_c":"","opcion_d":"","opcion_correcta":"A"}]`;
+      systemInstruction = `Eres un docente universitario experto y Game Master de "Saga Académica". A partir del tema suministrado, genera exactamente 3 preguntas de opción múltiple de calidad académica.
+Debes responder ÚNICAMENTE un arreglo JSON con este formato exacto:
+[
+  {
+    "enunciado": "Texto de la pregunta",
+    "opcion_a": "Opción A",
+    "opcion_b": "Opción B",
+    "opcion_c": "Opción C",
+    "opcion_d": "Opción D",
+    "opcion_correcta": "A",
+    "explicacion": "Breve explicación de por qué es correcta"
+  }
+]`;
     } else if (modo === 'ejemplo') {
       forceJson = true;
-      systemInstruction = `Genera un ejemplo de código didáctico sobre el tema dado. Responde ÚNICAMENTE un objeto JSON: {"titulo":"","contenido":""}`;
+      systemInstruction = `Eres un docente universitario experto. Basándote en el tema indicado, genera un ejemplo práctico o de código bien explicado (Pergamino de Estudio).
+Responde ÚNICAMENTE un objeto JSON:
+{
+  "titulo": "Título breve y descriptivo",
+  "contenido": "Desarrollo paso a paso o código fuente con comentarios claros"
+}`;
     } else if (modo === 'tarea') {
       forceJson = true;
-      systemInstruction = `Genera un trabajo práctico universitario sobre el tema dado. Responde ÚNICAMENTE un objeto JSON: {"titulo":"","descripcion":""}`;
+      systemInstruction = `Eres un docente universitario diseñando una misión práctica para "Saga Académica". Genera un trabajo práctico con instrucciones claras y criterios de evaluación.
+Responde ÚNICAMENTE un objeto JSON:
+{
+  "titulo": "Título de la misión o laboratorio",
+  "descripcion": "Instrucciones detalladas, entregables y criterios de evaluación"
+}`;
+    } else if (modo === 'alquimista') {
+      systemInstruction = `Eres el "Sabio Alquimista AI", un búho erudito y mentor dentro del mundo RPG educativo "Saga Académica". Responde al estudiante de forma motivadora, clara y didáctica sobre su duda académica (${contexto}), usando sutiles metáforas de RPG (pergaminos, conjuros, jefes, XP) sin dejar de ser riguroso y claro académicamente.`;
     } else {
-      systemInstruction = `Eres el Copiloto de IA para docentes universitarios de Saga Académica. Responde con profundidad técnica, ejemplos de código claros y consejos pedagógicos.`;
+      systemInstruction = `Eres el Copiloto de Inteligencia Artificial para el profesor (Game Master) de la plataforma "Saga Académica". Ayúdale a redactar temas, ejemplos, ejercicios o guías de estudio con excelencia académica.`;
     }
 
     const payload = {
-      contents: [{ parts: [{ text: `${systemInstruction}\n\nSOLICITUD DEL PROFESOR:\n${mensaje}` }] }]
+      contents: [{ parts: [{ text: `${systemInstruction}\n\nCONSULTA:\n${mensaje}` }] }]
     };
 
     if (forceJson) {
       payload.generationConfig = { responseMimeType: "application/json" };
     }
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
 
     const data = await response.json();
-    const textoGenerado = data.candidates[0].content.parts[0].text;
+    const textoGenerado = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+    if (!textoGenerado) {
+      throw new Error('Respuesta vacía del modelo');
+    }
 
     if (forceJson) {
       res.json({ tipo: modo, resultado: JSON.parse(textoGenerado) });
     } else {
-      res.json({ tipo: 'chat', resultado: textoGenerado });
+      res.json({ tipo: modo === 'alquimista' ? 'alquimista' : 'chat', resultado: textoGenerado });
     }
   } catch (error) {
+    console.error("Error en Copiloto IA:", error);
     res.status(500).json({ error: 'Error al procesar la solicitud con la IA.' });
   }
 });
 
+app.post('/api/ia/generar-evaluacion', (req, res) => {
+  res.redirect(307, '/api/ia/asistente');
+});
+
 app.listen(PORT, () => {
-  console.log(`Servidor de Saga Académica corriendo en http://localhost:${PORT}`);
+  console.log(`⚔️ Servidor Saga Académica corriendo en http://localhost:${PORT}`);
 });
