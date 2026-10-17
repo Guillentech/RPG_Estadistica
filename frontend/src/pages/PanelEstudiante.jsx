@@ -3,149 +3,141 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { 
   Map, Backpack, Scroll, Users, Trophy, Swords, CloudLightning, 
-  Send, Clock, MessageSquare, Check, Eye, X, Sparkles
+  Send, Eye, X, Sparkles, Zap, Compass, CheckCircle2, Lock
 } from 'lucide-react';
 
 // ============================================================================
-// SPRITES PIXEL ART EN SVG PURO (crispEdges = Pixel Art 2D nítido sin borrosidad)
+// SPRITES PIXEL ART 16-BIT (SVG CRISP-EDGES PARA UI Y MARCADORES DE BIOMAS)
 // ============================================================================
-const PixelCastleBoss = ({ derrotado }) => (
-  <svg width="110" height="105" viewBox="0 0 22 21" shapeRendering="crispEdges">
-    {/* Demonio Rojo (Jefe Final) asomándose sobre la muralla igual a 7468.jpg */}
-    {!derrotado && (
-      <g>
-        <rect x="6" y="1" width="2" height="2" fill="#fca5a5" />
-        <rect x="14" y="1" width="2" height="2" fill="#fca5a5" />
-        <rect x="7" y="2" width="8" height="6" fill="#dc2626" />
-        <rect x="6" y="3" width="10" height="4" fill="#ef4444" />
-        <rect x="8" y="4" width="2" height="1" fill="#fef08a" />
-        <rect x="12" y="4" width="2" height="1" fill="#fef08a" />
-        <rect x="9" y="6" width="4" height="1" fill="#450a0a" />
-      </g>
-    )}
-    {/* Torres y almenas de piedra gris */}
-    <rect x="2" y="6" width="1" height="2" fill="#94a3b8" />
-    <rect x="4" y="6" width="1" height="2" fill="#94a3b8" />
-    <rect x="17" y="6" width="1" height="2" fill="#94a3b8" />
-    <rect x="19" y="6" width="1" height="2" fill="#94a3b8" />
-    <rect x="2" y="8" width="4" height="11" fill="#64748b" />
-    <rect x="16" y="8" width="4" height="11" fill="#64748b" />
-    <rect x="6" y="9" width="10" height="10" fill="#475569" />
-    <rect x="7" y="8" width="2" height="1" fill="#94a3b8" />
-    <rect x="10" y="8" width="2" height="1" fill="#94a3b8" />
-    <rect x="13" y="8" width="2" height="1" fill="#94a3b8" />
-    {/* Detalles de ladrillos y portón oscuro */}
-    <rect x="3" y="10" width="2" height="2" fill="#1e293b" />
-    <rect x="17" y="10" width="2" height="2" fill="#1e293b" />
-    <rect x="9" y="13" width="4" height="6" fill="#0f172a" />
-    <rect x="10" y="12" width="2" height="1" fill="#0f172a" />
-    <rect x="10" y="13" width="1" height="6" fill="#334155" />
-  </svg>
-);
+const AvatarHero16Bit = ({ clase = '' }) => {
+  const esArquera = clase.toLowerCase().includes('arquer');
+  return (
+    <svg width="46" height="46" viewBox="0 0 16 16" shapeRendering="crispEdges">
+      <rect width="16" height="16" fill="#1e1b4b" />
+      {/* Cabello / Capucha */}
+      <rect x="4" y="2" width="8" height="3" fill={esArquera ? '#059669' : '#7e22ce'} />
+      <rect x="3" y="4" width="10" height="2" fill={esArquera ? '#10b981' : '#9333ea'} />
+      <rect x="4" y="4" width="8" height="1" fill="#fbbf24" />
+      {/* Rostro 16-bit */}
+      <rect x="4" y="6" width="8" height="5" fill="#fed7aa" />
+      <rect x="5" y="7" width="2" height="2" fill="#0f172a" />
+      <rect x="9" y="7" width="2" height="2" fill="#0f172a" />
+      <rect x="5" y="7" width="1" height="1" fill="#ffffff" />
+      <rect x="9" y="7" width="1" height="1" fill="#ffffff" />
+      <rect x="7" y="9" width="2" height="1" fill="#f97316" />
+      {/* Armadura / Túnica */}
+      <rect x="3" y="11" width="10" height="5" fill={esArquera ? '#047857' : '#2563eb'} />
+      <rect x="6" y="11" width="4" height="5" fill="#fbbf24" />
+    </svg>
+  );
+};
 
-const PixelRuins = () => (
-  <svg width="92" height="82" viewBox="0 0 18 16" shapeRendering="crispEdges">
-    {/* Base y columnas antiguas en ruinas */}
-    <rect x="2" y="13" width="14" height="2" fill="#64748b" />
-    <rect x="3" y="4" width="3" height="9" fill="#94a3b8" />
-    <rect x="8" y="6" width="2" height="7" fill="#94a3b8" />
-    <rect x="13" y="8" width="2" height="5" fill="#64748b" />
-    <rect x="2" y="3" width="8" height="2" fill="#cbd5e1" />
-    {/* Enredaderas verdes sobre la piedra */}
-    <rect x="3" y="5" width="2" height="2" fill="#10b981" />
-    <rect x="7" y="4" width="2" height="2" fill="#059669" />
-    <rect x="12" y="12" width="3" height="1" fill="#10b981" />
-  </svg>
-);
-
-const PixelForestCamp = () => (
-  <svg width="96" height="86" viewBox="0 0 18 16" shapeRendering="crispEdges">
-    {/* Árboles frondosos Pixel Art + Cofre de Pergaminos */}
-    <rect x="4" y="10" width="2" height="4" fill="#78350f" />
-    <rect x="12" y="11" width="2" height="3" fill="#78350f" />
-    <rect x="2" y="4" width="6" height="6" fill="#059669" />
-    <rect x="3" y="2" width="4" height="3" fill="#10b981" />
-    <rect x="10" y="5" width="6" height="6" fill="#047857" />
-    <rect x="11" y="3" width="4" height="3" fill="#10b981" />
-    {/* Cofre dorado en el centro */}
-    <rect x="7" y="11" width="4" height="3" fill="#d97706" />
-    <rect x="7" y="11" width="4" height="1" fill="#fbbf24" />
-    <rect x="8" y="12" width="2" height="1" fill="#fef08a" />
-  </svg>
-);
-
-const PixelLabTower = () => (
-  <svg width="92" height="92" viewBox="0 0 18 18" shapeRendering="crispEdges">
-    {/* Torre de alquimia / Laboratorio con cristal flotante */}
-    <rect x="8" y="1" width="2" height="3" fill="#38bdf8" />
-    <rect x="6" y="4" width="6" height="3" fill="#6d28d9" />
-    <rect x="5" y="7" width="8" height="9" fill="#475569" />
-    <rect x="7" y="9" width="4" height="3" fill="#38bdf8" />
-    <rect x="8" y="13" width="2" height="3" fill="#1e1b4b" />
-    <rect x="4" y="16" width="10" height="1" fill="#94a3b8" />
-  </svg>
-);
-
-const PixelHeroWizard = ({ caminando }) => (
-  <svg 
-    width="48" 
-    height="54" 
-    viewBox="0 0 14 16" 
-    shapeRendering="crispEdges"
-    style={{ transform: caminando ? 'translateY(-3px)' : 'none', transition: 'transform 0.15s' }}
-  >
-    {/* Sombrero de Mago Morado */}
-    <rect x="5" y="1" width="4" height="2" fill="#7e22ce" />
-    <rect x="4" y="3" width="6" height="2" fill="#9333ea" />
-    <rect x="2" y="5" width="10" height="1" fill="#a855f7" />
-    <rect x="4" y="4" width="6" height="1" fill="#fbbf24" />
-    {/* Rostro */}
-    <rect x="4" y="6" width="6" height="3" fill="#fed7aa" />
-    <rect x="5" y="7" width="1" height="1" fill="#0f172a" />
-    <rect x="8" y="7" width="1" height="1" fill="#0f172a" />
-    {/* Túnica Azul/Morada y Báculo */}
-    <rect x="3" y="9" width="8" height="5" fill="#2563eb" />
-    <rect x="5" y="9" width="4" height="5" fill="#7e22ce" />
-    <rect x="11" y="6" width="1" height="9" fill="#92400e" />
-    <rect x="10" y="4" width="3" height="2" fill="#38bdf8" />
-    {/* Botas */}
-    <rect x="4" y="14" width="2" height="2" fill="#1e293b" />
-    <rect x="8" y="14" width="2" height="2" fill="#1e293b" />
-  </svg>
-);
-
-const PixelOwlAlchemist = () => (
-  <svg width="78" height="86" viewBox="0 0 16 18" shapeRendering="crispEdges">
-    {/* Sombrero de Mago del Búho con estrella dorada */}
-    <rect x="6" y="0" width="4" height="2" fill="#6b21a8" />
+const AlchemistWizard16Bit = () => (
+  <svg width="64" height="68" viewBox="0 0 16 17" shapeRendering="crispEdges">
+    {/* Sombrero Arcano con Estrella */}
+    <rect x="6" y="0" width="4" height="2" fill="#581c87" />
     <rect x="5" y="2" width="6" height="2" fill="#7e22ce" />
     <rect x="2" y="4" width="12" height="2" fill="#9333ea" />
-    <rect x="7" y="3" width="2" height="2" fill="#fbbf24" />
-    {/* Cuerpo del Búho */}
-    <rect x="4" y="6" width="8" height="9" fill="#b45309" />
-    <rect x="3" y="8" width="2" height="5" fill="#92400e" />
-    <rect x="11" y="8" width="2" height="5" fill="#92400e" />
-    {/* Ojos grandes sabios y pico */}
-    <rect x="5" y="7" width="2" height="2" fill="#ffffff" />
-    <rect x="9" y="7" width="2" height="2" fill="#ffffff" />
-    <rect x="6" y="8" width="1" height="1" fill="#000000" />
-    <rect x="10" y="8" width="1" height="1" fill="#000000" />
-    <rect x="7" y="9" width="2" height="2" fill="#fbbf24" />
-    {/* Pecho emplumado y patas */}
-    <rect x="6" y="11" width="4" height="3" fill="#fde68a" />
-    <rect x="5" y="15" width="2" height="2" fill="#f59e0b" />
-    <rect x="9" y="15" width="2" height="2" fill="#f59e0b" />
+    <rect x="7" y="3" width="2" height="1" fill="#fde047" />
+    {/* Rostro y Barba Blanca de Sabio */}
+    <rect x="5" y="6" width="6" height="3" fill="#fed7aa" />
+    <rect x="6" y="7" width="1" height="1" fill="#0f172a" />
+    <rect x="9" y="7" width="1" height="1" fill="#0f172a" />
+    <rect x="4" y="9" width="8" height="4" fill="#f8fafc" />
+    <rect x="5" y="13" width="6" height="1" fill="#e2e8f0" />
+    {/* Túnica Púrpura y Orbe Alquímico */}
+    <rect x="3" y="10" width="2" height="6" fill="#6b21a8" />
+    <rect x="11" y="10" width="2" height="6" fill="#6b21a8" />
+    <rect x="5" y="14" width="6" height="3" fill="#7e22ce" />
+    <rect x="13" y="7" width="2" height="2" fill="#38bdf8" />
+    <rect x="13" y="9" width="1" height="7" fill="#b45309" />
   </svg>
 );
+
+const CastleDungeonSprite = ({ derrotado }) => (
+  <svg width="88" height="84" viewBox="0 0 22 21" shapeRendering="crispEdges">
+    {/* Aura o Jefe Demonio sobre la mazmorra */}
+    {!derrotado && (
+      <g>
+        <rect x="6" y="1" width="2" height="2" fill="#fde047" />
+        <rect x="14" y="1" width="2" height="2" fill="#fde047" />
+        <rect x="7" y="2" width="8" height="5" fill="#dc2626" />
+        <rect x="8" y="4" width="2" height="1" fill="#fef08a" />
+        <rect x="12" y="4" width="2" height="1" fill="#fef08a" />
+      </g>
+    )}
+    {/* Almenas y Torres */}
+    <rect x="2" y="6" width="2" height="2" fill="#cbd5e1" />
+    <rect x="5" y="6" width="2" height="2" fill="#cbd5e1" />
+    <rect x="15" y="6" width="2" height="2" fill="#cbd5e1" />
+    <rect x="18" y="6" width="2" height="2" fill="#cbd5e1" />
+    <rect x="2" y="8" width="5" height="11" fill="#64748b" />
+    <rect x="15" y="8" width="5" height="11" fill="#64748b" />
+    <rect x="7" y="9" width="8" height="10" fill="#475569" />
+    <rect x="8" y="8" width="2" height="1" fill="#94a3b8" />
+    <rect x="12" y="8" width="2" height="1" fill="#94a3b8" />
+    {/* Puerta de madera con reja */}
+    <rect x="9" y="13" width="4" height="6" fill="#0f172a" />
+    <rect x="10" y="12" width="2" height="1" fill="#0f172a" />
+    <rect x="10" y="13" width="2" height="6" fill="#78350f" />
+    {/* Banderines Rojos/Verdes */}
+    <rect x="4" y="4" width="1" height="2" fill="#f8fafc" />
+    <rect x="5" y="4" width="2" height="1" fill={derrotado ? '#10b981' : '#ef4444'} />
+    <rect x="17" y="4" width="1" height="2" fill="#f8fafc" />
+    <rect x="18" y="4" width="2" height="1" fill={derrotado ? '#10b981' : '#ef4444'} />
+  </svg>
+);
+
+const BiomeStructureSprite = ({ tipo }) => {
+  if (tipo === 'ruinas') {
+    return (
+      <svg width="76" height="68" viewBox="0 0 18 16" shapeRendering="crispEdges">
+        <rect x="2" y="13" width="14" height="2" fill="#64748b" />
+        <rect x="3" y="4" width="3" height="9" fill="#cbd5e1" />
+        <rect x="8" y="5" width="2" height="8" fill="#94a3b8" />
+        <rect x="13" y="7" width="2" height="6" fill="#64748b" />
+        <rect x="2" y="3" width="9" height="2" fill="#e2e8f0" />
+        <rect x="3" y="5" width="2" height="3" fill="#10b981" />
+        <rect x="8" y="6" width="2" height="2" fill="#059669" />
+      </svg>
+    );
+  }
+  if (tipo === 'laboratorio') {
+    return (
+      <svg width="76" height="76" viewBox="0 0 18 18" shapeRendering="crispEdges">
+        <rect x="8" y="1" width="2" height="3" fill="#38bdf8" />
+        <rect x="5" y="4" width="8" height="3" fill="#7e22ce" />
+        <rect x="4" y="7" width="10" height="9" fill="#475569" />
+        <rect x="7" y="9" width="4" height="3" fill="#38bdf8" />
+        <rect x="8" y="13" width="2" height="3" fill="#0f172a" />
+        <rect x="3" y="16" width="12" height="1" fill="#94a3b8" />
+      </svg>
+    );
+  }
+  return (
+    <svg width="78" height="70" viewBox="0 0 18 16" shapeRendering="crispEdges">
+      <rect x="3" y="10" width="2" height="4" fill="#78350f" />
+      <rect x="13" y="10" width="2" height="4" fill="#78350f" />
+      <rect x="1" y="4" width="6" height="6" fill="#047857" />
+      <rect x="2" y="2" width="4" height="3" fill="#10b981" />
+      <rect x="11" y="4" width="6" height="6" fill="#065f46" />
+      <rect x="12" y="2" width="4" height="3" fill="#34d399" />
+      <rect x="7" y="10" width="4" height="4" fill="#d97706" />
+      <rect x="7" y="10" width="4" height="1" fill="#fde047" />
+      <rect x="8" y="11" width="2" height="1" fill="#fef08a" />
+    </svg>
+  );
+};
 
 export default function PanelEstudiante() {
   const { user, refrescarEstudiante } = useAuth();
   const navigate = useNavigate();
+  const canvasRef = useRef(null);
 
-  // Hotbar inferior
-  const [vistaHotbar, setVistaHotbar] = useState('mapa'); // 'mapa' | 'inventario' | 'pergaminos' | 'gremio' | 'logros'
+  // Navegación Hotbar Inferior
+  const [vistaHotbar, setVistaHotbar] = useState('mapa');
 
-  // Datos del backend
+  // Datos sincronizados con el Backend
   const [temas, setTemas] = useState([]);
   const [evaluaciones, setEvaluaciones] = useState([]);
   const [calificaciones, setCalificaciones] = useState([]);
@@ -153,30 +145,38 @@ export default function PanelEstudiante() {
   const [misEntregas, setMisEntregas] = useState([]);
   const [gremio, setGremio] = useState([]);
 
-  // Posición 2D del Héroe en el Mapa (Porcentajes X: 0-100, Y: 0-100)
-  const [heroPos, setHeroPos] = useState({ x: 50, y: 54 });
+  // Coordenadas del Héroe en el Mapa 2D (Porcentaje 0-100)
+  const [heroPos, setHeroPos] = useState({ x: 38, y: 52 });
   const [caminando, setCaminando] = useState(false);
   const [zonaActivaModal, setZonaActivaModal] = useState(null);
   const [calificacionDetalle, setCalificacionDetalle] = useState(null);
 
-  // Entregas
+  // Entregas de Misiones
   const [entregaTexto, setEntregaTexto] = useState({});
   const [enviandoTarea, setEnviandoTarea] = useState(false);
 
-  // Búho Sabio Alquimista AI
-  const [dialogoBuhoAbierto, setDialogoBuhoAbierto] = useState(false);
+  // Búho / Sabio Alquimista AI
+  const [dialogoAlquimistaAbierto, setDialogoAlquimistaAbierto] = useState(false);
   const [preguntaAlquimista, setPreguntaAlquimista] = useState('');
   const [respuestaAlquimista, setRespuestaAlquimista] = useState('');
   const [cargandoAlquimista, setCargandoAlquimista] = useState(false);
 
-  // Coordenadas 2D fijas estilo Mockup 7468.jpg para los biomas del curso
-  const coordenadasMapa = [
-    { x: 26, y: 30, biomaDefault: 'mazmorra' },    // Arriba-Izquierda (Castillo Mazmorra)
-    { x: 27, y: 74, biomaDefault: 'ruinas' },      // Abajo-Izquierda (Ruinas)
-    { x: 67, y: 55, biomaDefault: 'bosque' },      // Derecha-Centro (Bosque tras el puente)
-    { x: 73, y: 26, biomaDefault: 'laboratorio' }, // Arriba-Derecha (Lab: El Algoritmo)
-    { x: 52, y: 80, biomaDefault: 'bosque' },
-    { x: 82, y: 72, biomaDefault: 'mazmorra' }
+  // Posiciones de los Biomas sobre el Camino Empedrado (Izquierda: Pradera de Cálculo | Derecha: Bosque y Lab)
+  const nodosBiomas = [
+    { x: 22, y: 30, biomaDefault: 'mazmorra', etiqueta: 'Mazmorra Central' },
+    { x: 24, y: 74, biomaDefault: 'ruinas', etiqueta: 'Ruinas Antiguas' },
+    { x: 68, y: 58, biomaDefault: 'bosque', etiqueta: 'Bosque de Código' },
+    { x: 74, y: 26, biomaDefault: 'laboratorio', etiqueta: 'Torre del Algoritmo' },
+    { x: 84, y: 72, biomaDefault: 'mazmorra', etiqueta: 'Fortaleza Final' }
+  ];
+
+  // Hitos de nivel a lo largo del camino empedrado (Checkpoints)
+  const hitosCamino = [
+    { x: 23, y: 52, nivelReq: 1, nombre: 'Hito I' },
+    { x: 38, y: 52, nivelReq: 1, nombre: 'Cruce del Valle' },
+    { x: 50, y: 52, nivelReq: 2, nombre: 'Puente del Río' },
+    { x: 68, y: 41, nivelReq: 2, nombre: 'Hito II' },
+    { x: 76, y: 65, nivelReq: 3, nombre: 'Hito III' }
   ];
 
   const cargarDatos = () => {
@@ -206,52 +206,216 @@ export default function PanelEstudiante() {
     cargarDatos();
   }, [user?.id]);
 
-  // Movimiento 2D con Teclado (WASD o Flechas)
+  // ==========================================================================
+  // RENDERIZADOR CANVAS 16-BIT PIXEL ART (480x270 NATIVO -> ESCALADO PIXELATED)
+  // ==========================================================================
   useEffect(() => {
-    if (vistaHotbar !== 'mapa' || zonaActivaModal || dialogoBuhoAbierto) return;
+    if (vistaHotbar !== 'mapa') return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = false;
 
-    const manejarTecla = (e) => {
-      const tecla = e.key.toLowerCase();
-      const paso = 3.5;
+    let frame = 0;
+    let animId;
+
+    // Función para dibujar un bloque de adoquines (Cobblestone road tile)
+    const dibujarAdoquin = (cx, cy, w, h) => {
+      ctx.fillStyle = '#57534e'; // Borde oscuro del camino
+      ctx.fillRect(cx - 2, cy - 2, w + 4, h + 4);
+      ctx.fillStyle = '#a8a29e'; // Piedra base
+      ctx.fillRect(cx, cy, w, h);
+
+      // Ladrillos internos pixelados
+      for (let py = cy + 1; py < cy + h - 2; py += 5) {
+        const offset = ((py / 5) % 2) * 4;
+        for (let px = cx + 1 + offset; px < cx + w - 4; px += 8) {
+          ctx.fillStyle = (px + py) % 3 === 0 ? '#d6d3d1' : '#78716c';
+          ctx.fillRect(px, py, 6, 3);
+        }
+      }
+    };
+
+    // Función para dibujar árboles 16-bit en el mapa
+    const dibujarArbol16Bit = (tx, ty, variante = 0) => {
+      // Sombra
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+      ctx.fillRect(tx + 2, ty + 18, 12, 4);
+      // Tronco
+      ctx.fillStyle = '#78350f';
+      ctx.fillRect(tx + 5, ty + 12, 6, 8);
+      ctx.fillStyle = '#92400e';
+      ctx.fillRect(tx + 6, ty + 12, 2, 7);
+      // Copa del árbol en capas pixeladas
+      ctx.fillStyle = variante === 1 ? '#065f46' : '#14532d';
+      ctx.fillRect(tx, ty + 4, 16, 10);
+      ctx.fillStyle = variante === 1 ? '#059669' : '#16a34a';
+      ctx.fillRect(tx + 2, ty + 1, 12, 9);
+      ctx.fillStyle = variante === 1 ? '#34d399' : '#4ade80';
+      ctx.fillRect(tx + 4, ty, 8, 4);
+      ctx.fillRect(tx + 3, ty + 3, 4, 2);
+    };
+
+    const renderLoop = () => {
+      frame++;
+      const W = 480;
+      const H = 270;
+
+      // 1. Agua profunda base
+      ctx.fillStyle = '#082f49';
+      ctx.fillRect(0, 0, W, H);
+
+      // 2. BIOMA IZQUIERDO: Pradera Verde de Cálculo (Lush Green Grassy Plains)
+      // Acantilado inferior de tierra/roca
+      ctx.fillStyle = '#334155';
+      ctx.fillRect(14, 18, 206, 238);
+      ctx.fillStyle = '#15803d'; // Borde de pasto
+      ctx.fillRect(14, 14, 206, 232);
+      ctx.fillStyle = '#22c55e'; // Pradera luminosa 16-bit
+      ctx.fillRect(20, 20, 194, 220);
+
+      // Textura de pasto y flores pixeladas en la pradera izquierda
+      for (let y = 26; y < 234; y += 16) {
+        for (let x = 26; x < 206; x += 18) {
+          ctx.fillStyle = '#16a34a';
+          ctx.fillRect(x, y, 3, 2);
+          ctx.fillRect(x + 2, y - 1, 2, 2);
+          if ((x + y) % 5 === 0) {
+            ctx.fillStyle = '#fef08a'; // Flores amarillas pixeladas
+            ctx.fillRect(x + 8, y + 6, 2, 2);
+          }
+        }
+      }
+
+      // 3. BIOMA DERECHO: Bosque Arcano y Tierras Altas de Programación
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(262, 18, 204, 238);
+      ctx.fillStyle = '#065f46';
+      ctx.fillRect(262, 14, 204, 232);
+      ctx.fillStyle = '#059669';
+      ctx.fillRect(268, 20, 192, 220);
+
+      // Textura de bosque mágico en el lado derecho
+      for (let y = 28; y < 232; y += 16) {
+        for (let x = 274; x < 452; x += 20) {
+          ctx.fillStyle = '#047857';
+          ctx.fillRect(x, y, 4, 2);
+          if ((x * y) % 7 === 0) {
+            ctx.fillStyle = '#38bdf8'; // Cristales/flores arcanas
+            ctx.fillRect(x + 6, y + 4, 2, 2);
+          }
+        }
+      }
+
+      // 4. RÍO CENTRAL VERTICAL CON CORRIENTE ANIMADA (División entre Biomas)
+      ctx.fillStyle = '#0369a1';
+      ctx.fillRect(220, 0, 42, H);
+      ctx.fillStyle = '#0284c7';
+      ctx.fillRect(225, 0, 32, H);
+      ctx.fillStyle = '#38bdf8';
+      const offsetAgua = Math.floor(frame / 6) % 24;
+      for (let wy = -24 + offsetAgua; wy < H; wy += 24) {
+        ctx.fillRect(232, wy, 6, 3);
+        ctx.fillRect(244, wy + 12, 5, 2);
+      }
+
+      // Orillas de espuma blanca en el río
+      ctx.fillStyle = '#bae6fd';
+      ctx.fillRect(220, 0, 2, H);
+      ctx.fillRect(260, 0, 2, H);
+
+      // 5. CUADRÍCULA EDUCATIVA SUTIL (Educational Map Grid 16-bit)
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+      for (let gx = 0; gx < W; gx += 24) {
+        ctx.fillRect(gx, 0, 1, H);
+      }
+      for (let gy = 0; gy < H; gy += 24) {
+        ctx.fillRect(0, gy, W, 1);
+      }
+
+      // 6. CAMINOS EMPEDRADOS (Cobblestone Pathways)
+      // Tramo vertical izquierdo (une Mazmorra de Cálculo con Ruinas)
+      dibujarAdoquin(100, 75, 18, 130);
+      // Tramo horizontal central (cruza desde la izquierda hacia el puente y el bosque)
+      dibujarAdoquin(100, 132, 235, 18);
+      // Tramo vertical derecho (sube al Laboratorio y baja a la Fortaleza)
+      dibujarAdoquin(320, 68, 18, 95);
+      dibujarAdoquin(320, 145, 90, 16);
+      dibujarAdoquin(394, 145, 18, 55);
+
+      // 7. PUENTE DE MADERA PIXEL ART SOBRE EL RÍO CENTRAL
+      const bx = 214;
+      const by = 127;
+      const bw = 54;
+      const bh = 28;
+      // Barandillas de madera
+      ctx.fillStyle = '#451a03';
+      ctx.fillRect(bx, by, bw, bh);
+      ctx.fillStyle = '#b45309';
+      ctx.fillRect(bx, by, bw, 4);
+      ctx.fillRect(bx, by + bh - 4, bw, 4);
+      // Tablones de madera
+      for (let px = bx + 3; px < bx + bw - 3; px += 6) {
+        ctx.fillStyle = (px % 12 === 0) ? '#92400e' : '#78350f';
+        ctx.fillRect(px, by + 4, 5, bh - 8);
+      }
+
+      // 8. ÁRBOLES DECORATIVOS 16-BIT ALREDEDOR DE LOS CAMINOS
+      const arbolesIzq = [
+        [28, 28], [48, 34], [155, 32], [175, 45],
+        [32, 110], [52, 125], [160, 95], [34, 195], [165, 195]
+      ];
+      arbolesIzq.forEach(([ax, ay]) => dibujarArbol16Bit(ax, ay, 0));
+
+      const arbolesDer = [
+        [278, 32], [298, 42], [415, 28], [435, 42],
+        [280, 185], [302, 200], [428, 110], [442, 128]
+      ];
+      arbolesDer.forEach(([ax, ay]) => dibujarArbol16Bit(ax, ay, 1));
+
+      animId = requestAnimationFrame(renderLoop);
+    };
+
+    renderLoop();
+    return () => cancelAnimationFrame(animId);
+  }, [vistaHotbar]);
+
+  // Movimiento con teclado (WASD y Flechas)
+  useEffect(() => {
+    if (vistaHotbar !== 'mapa' || zonaActivaModal || dialogoAlquimistaAbierto) return;
+
+    const handleKeyDown = (e) => {
+      const k = e.key.toLowerCase();
+      const paso = 3;
       let dx = 0;
       let dy = 0;
 
-      if (tecla === 'w' || tecla === 'arrowup') dy = -paso;
-      else if (tecla === 's' || tecla === 'arrowdown') dy = paso;
-      else if (tecla === 'a' || tecla === 'arrowleft') dx = -paso;
-      else if (tecla === 'd' || tecla === 'arrowright') dx = paso;
+      if (k === 'w' || k === 'arrowup') dy = -paso;
+      else if (k === 's' || k === 'arrowdown') dy = paso;
+      else if (k === 'a' || k === 'arrowleft') dx = -paso;
+      else if (k === 'd' || k === 'arrowright') dx = paso;
       else return;
 
       e.preventDefault();
       setCaminando(true);
       setHeroPos(prev => ({
         x: Math.max(8, Math.min(92, prev.x + dx)),
-        y: Math.max(14, Math.min(88, prev.y + dy))
+        y: Math.max(12, Math.min(88, prev.y + dy))
       }));
-      setTimeout(() => setCaminando(false), 160);
+      setTimeout(() => setCaminando(false), 150);
     };
 
-    window.addEventListener('keydown', manejarTecla);
-    return () => window.removeEventListener('keydown', manejarTecla);
-  }, [vistaHotbar, zonaActivaModal, dialogoBuhoAbierto]);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [vistaHotbar, zonaActivaModal, dialogoAlquimistaAbierto]);
 
-  // Mover héroe con botones táctiles o al hacer clic en un Bioma
-  const moverHeroePaso = (dx, dy) => {
+  const caminarHaciaBioma = (tema, nodo) => {
     setCaminando(true);
-    setHeroPos(prev => ({
-      x: Math.max(8, Math.min(92, prev.x + dx)),
-      y: Math.max(14, Math.min(88, prev.y + dy))
-    }));
-    setTimeout(() => setCaminando(false), 180);
-  };
-
-  const viajarABioma = (tema, coords) => {
-    setCaminando(true);
-    setHeroPos({ x: coords.x + 4, y: coords.y + 8 });
+    setHeroPos({ x: nodo.x + 3, y: nodo.y + 6 });
     setTimeout(() => {
       setCaminando(false);
       setZonaActivaModal(tema);
-    }, 320);
+    }, 280);
   };
 
   const enviarTrabajo = async (tareaId) => {
@@ -271,7 +435,7 @@ export default function PanelEstudiante() {
       });
       const data = await res.json();
       if (res.ok) {
-        alert(data.mensaje || '¡Misión entregada al Gremio!');
+        alert(data.mensaje || '¡Misión entregada con éxito!');
         cargarDatos();
       }
     } catch {
@@ -299,200 +463,293 @@ export default function PanelEstudiante() {
       const data = await res.json();
       if (res.ok) setRespuestaAlquimista(data.resultado);
     } catch {
-      setRespuestaAlquimista('🦉 El Sabio Alquimista consulta los astros... intenta de nuevo.');
+      setRespuestaAlquimista('🦉 El Sabio Alquimista medita sobre tu consulta... intenta nuevamente.');
     } finally {
       setCargandoAlquimista(false);
     }
   };
 
-  // Estadísticas del HUD
+  // Estadísticas para el Top HUD (Barras de XP y Energía/Stamina)
   const xpActual = user?.xp || 150;
-  const nivelActual = user?.nivel || 1;
-  const progresoNivel = ((xpActual % 250) / 250) * 100;
+  const nivelActual = user?.nivel || 3;
+  const xpEnNivel = xpActual % 250;
+  const porcentajeXP = Math.min(100, Math.max(20, Math.round((xpEnNivel / 250) * 100)));
+
   const examenesPendientes = evaluaciones.filter(ev => !calificaciones.some(c => c.evaluacion_id === ev.id));
   const tareasPendientes = tareas.filter(t => !misEntregas.some(e => e.tarea_id === t.id));
+  const energiaActual = Math.max(35, 100 - (examenesPendientes.length * 10));
   const hayTormenta = examenesPendientes.length > 0 || tareasPendientes.length > 0;
-  const companerosParty = gremio.filter(m => m.id !== user?.id).slice(0, 3);
 
   return (
-    <div className="container" style={{ maxWidth: '1180px', paddingTop: '0.75rem' }}>
+    <div className="container" style={{ maxWidth: '1220px', paddingTop: '0.6rem' }}>
+      
       {/* =====================================================================
-          1. BARRA SUPERIOR HUD (IDÉNTICA AL MOCKUP: JUGADOR | PARTY | CLIMA)
+          1. TOP HUD 16-BIT (AVATAR IZQ | BARRAS XP Y ENERGÍA CENTRO | CLIMA DER)
          ===================================================================== */}
-      <div className="rpg-hud-top">
-        {/* Jugador */}
-        <div className="rpg-hud-box">
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'minmax(240px, 1fr) minmax(320px, 2fr) minmax(210px, 0.85fr)',
+        gap: '0.85rem',
+        background: 'linear-gradient(180deg, #0f1329 0%, #090c1a 100%)',
+        border: '3px solid #a855f7',
+        borderRadius: '14px',
+        padding: '0.7rem 1rem',
+        marginBottom: '0.85rem',
+        boxShadow: '0 0 22px rgba(168, 85, 247, 0.35), inset 0 0 18px rgba(168, 85, 247, 0.15)',
+        alignItems: 'center'
+      }}>
+        {/* Izquierda: Avatar Principal + Nombre, Nivel y Clase */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <div style={{
-            width: '52px', height: '52px', borderRadius: '10px',
-            background: 'linear-gradient(135deg, #581c87 0%, #1e3a8a 100%)',
-            border: '2px solid #e879f9', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            overflow: 'hidden', flexShrink: 0
+            width: '52px',
+            height: '52px',
+            borderRadius: '8px',
+            border: '2px solid #c084fc',
+            background: '#1e1b4b',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 0 12px rgba(192, 132, 252, 0.4)',
+            flexShrink: 0,
+            overflow: 'hidden'
           }}>
-            <PixelHeroWizard caminando={false} />
-          </div>
-          <div style={{ flex: 1 }}>
-            <span style={{ fontSize: '0.68rem', color: '#38bdf8', fontWeight: '800', textTransform: 'uppercase' }}>
-              Gremio
-            </span>
-            <div style={{ fontWeight: '800', fontSize: '1.02rem', color: '#fff', lineHeight: 1.15 }}>
-              {user?.nombre}
-            </div>
-            <div style={{ fontSize: '0.74rem', color: '#cbd5e1', marginTop: '2px' }}>
-              {user?.clase_rpg || 'Mago de Código'}, Nvl {nivelActual}
-            </div>
-            <div className="rpg-stat-bar">
-              <div className="rpg-stat-fill-xp" style={{ width: `${Math.max(18, progresoNivel)}%` }} />
-            </div>
-          </div>
-        </div>
-
-        {/* Party: Leo, Sofía, Ana */}
-        <div className="rpg-hud-box" style={{ justifyContent: 'space-around', flexWrap: 'wrap' }}>
-          {companerosParty.map((comp, idx) => (
-            <div key={comp.id} style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', minWidth: '100px' }}>
-              <div style={{
-                width: '34px', height: '34px', borderRadius: '8px',
-                background: '#1e1b4b', border: '1px solid #a855f7',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem'
-              }}>
-                {idx === 0 ? '🧑🏽‍💻' : idx === 1 ? '👩🏻' : '👩🏻‍🦰'}
-              </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '0.76rem', fontWeight: '800', color: '#fff' }}>{comp.nombre.split(' ')[0]}</div>
-                <div className="rpg-stat-bar" style={{ height: '5px' }}>
-                  <div className="rpg-stat-fill-hp" style={{ width: `${comp.hp || 90}%` }} />
-                </div>
-                <div className="rpg-stat-bar" style={{ height: '5px' }}>
-                  <div className="rpg-stat-fill-xp" style={{ width: `${Math.min(100, ((comp.xp || 200) % 250) / 2.5)}%` }} />
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Clima: Tormenta de Fechas (24h) */}
-        <div className="rpg-hud-box" style={{ borderColor: '#a855f7' }}>
-          <div style={{
-            width: '44px', height: '44px', borderRadius: '10px',
-            background: 'rgba(251, 191, 36, 0.14)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: '#fbbf24', flexShrink: 0
-          }}>
-            <CloudLightning size={26} />
+            <AvatarHero16Bit clase={user?.clase_rpg || 'Arquera Lógica'} />
           </div>
           <div>
-            <span style={{ fontSize: '0.68rem', color: '#94a3b8', fontWeight: '700' }}>TIEMPO:</span>
-            <div style={{ fontSize: '0.84rem', fontWeight: '800', color: '#f8fafc' }}>
-              {hayTormenta ? 'TORMENTA DE FECHAS (24h)' : 'CLIMA DESPEJADO'}
+            <div className="pixel-font" style={{ fontSize: '0.72rem', color: '#ffffff', lineHeight: 1.35 }}>
+              {user?.nombre || 'Sofía'}
+            </div>
+            <div style={{ fontSize: '0.78rem', fontWeight: '800', color: '#c084fc', marginTop: '2px' }}>
+              Nvl {nivelActual} • {user?.clase_rpg || 'Arquera Lógica'}
+            </div>
+            <span style={{ fontSize: '0.68rem', color: '#38bdf8', fontFamily: 'monospace' }}>
+              TOKEN: {user?.codigo_unico || 'EST-SOF2'}
+            </span>
+          </div>
+        </div>
+
+        {/* Centro: Barras Horizontales Brillantes de XP (Verde) y Energía/Stamina (Azul) */}
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.5rem',
+          padding: '0.2rem 0.75rem',
+          borderLeft: '1px solid rgba(168, 85, 247, 0.3)',
+          borderRight: '1px solid rgba(168, 85, 247, 0.3)'
+        }}>
+          {/* Barra de Experiencia (XP) - Verde Neón */}
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', fontWeight: '800', marginBottom: '3px' }}>
+              <span className="pixel-font" style={{ fontSize: '0.58rem', color: '#4ade80' }}>
+                ★ EXPERIENCIA (XP)
+              </span>
+              <span style={{ fontFamily: 'monospace', color: '#86efac' }}>
+                {xpActual} XP ({porcentajeXP}%)
+              </span>
+            </div>
+            <div style={{
+              width: '100%',
+              height: '12px',
+              background: '#050811',
+              border: '2px solid #059669',
+              borderRadius: '6px',
+              overflow: 'hidden',
+              boxShadow: 'inset 0 0 6px #000'
+            }}>
+              <div style={{
+                width: `${porcentajeXP}%`,
+                height: '100%',
+                background: 'linear-gradient(90deg, #10b981 0%, #4ade80 100%)',
+                boxShadow: '0 0 12px #22c55e',
+                transition: 'width 0.4s ease'
+              }} />
+            </div>
+          </div>
+
+          {/* Barra de Energía / Stamina - Azul Cian Brillante */}
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', fontWeight: '800', marginBottom: '3px' }}>
+              <span className="pixel-font" style={{ fontSize: '0.58rem', color: '#38bdf8' }}>
+                ⚡ ENERGÍA / STAMINA
+              </span>
+              <span style={{ fontFamily: 'monospace', color: '#7dd3fc' }}>
+                {energiaActual} / 100 EN
+              </span>
+            </div>
+            <div style={{
+              width: '100%',
+              height: '12px',
+              background: '#050811',
+              border: '2px solid #0284c7',
+              borderRadius: '6px',
+              overflow: 'hidden',
+              boxShadow: 'inset 0 0 6px #000'
+            }}>
+              <div style={{
+                width: `${energiaActual}%`,
+                height: '100%',
+                background: 'linear-gradient(90deg, #0284c7 0%, #38bdf8 100%)',
+                boxShadow: '0 0 12px #38bdf8',
+                transition: 'width 0.4s ease'
+              }} />
+            </div>
+          </div>
+        </div>
+
+        {/* Derecha: Widget Compacto de Clima / Tiempo */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.65rem',
+          justifyContent: 'flex-end'
+        }}>
+          <div style={{
+            width: '42px',
+            height: '42px',
+            borderRadius: '8px',
+            background: 'rgba(168, 85, 247, 0.16)',
+            border: '2px solid #c084fc',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#fde047',
+            flexShrink: 0
+          }}>
+            <CloudLightning size={22} />
+          </div>
+          <div>
+            <div className="pixel-font" style={{ fontSize: '0.55rem', color: '#c084fc' }}>
+              CLIMA: 24H
+            </div>
+            <div style={{ fontSize: '0.78rem', fontWeight: '800', color: '#ffffff', marginTop: '2px' }}>
+              {hayTormenta ? 'TORMENTA DE FECHAS' : 'CIELO DESPEJADO'}
+            </div>
+            <div style={{ fontSize: '0.68rem', color: '#94a3b8' }}>
+              {examenesPendientes.length} Jefes activos
             </div>
           </div>
         </div>
       </div>
 
       {/* =====================================================================
-          2. LIENZO DEL VIDEOJUEGO 2D PIXEL ART (CON MOVIMIENTO REAL)
+          2. VIEWPORT 16:9 DEL MAPA OVERWORLD 2D PIXEL ART
          ===================================================================== */}
       {vistaHotbar === 'mapa' && (
-        <div 
-          style={{
-            position: 'relative',
-            width: '100%',
-            height: '530px',
-            borderRadius: '18px',
-            border: '3px solid #a855f7',
-            boxShadow: '0 0 35px rgba(168, 85, 247, 0.35), inset 0 0 50px rgba(0,0,0,0.8)',
-            overflow: 'hidden',
-            backgroundColor: '#071324',
-            userSelect: 'none'
-          }}
-        >
-          {/* Banner Superior Central "MAPA DEL SEMESTRE" */}
+        <div style={{
+          position: 'relative',
+          width: '100%',
+          aspectRatio: '16 / 9',
+          minHeight: '480px',
+          maxHeight: '620px',
+          border: '3px solid #a855f7',
+          borderRadius: '16px',
+          overflow: 'hidden',
+          boxShadow: '0 0 35px rgba(168, 85, 247, 0.35), inset 0 0 40px rgba(0,0,0,0.8)',
+          backgroundColor: '#082f49',
+          userSelect: 'none'
+        }}>
+          {/* Lienzo Pixel Art 16-bit de Fondo (480x270) */}
+          <canvas
+            ref={canvasRef}
+            width={480}
+            height={270}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              imageRendering: 'pixelated',
+              zIndex: 1
+            }}
+          />
+
+          {/* Placa de Título Superior del Mapa */}
           <div style={{
-            position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)',
-            zIndex: 25, background: 'linear-gradient(180deg, #2e1065 0%, #170d36 100%)',
-            border: '2px solid #c084fc', borderTop: 'none',
-            padding: '0.45rem 1.8rem', borderRadius: '0 0 16px 16px',
-            fontFamily: "'Press Start 2P', monospace", fontSize: '0.78rem', color: '#fff',
-            boxShadow: '0 6px 20px rgba(0,0,0,0.7)'
+            position: 'absolute',
+            top: 0,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 20,
+            background: 'linear-gradient(180deg, #2e1065 0%, #13092b 100%)',
+            border: '2px solid #c084fc',
+            borderTop: 'none',
+            padding: '0.4rem 1.6rem',
+            borderRadius: '0 0 12px 12px',
+            boxShadow: '0 6px 16px rgba(0,0,0,0.75)'
           }}>
-            MAPA DEL SEMESTRE
+            <span className="pixel-font" style={{ fontSize: '0.7rem', color: '#ffffff' }}>
+              MAPA DEL SEMESTRE
+            </span>
           </div>
 
-          {/* Indicador "Semestre 1" y Controles en Esquina Superior Izquierda */}
-          <div style={{ position: 'absolute', top: '14px', left: '18px', zIndex: 20 }}>
-            <div style={{ fontSize: '1.25rem', fontWeight: '800', color: '#fff', textShadow: '0 2px 6px #000' }}>
-              Semestre 1
-            </div>
-            <div style={{ fontSize: '0.72rem', color: '#a5f3fc', background: 'rgba(0,0,0,0.55)', padding: '3px 8px', borderRadius: '6px', marginTop: '3px' }}>
-              🎮 Usa <strong>WASD / Flechas</strong> o haz clic en un Bioma para caminar
-            </div>
+          {/* Etiquetas de Regiones Académicas (Izquierda: Pradera | Derecha: Bosque Arcano) */}
+          <div style={{
+            position: 'absolute', top: '12px', left: '14px', zIndex: 15,
+            background: 'rgba(9, 13, 28, 0.85)', border: '1px solid #4ade80',
+            padding: '4px 10px', borderRadius: '6px'
+          }}>
+            <span className="pixel-font" style={{ fontSize: '0.55rem', color: '#4ade80' }}>
+              REGIÓN OESTE: PRADERA DE CÁLCULO
+            </span>
           </div>
 
-          {/* CAPA 1: MUNDO 2D PIXEL ART (ISLAS, RÍO, PUENTE DE MADERA Y CAMINOS MORADOS) */}
-          <svg 
-            viewBox="0 0 1000 530" 
-            preserveAspectRatio="none"
-            shapeRendering="crispEdges"
-            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', zIndex: 1 }}
-          >
-            {/* Agua profunda y río central */}
-            <rect width="1000" height="530" fill="#081c2e" />
-            <path d="M 460 0 L 560 0 L 520 530 L 410 530 Z" fill="#0e3a5c" />
-            <path d="M 480 0 L 535 0 L 495 530 L 435 530 Z" fill="#165b8a" />
+          <div style={{
+            position: 'absolute', top: '12px', right: '14px', zIndex: 15,
+            background: 'rgba(9, 13, 28, 0.85)', border: '1px solid #38bdf8',
+            padding: '4px 10px', borderRadius: '6px'
+          }}>
+            <span className="pixel-font" style={{ fontSize: '0.55rem', color: '#38bdf8' }}>
+              REGIÓN ESTE: BOSQUE DE ALGORITMOS
+            </span>
+          </div>
 
-            {/* Isla Izquierda (Acantilado de piedra + Pasto pixelado) */}
-            <polygon points="40,120 450,90 480,470 60,495" fill="#1e293b" />
-            <polygon points="40,95 450,70 475,445 60,470" fill="#065f46" />
-            <polygon points="65,115 430,90 455,425 85,445" fill="#10b981" />
+          {/* HITOS DE PROGRESO SOBRE EL CAMINO EMPEDRADO (Level Progress Markers) */}
+          {hitosCamino.map((hito, i) => {
+            const desbloqueado = nivelActual >= hito.nivelReq;
+            return (
+              <div
+                key={i}
+                onClick={() => setHeroPos({ x: hito.x, y: hito.y })}
+                title={`${hito.nombre} (Nivel ${hito.nivelReq})`}
+                style={{
+                  position: 'absolute',
+                  left: `${hito.x}%`,
+                  top: `${hito.y}%`,
+                  transform: 'translate(-50%, -50%)',
+                  zIndex: 12,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center'
+                }}
+              >
+                <div style={{
+                  width: '18px',
+                  height: '18px',
+                  background: desbloqueado ? '#10b981' : '#334155',
+                  border: `2px solid ${desbloqueado ? '#fde047' : '#94a3b8'}`,
+                  transform: 'rotate(45deg)',
+                  boxShadow: desbloqueado ? '0 0 10px #10b981' : 'none'
+                }} />
+                <span style={{
+                  marginTop: '4px',
+                  fontSize: '0.6rem',
+                  fontWeight: '800',
+                  color: '#fde047',
+                  background: 'rgba(0,0,0,0.75)',
+                  padding: '1px 5px',
+                  borderRadius: '4px'
+                }}>
+                  {hito.nombre}
+                </span>
+              </div>
+            );
+          })}
 
-            {/* Isla Derecha (Bosque de la Programación y Lab) */}
-            <polygon points="530,95 955,85 940,475 515,465" fill="#1e293b" />
-            <polygon points="530,75 955,65 940,450 515,440" fill="#065f46" />
-            <polygon points="555,95 930,85 915,425 540,415" fill="#10b981" />
-
-            {/* Caminos Morados estilo RPG conectando las zonas igual a 7468.jpg */}
-            <path 
-              d="M 260 175 L 340 280 L 270 395 M 340 280 L 500 265 L 670 290 L 730 145 M 670 290 L 820 380" 
-              fill="none" 
-              stroke="#7e22ce" 
-              strokeWidth="34" 
-              strokeLinecap="square"
-            />
-            <path 
-              d="M 260 175 L 340 280 L 270 395 M 340 280 L 500 265 L 670 290 L 730 145 M 670 290 L 820 380" 
-              fill="none" 
-              stroke="#a855f7" 
-              strokeWidth="22" 
-              strokeLinecap="square"
-            />
-
-            {/* Puente de Madera Pixel Art cruzando el río central */}
-            <rect x="440" y="242" width="115" height="44" fill="#78350f" />
-            <rect x="440" y="236" width="115" height="6" fill="#b45309" />
-            <rect x="440" y="286" width="115" height="6" fill="#b45309" />
-            <rect x="455" y="242" width="10" height="44" fill="#92400e" />
-            <rect x="475" y="242" width="10" height="44" fill="#92400e" />
-            <rect x="495" y="242" width="10" height="44" fill="#92400e" />
-            <rect x="515" y="242" width="10" height="44" fill="#92400e" />
-            <rect x="535" y="242" width="10" height="44" fill="#92400e" />
-
-            {/* Árboles decorativos Pixel Art distribuidos por el mapa */}
-            {[
-              { x: 95, y: 150 }, { x: 135, y: 210 }, { x: 85, y: 310 },
-              { x: 400, y: 130 }, { x: 585, y: 120 }, { x: 865, y: 140 },
-              { x: 880, y: 250 }, { x: 600, y: 360 }, { x: 410, y: 375 }
-            ].map((arb, i) => (
-              <g key={i} transform={`translate(${arb.x}, ${arb.y})`}>
-                <rect x="12" y="28" width="10" height="12" fill="#78350f" />
-                <rect x="2" y="10" width="30" height="20" fill="#047857" />
-                <rect x="6" y="2" width="22" height="14" fill="#10b981" />
-              </g>
-            ))}
-          </svg>
-
-          {/* CAPA 2: ESTRUCTURAS 2D INTERACTIVAS (CADA TEMA DE LA BD ES UN EDIFICIO EN EL MAPA) */}
+          {/* BIOMAS ACADÉMICOS Y CASTILLO (MAZMORRA) EN EL MAPA */}
           {temas.map((tema, idx) => {
-            const coord = coordenadasMapa[idx % coordenadasMapa.length];
-            const tipoBioma = tema.bioma || coord.biomaDefault;
+            const nodo = nodosBiomas[idx % nodosBiomas.length];
+            const tipoBioma = idx === 0 ? 'mazmorra' : (tema.bioma || nodo.biomaDefault);
             const evalsDeTema = evaluaciones.filter(ev => ev.tema_id === tema.id);
             const jefeActivo = evalsDeTema[0];
             const yaDerrotado = jefeActivo && calificaciones.some(c => c.evaluacion_id === jefeActivo.id);
@@ -500,55 +757,53 @@ export default function PanelEstudiante() {
             return (
               <div
                 key={tema.id}
-                onClick={() => viajarABioma(tema, coord)}
+                onClick={() => caminarHaciaBioma(tema, nodo)}
                 style={{
                   position: 'absolute',
-                  left: `${coord.x}%`,
-                  top: `${coord.y}%`,
+                  left: `${nodo.x}%`,
+                  top: `${nodo.y}%`,
                   transform: 'translate(-50%, -50%)',
-                  zIndex: 10,
+                  zIndex: 16,
                   textAlign: 'center',
-                  cursor: 'pointer',
-                  transition: 'transform 0.2s ease'
+                  cursor: 'pointer'
                 }}
-                title="Haz clic para caminar hacia este Bioma"
               >
-                {/* Cartel Rojo de Jefe Final sobre el Castillo (Igual a "¡Befe Final: Examen 2!") */}
+                {/* Cartel de Jefe Final sobre el Castillo/Bioma */}
                 {jefeActivo && (
                   <div className="rpg-boss-tag" style={{
-                    marginBottom: '-6px',
-                    position: 'relative',
-                    zIndex: 12,
+                    marginBottom: '-4px',
+                    fontFamily: "'Press Start 2P', monospace",
+                    fontSize: '0.52rem',
+                    padding: '4px 8px',
                     background: yaDerrotado 
                       ? 'linear-gradient(90deg, #065f46 0%, #10b981 100%)' 
                       : 'linear-gradient(90deg, #7f1d1d 0%, #dc2626 100%)'
                   }}>
-                    {yaDerrotado 
-                      ? `✓ ${jefeActivo.titulo} Superado` 
-                      : `¡${jefeActivo.nombre_jefe || `Befe Final: ${jefeActivo.titulo}`}!`}
+                    {yaDerrotado ? `✓ ${jefeActivo.titulo}` : `⚔️ ${jefeActivo.titulo}`}
                   </div>
                 )}
 
-                {/* Sprite 2D Pixel Art según el Bioma */}
-                <div style={{ filter: 'drop-shadow(0 8px 10px rgba(0,0,0,0.75))' }}>
-                  {tipoBioma === 'mazmorra' && <PixelCastleBoss derrotado={yaDerrotado} />}
-                  {tipoBioma === 'ruinas' && <PixelRuins />}
-                  {tipoBioma === 'laboratorio' && <PixelLabTower />}
-                  {tipoBioma === 'bosque' && <PixelForestCamp />}
+                {/* Sprite 16-bit de la Estructura */}
+                <div style={{ filter: 'drop-shadow(0 6px 8px rgba(0,0,0,0.85))' }}>
+                  {tipoBioma === 'mazmorra' ? (
+                    <CastleDungeonSprite derrotado={yaDerrotado} />
+                  ) : (
+                    <BiomeStructureSprite tipo={tipoBioma} />
+                  )}
                 </div>
 
-                {/* Etiqueta morada oscura con nombre del Bioma igual a 7468.jpg */}
+                {/* Placa de Nombre del Bioma con Borde Neón Púrpura */}
                 <div style={{
-                  marginTop: '-4px',
-                  background: 'rgba(15, 23, 42, 0.92)',
+                  marginTop: '-2px',
+                  background: '#0f1329',
                   border: '2px solid #a855f7',
                   color: '#ffffff',
-                  padding: '0.25rem 0.75rem',
-                  borderRadius: '8px',
-                  fontSize: '0.78rem',
-                  fontWeight: '800',
+                  padding: '3px 9px',
+                  borderRadius: '6px',
+                  fontFamily: "'Press Start 2P', monospace",
+                  fontSize: '0.55rem',
                   whiteSpace: 'nowrap',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.8)'
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.9), 0 0 10px rgba(168,85,247,0.4)'
                 }}>
                   {tema.titulo}
                 </div>
@@ -556,268 +811,217 @@ export default function PanelEstudiante() {
             );
           })}
 
-          {/* CAPA 3: PERSONAJE JUGABLE 2D CON GLOBO DE EXCLAMACIÓN [ ! ] */}
-          <div
-            style={{
-              position: 'absolute',
-              left: `${heroPos.x}%`,
-              top: `${heroPos.y}%`,
-              transform: 'translate(-50%, -50%)',
-              zIndex: 18,
-              transition: 'left 0.22s linear, top 0.22s linear',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              pointerEvents: 'none'
-            }}
-          >
-            {/* Globo blanco con signo de exclamación dorado igual al centro del mapa en 7468.jpg */}
-            <div style={{
+          {/* PERSONAJE JUGABLE EN EL MAPA 2D */}
+          <div style={{
+            position: 'absolute',
+            left: `${heroPos.x}%`,
+            top: `${heroPos.y}%`,
+            transform: 'translate(-50%, -50%)',
+            zIndex: 22,
+            transition: 'left 0.2s linear, top 0.2s linear',
+            pointerEvents: 'none',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center'
+          }}>
+            <div className="pixel-font" style={{
               background: '#ffffff',
-              color: '#d97706',
+              color: '#0f172a',
               border: '2px solid #0f172a',
-              borderRadius: '8px',
-              padding: '1px 8px',
-              fontWeight: '900',
-              fontSize: '0.85rem',
-              marginBottom: '2px',
-              boxShadow: '0 4px 8px rgba(0,0,0,0.5)'
+              borderRadius: '4px',
+              padding: '2px 5px',
+              fontSize: '0.55rem',
+              marginBottom: '2px'
             }}>
               !
             </div>
-            <PixelHeroWizard caminando={caminando} />
-            <span style={{
-              background: 'rgba(0,0,0,0.75)',
-              color: '#fde047',
-              fontSize: '0.65rem',
-              fontWeight: '800',
-              padding: '1px 6px',
-              borderRadius: '4px',
-              marginTop: '2px'
+            <div style={{
+              border: '2px solid #fde047',
+              borderRadius: '6px',
+              overflow: 'hidden',
+              boxShadow: '0 6px 14px rgba(0,0,0,0.85)',
+              transform: caminando ? 'translateY(-4px)' : 'none'
             }}>
-              {user?.nombre?.split(' ')[0]}
-            </span>
-          </div>
-
-          {/* CAPA 4: BÚHO "SABIO ALQUIMISTA AI" EN LA ESQUINA INFERIOR DERECHA (IGUAL A 7468.jpg) */}
-          <div
-            style={{
-              position: 'absolute',
-              right: '18px',
-              bottom: '14px',
-              zIndex: 22,
-              display: 'flex',
-              alignItems: 'flex-end',
-              gap: '0.6rem'
-            }}
-          >
-            {/* Bocadillo de diálogo blanco estilo cómic RPG */}
-            <div 
-              onClick={() => setDialogoBuhoAbierto(true)}
-              style={{
-                background: '#ffffff',
-                color: '#0f172a',
-                border: '3px solid #1e1b4b',
-                borderRadius: '12px',
-                padding: '0.65rem 0.9rem',
-                maxWidth: '250px',
-                fontSize: '0.78rem',
-                fontWeight: '800',
-                lineHeight: 1.35,
-                boxShadow: '0 8px 20px rgba(0,0,0,0.65)',
-                cursor: 'pointer'
-              }}
-            >
-              {examenesPendientes.length > 0 
-                ? `¡Atención! El Boss de "${examenesPendientes[0].titulo}" acecha. ¿Invocamos un consejo táctico? (Clic aquí)`
-                : `¡Mazmorras despejadas! Haz clic sobre mí si necesitas ayuda con algún pergamino o tarea.`}
+              <AvatarHero16Bit clase={user?.clase_rpg || 'Arquera Lógica'} />
             </div>
-
-            {/* Sprite del Búho con Sombrero de Mago */}
-            <div 
-              onClick={() => setDialogoBuhoAbierto(true)}
-              style={{ textAlign: 'center', cursor: 'pointer' }}
-            >
-              <div style={{ filter: 'drop-shadow(0 6px 12px rgba(0,0,0,0.8))' }}>
-                <PixelOwlAlchemist />
-              </div>
-              <div style={{
-                background: '#1e1b4b',
-                border: '2px solid #a855f7',
-                color: '#f8fafc',
-                fontSize: '0.7rem',
-                fontWeight: '800',
-                padding: '2px 8px',
-                borderRadius: '6px',
-                marginTop: '-4px'
-              }}>
-                Sabio Alquimista AI
-              </div>
-            </div>
-          </div>
-
-          {/* D-PAD TÁCTIL EN LA ESQUINA INFERIOR IZQUIERDA (Para Móviles o Mouse) */}
-          <div style={{
-            position: 'absolute', left: '16px', bottom: '14px', zIndex: 22,
-            display: 'grid', gridTemplateColumns: 'repeat(3, 32px)', gap: '4px',
-            background: 'rgba(15, 23, 42, 0.75)', padding: '6px', borderRadius: '12px',
-            border: '1px solid rgba(168, 85, 247, 0.5)'
-          }}>
-            <div />
-            <button onClick={() => moverHeroePaso(0, -6)} style={{ background: '#1e293b', color: '#fff', border: '1px solid #a855f7', borderRadius: '6px', cursor: 'pointer', height: '28px' }}>▲</button>
-            <div />
-            <button onClick={() => moverHeroePaso(-6, 0)} style={{ background: '#1e293b', color: '#fff', border: '1px solid #a855f7', borderRadius: '6px', cursor: 'pointer', height: '28px' }}>◀</button>
-            <button onClick={() => temas[0] && setZonaActivaModal(temas[0])} title="Explorar zona" style={{ background: '#7e22ce', color: '#fde047', border: '1px solid #f0abfc', borderRadius: '6px', cursor: 'pointer', height: '28px', fontWeight: '900', fontSize: '0.7rem' }}>OK</button>
-            <button onClick={() => moverHeroePaso(6, 0)} style={{ background: '#1e293b', color: '#fff', border: '1px solid #a855f7', borderRadius: '6px', cursor: 'pointer', height: '28px' }}>▶</button>
-            <div />
-            <button onClick={() => moverHeroePaso(0, 6)} style={{ background: '#1e293b', color: '#fff', border: '1px solid #a855f7', borderRadius: '6px', cursor: 'pointer', height: '28px' }}>▼</button>
-            <div />
           </div>
 
           {/* =================================================================
-              MODAL FLOTANTE 2D AL ENTRAR A UN BIOMA (COFRES, MISIONES Y JEFE)
+              ESQUINA INFERIOR DERECHA: MARCO DEL MAGO / SABIO ALQUIMISTA AI
+             ================================================================= */}
+          <div
+            onClick={() => setDialogoAlquimistaAbierto(true)}
+            style={{
+              position: 'absolute',
+              right: '14px',
+              bottom: '14px',
+              zIndex: 25,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.65rem',
+              background: 'linear-gradient(180deg, rgba(15, 19, 41, 0.96) 0%, rgba(9, 12, 26, 0.98) 100%)',
+              border: '3px solid #a855f7',
+              borderRadius: '12px',
+              padding: '0.55rem 0.85rem',
+              maxWidth: '370px',
+              cursor: 'pointer',
+              boxShadow: '0 0 24px rgba(168, 85, 247, 0.45)'
+            }}
+          >
+            {/* Burbuja de Diálogo Interna */}
+            <div style={{
+              background: '#ffffff',
+              color: '#0f172a',
+              border: '2px solid #1e1b4b',
+              borderRadius: '8px',
+              padding: '0.5rem 0.7rem',
+              fontSize: '0.74rem',
+              fontWeight: '800',
+              lineHeight: 1.35
+            }}>
+              <div className="pixel-font" style={{ fontSize: '0.5rem', color: '#7e22ce', marginBottom: '3px' }}>
+                SABIO ALQUIMISTA AI
+              </div>
+              {examenesPendientes.length > 0
+                ? `¡Atención! El Jefe de "${examenesPendientes[0].titulo}" aguarda en el castillo. ¿Repasamos los pergaminos?`
+                : `¡Buen trabajo en el camino! Haz clic aquí para consultar cualquier duda del temario.`}
+            </div>
+
+            {/* Sprite Pixel Art del Mago Alquimista */}
+            <div style={{ flexShrink: 0, textAlign: 'center' }}>
+              <AlchemistWizard16Bit />
+            </div>
+          </div>
+
+          {/* Control D-Pad Compacto en Esquina Inferior Izquierda */}
+          <div style={{
+            position: 'absolute', left: '14px', bottom: '14px', zIndex: 25,
+            background: 'rgba(9, 12, 26, 0.9)', border: '2px solid #a855f7',
+            borderRadius: '10px', padding: '6px 10px', fontSize: '0.7rem', color: '#cbd5e1'
+          }}>
+            <span className="pixel-font" style={{ fontSize: '0.52rem', color: '#c084fc' }}>
+              MOVIMIENTO: WASD / CLIC EN BIOMA
+            </span>
+          </div>
+
+          {/* =================================================================
+              MODAL DE BIOMA AL ENTRAR A UN CASTILLO / ZONA
              ================================================================= */}
           {zonaActivaModal && (
             <div style={{
-              position: 'absolute', inset: '18px', zIndex: 40,
-              background: 'rgba(10, 14, 29, 0.96)', border: '3px solid #fbbf24',
-              borderRadius: '16px', padding: '1.25rem 1.5rem', overflowY: 'auto',
-              boxShadow: '0 0 40px rgba(0,0,0,0.9)'
+              position: 'absolute', inset: '16px', zIndex: 40,
+              background: 'rgba(9, 12, 26, 0.97)', border: '3px solid #a855f7',
+              borderRadius: '14px', padding: '1.25rem 1.5rem', overflowY: 'auto',
+              boxShadow: '0 0 35px rgba(168, 85, 247, 0.5)'
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '0.75rem', marginBottom: '1rem' }}>
                 <div>
-                  <span style={{ fontSize: '0.72rem', color: '#fbbf24', fontWeight: '800', textTransform: 'uppercase' }}>
-                    📍 Zona Explorable del Mapa
+                  <span className="pixel-font" style={{ fontSize: '0.55rem', color: '#4ade80' }}>
+                    BIOMA ACADÉMICO DESBLOQUEADO
                   </span>
-                  <h3 className="pixel-font" style={{ fontSize: '1rem', color: '#fff', marginTop: '4px' }}>
+                  <h3 className="pixel-font" style={{ fontSize: '0.95rem', color: '#ffffff', marginTop: '4px' }}>
                     {zonaActivaModal.titulo}
                   </h3>
                 </div>
-                <button 
-                  onClick={() => setZonaActivaModal(null)}
-                  className="btn-danger"
-                  style={{ padding: '0.4rem 0.75rem', borderRadius: '8px', display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: '700' }}
-                >
-                  <X size={16} /> Salir al Mapa
+                <button onClick={() => setZonaActivaModal(null)} className="btn-danger" style={{ padding: '0.4rem 0.8rem', borderRadius: '8px', fontWeight: '800' }}>
+                  <X size={16} /> Cerrar
                 </button>
               </div>
 
-              <p style={{ color: '#cbd5e1', fontSize: '0.9rem', marginBottom: '1.1rem' }}>
+              <p style={{ color: '#cbd5e1', fontSize: '0.88rem', marginBottom: '1rem' }}>
                 {zonaActivaModal.descripcion}
               </p>
 
               <div className="grid-2">
-                {/* Pergaminos / Cofres de Teoría del Bioma */}
-                <div style={{ background: 'var(--bg-input)', padding: '1rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
-                  <h4 style={{ color: '#fde047', marginBottom: '0.65rem', fontSize: '0.95rem' }}>
-                    📜 Pergaminos y Cofres de Teoría
+                {/* Pergaminos de Estudio */}
+                <div style={{ background: 'var(--bg-input)', padding: '1rem', borderRadius: '10px', border: '1px solid #a855f7' }}>
+                  <h4 className="pixel-font" style={{ fontSize: '0.68rem', color: '#fde047', marginBottom: '0.75rem' }}>
+                    📜 PERGAMINOS DE ESTUDIO
                   </h4>
-                  {zonaActivaModal.ejemplos && zonaActivaModal.ejemplos.length > 0 ? (
+                  {zonaActivaModal.ejemplos?.length > 0 ? (
                     zonaActivaModal.ejemplos.map(ej => (
-                      <div key={ej.id} style={{ marginBottom: '0.75rem', background: '#070a14', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--border)' }}>
-                        <strong style={{ color: '#38bdf8', fontSize: '0.85rem' }}>{ej.titulo}</strong>
+                      <div key={ej.id} style={{ background: '#050811', padding: '0.75rem', borderRadius: '8px', marginBottom: '0.6rem', border: '1px solid var(--border)' }}>
+                        <strong style={{ color: '#38bdf8', fontSize: '0.84rem' }}>{ej.titulo}</strong>
                         <pre style={{ marginTop: '0.4rem', fontSize: '0.78rem', color: '#a5f3fc', overflowX: 'auto', whiteSpace: 'pre-wrap' }}>
                           {ej.contenido}
                         </pre>
                       </div>
                     ))
                   ) : (
-                    <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>No hay pergaminos en este bioma todavía.</p>
+                    <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>Sin pergaminos publicados en esta zona.</p>
                   )}
                 </div>
 
-                {/* Jefes Finales y Misiones de este Bioma */}
-                <div style={{ background: 'var(--bg-input)', padding: '1rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
-                  <h4 style={{ color: '#f87171', marginBottom: '0.65rem', fontSize: '0.95rem' }}>
-                    👹 Enfrentamientos contra Jefes
+                {/* Jefes de Evaluación y Misiones */}
+                <div style={{ background: 'var(--bg-input)', padding: '1rem', borderRadius: '10px', border: '1px solid #a855f7' }}>
+                  <h4 className="pixel-font" style={{ fontSize: '0.68rem', color: '#f87171', marginBottom: '0.75rem' }}>
+                    ⚔️ JEFE DE MAZMORRA (EVALUACIÓN)
                   </h4>
-                  {evaluaciones.filter(ev => ev.tema_id === zonaActivaModal.id).length === 0 ? (
-                    <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>Sin Jefe Final en esta zona.</p>
-                  ) : (
-                    evaluaciones.filter(ev => ev.tema_id === zonaActivaModal.id).map(ev => {
-                      const intento = calificaciones.find(c => c.evaluacion_id === ev.id);
-                      return (
-                        <div key={ev.id} style={{ background: 'rgba(0,0,0,0.35)', padding: '0.85rem', borderRadius: '10px', marginBottom: '0.65rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <div>
-                            <strong style={{ color: '#fff', fontSize: '0.9rem' }}>{ev.titulo}</strong>
-                            <div style={{ fontSize: '0.75rem', color: '#fca5a5' }}>{ev.total_preguntas} conjuros • +{ev.xp_recompensa || 300} XP</div>
-                          </div>
-                          {intento ? (
-                            <span className="badge badge-success">Derrotado ({intento.puntaje}%)</span>
-                          ) : (
-                            <button
-                              onClick={() => navigate(`/evaluacion/${ev.id}`)}
-                              className="btn-pro btn-pro-primary"
-                              style={{ background: 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)', padding: '0.45rem 0.85rem', fontSize: '0.8rem' }}
-                            >
-                              <Swords size={15} /> ¡Atacar Jefe!
-                            </button>
-                          )}
+                  {evaluaciones.filter(ev => ev.tema_id === zonaActivaModal.id).map(ev => {
+                    const intento = calificaciones.find(c => c.evaluacion_id === ev.id);
+                    return (
+                      <div key={ev.id} style={{ background: '#050811', padding: '0.85rem', borderRadius: '8px', marginBottom: '0.65rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div>
+                          <strong style={{ color: '#fff', fontSize: '0.88rem' }}>{ev.titulo}</strong>
+                          <div style={{ fontSize: '0.74rem', color: '#4ade80' }}>+{ev.xp_recompensa || 300} XP • {ev.total_preguntas} preguntas</div>
                         </div>
-                      );
-                    })
-                  )}
-
-                  <h4 style={{ color: '#c084fc', margin: '1rem 0 0.65rem 0', fontSize: '0.95rem' }}>
-                    ⚔️ Misiones de Laboratorio en esta Zona
-                  </h4>
-                  {tareas.filter(t => t.tema_id === zonaActivaModal.id).map(tar => (
-                    <div key={tar.id} style={{ background: 'rgba(0,0,0,0.35)', padding: '0.75rem', borderRadius: '10px', marginBottom: '0.5rem' }}>
-                      <strong style={{ fontSize: '0.85rem' }}>{tar.titulo}</strong>
-                      <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: '4px 0' }}>{tar.descripcion}</p>
-                      <button 
-                        onClick={() => { setZonaActivaModal(null); setVistaHotbar('inventario'); }}
-                        className="btn-pro btn-pro-ai"
-                        style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', marginTop: '4px' }}
-                      >
-                        Entregar Misión
-                      </button>
-                    </div>
-                  ))}
+                        {intento ? (
+                          <span className="badge badge-success">Completado ({intento.puntaje}%)</span>
+                        ) : (
+                          <button
+                            onClick={() => navigate(`/evaluacion/${ev.id}`)}
+                            className="btn-pro btn-pro-ai"
+                            style={{ padding: '0.45rem 0.85rem', fontSize: '0.78rem' }}
+                          >
+                            <Swords size={15} /> Iniciar Combate
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
           )}
 
-          {/* MODAL DE DIÁLOGO CON EL BÚHO SABIO ALQUIMISTA AI */}
-          {dialogoBuhoAbierto && (
+          {/* MODAL INTERACTIVO DEL SABIO ALQUIMISTA AI */}
+          {dialogoAlquimistaAbierto && (
             <div style={{
-              position: 'absolute', inset: '24px', zIndex: 45,
-              background: 'rgba(14, 17, 38, 0.96)', border: '3px solid #a855f7',
-              borderRadius: '16px', padding: '1.25rem 1.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between'
+              position: 'absolute', inset: '20px', zIndex: 45,
+              background: 'rgba(9, 12, 26, 0.98)', border: '3px solid #a855f7',
+              borderRadius: '14px', padding: '1.25rem 1.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between'
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <PixelOwlAlchemist />
+                  <AlchemistWizard16Bit />
                   <div>
-                    <span className="badge" style={{ background: 'rgba(251, 191, 36, 0.2)', color: '#fde047', border: '1px solid #fbbf24' }}>
-                      Oráculo del Mapa
-                    </span>
-                    <h3 className="pixel-font" style={{ fontSize: '0.95rem', marginTop: '4px' }}>Sabio Alquimista AI</h3>
+                    <span className="pixel-font" style={{ fontSize: '0.6rem', color: '#fde047' }}>MENTOR ARCANO IA</span>
+                    <h3 className="pixel-font" style={{ fontSize: '0.9rem', color: '#fff', marginTop: '4px' }}>Sabio Alquimista AI</h3>
                   </div>
                 </div>
-                <button onClick={() => setDialogoBuhoAbierto(false)} className="btn-danger" style={{ padding: '0.4rem 0.75rem', borderRadius: '8px' }}>
+                <button onClick={() => setDialogoAlquimistaAbierto(false)} className="btn-danger" style={{ padding: '0.4rem 0.8rem', borderRadius: '8px' }}>
                   ✕ Cerrar
                 </button>
               </div>
 
               <div style={{
-                background: '#ffffff', color: '#0f172a', padding: '1rem', borderRadius: '12px',
-                fontWeight: '700', fontSize: '0.9rem', lineHeight: 1.5, margin: '1rem 0', flex: 1, overflowY: 'auto'
+                background: '#ffffff', color: '#0f172a', padding: '1rem', borderRadius: '10px',
+                border: '2px solid #a855f7', fontWeight: '700', fontSize: '0.88rem', lineHeight: 1.5,
+                margin: '1rem 0', flex: 1, overflowY: 'auto'
               }}>
-                {respuestaAlquimista || `🦉 "¡Saludos, ${user?.nombre}! Soy el Sabio Alquimista AI. Pregúntame cualquier duda sobre tus temas de estudio, código o cómo prepararte para vencer al Jefe Final de la mazmorra."`}
+                {respuestaAlquimista || `🧙‍♂️ "¡Saludos, ${user?.nombre || 'Aventurero'}! Escribe cualquier duda sobre Cálculo, Programación o Estadística y te guiaré antes de que cruces la puerta de la mazmorra."`}
               </div>
 
               <form onSubmit={consultarSabioAlquimista} style={{ display: 'flex', gap: '0.6rem' }}>
                 <input
                   type="text"
                   className="input-pro"
-                  placeholder="Escribe tu duda académica para el Sabio Alquimista..."
+                  placeholder="Pregúntale al Sabio Alquimista sobre un tema o ejercicio..."
                   value={preguntaAlquimista}
                   onChange={(e) => setPreguntaAlquimista(e.target.value)}
                 />
                 <button type="submit" disabled={cargandoAlquimista} className="btn-pro btn-pro-ai">
-                  <Send size={16} /> {cargandoAlquimista ? 'Consultando...' : 'Preguntar'}
+                  <Send size={16} /> {cargandoAlquimista ? 'Consultando...' : 'Consultar'}
                 </button>
               </form>
             </div>
@@ -826,15 +1030,15 @@ export default function PanelEstudiante() {
       )}
 
       {/* =====================================================================
-          3. SUB-VISTAS DE LA HOTBAR (INVENTARIO, PERGAMINOS, GREMIO, LOGROS)
+          3. SUB-VISTAS DE LA BARRA INFERIOR (INVENTARIO, PERGAMINOS, GREMIO, LOGROS)
          ===================================================================== */}
       {vistaHotbar === 'inventario' && (
         <div className="card-pro" style={{ border: '2px solid #a855f7' }}>
-          <h3 style={{ marginBottom: '1rem' }}>🎒 Inventario de Misiones y Entregas ({tareas.length})</h3>
+          <h3 className="pixel-font" style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>🎒 INVENTARIO Y MISIONES ({tareas.length})</h3>
           {tareas.map(tar => {
             const entrega = misEntregas.find(e => e.tarea_id === tar.id);
             return (
-              <div key={tar.id} style={{ background: 'var(--bg-input)', padding: '1rem', borderRadius: '12px', marginBottom: '1rem', border: '1px solid var(--border)' }}>
+              <div key={tar.id} style={{ background: 'var(--bg-input)', padding: '1rem', borderRadius: '10px', marginBottom: '1rem', border: '1px solid var(--border)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <h4>⚔️ {tar.titulo} ({tar.tema_titulo})</h4>
                   <span className={`badge ${entrega ? 'badge-success' : 'badge-danger'}`}>
@@ -842,15 +1046,10 @@ export default function PanelEstudiante() {
                   </span>
                 </div>
                 <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)', margin: '0.5rem 0' }}>{tar.descripcion}</p>
-                {entrega?.calificacion !== null && entrega?.calificacion !== undefined && (
-                  <div style={{ color: '#34d399', fontSize: '0.85rem', marginBottom: '0.5rem', fontWeight: '700' }}>
-                    Calificación del Game Master: {entrega.calificacion}/100 • {entrega.retroalimentacion}
-                  </div>
-                )}
                 <textarea
                   className="input-pro"
                   rows="3"
-                  placeholder="Escribe tu solución o código para entregar la misión..."
+                  placeholder="Escribe aquí tu código o respuesta de la misión..."
                   value={entregaTexto[tar.id] || ''}
                   onChange={(e) => setEntregaTexto({ ...entregaTexto, [tar.id]: e.target.value })}
                 />
@@ -864,14 +1063,14 @@ export default function PanelEstudiante() {
       )}
 
       {vistaHotbar === 'pergaminos' && (
-        <div className="card-pro" style={{ border: '2px solid #fbbf24' }}>
-          <h3 style={{ marginBottom: '1rem' }}>📜 Pergaminos de Estudio Desbloqueados</h3>
+        <div className="card-pro" style={{ border: '2px solid #a855f7' }}>
+          <h3 className="pixel-font" style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>📜 PERGAMINOS DE TEORÍA</h3>
           {temas.map(t => (
             <div key={t.id} style={{ marginBottom: '1.25rem', paddingBottom: '1rem', borderBottom: '1px solid var(--border)' }}>
-              <h4 style={{ color: '#fde047' }}>{t.titulo}</h4>
+              <h4 style={{ color: '#4ade80' }}>{t.titulo}</h4>
               <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>{t.descripcion}</p>
               {t.ejemplos?.map(ej => (
-                <pre key={ej.id} style={{ background: '#070a14', padding: '0.85rem', borderRadius: '8px', color: '#a5f3fc', fontSize: '0.82rem', overflowX: 'auto', marginTop: '0.4rem' }}>
+                <pre key={ej.id} style={{ background: '#050811', padding: '0.85rem', borderRadius: '8px', color: '#a5f3fc', fontSize: '0.82rem', overflowX: 'auto', marginTop: '0.4rem' }}>
                   <strong>// {ej.titulo}</strong>{'\n'}{ej.contenido}
                 </pre>
               ))}
@@ -881,8 +1080,8 @@ export default function PanelEstudiante() {
       )}
 
       {vistaHotbar === 'gremio' && (
-        <div className="card-pro" style={{ border: '2px solid #38bdf8' }}>
-          <h3 style={{ marginBottom: '1rem' }}>🛡️ Clasificación del Gremio (Classroom)</h3>
+        <div className="card-pro" style={{ border: '2px solid #a855f7' }}>
+          <h3 className="pixel-font" style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>🛡️ TABLA DEL GREMIO</h3>
           <table>
             <thead>
               <tr>
@@ -900,7 +1099,7 @@ export default function PanelEstudiante() {
                   <td style={{ fontWeight: '800' }}>{m.nombre}</td>
                   <td style={{ color: '#c084fc' }}>{m.clase_rpg}</td>
                   <td>Nvl {m.nivel || 1}</td>
-                  <td style={{ color: '#34d399', fontWeight: '700' }}>{m.xp || 150} XP</td>
+                  <td style={{ color: '#4ade80', fontWeight: '700' }}>{m.xp || 150} XP</td>
                 </tr>
               ))}
             </tbody>
@@ -909,72 +1108,43 @@ export default function PanelEstudiante() {
       )}
 
       {vistaHotbar === 'logros' && (
-        <div className="card-pro" style={{ border: '2px solid #10b981' }}>
-          <h3 style={{ marginBottom: '1rem' }}>🏆 Historial de Jefes Derrotados y Retroalimentación</h3>
-          {calificaciones.length === 0 ? (
-            <p style={{ color: 'var(--text-muted)' }}>Aún no has derrotado a ningún Jefe Final en el mapa.</p>
-          ) : (
-            calificaciones.map(cal => {
-              let detalle = [];
-              try { detalle = JSON.parse(cal.detalle_respuestas || '[]'); } catch { detalle = []; }
-              const abierto = calificacionDetalle === cal.id;
-              return (
-                <div key={cal.id} style={{ padding: '0.85rem 0', borderBottom: '1px solid var(--border)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div>
-                      <strong>{cal.evaluacion_titulo}</strong>
-                      <div style={{ fontSize: '0.78rem', color: '#34d399' }}>+{cal.xp_ganada || 150} XP • {cal.aciertos}/{cal.total_preguntas} aciertos</div>
-                    </div>
-                    <div style={{ textAlign: 'right' }}>
-                      <span style={{ fontSize: '1.2rem', fontWeight: '800', color: cal.puntaje >= 60 ? '#10b981' : '#ef4444' }}>{cal.puntaje}%</span>
-                      {detalle.length > 0 && (
-                        <div>
-                          <button onClick={() => setCalificacionDetalle(abierto ? null : cal.id)} style={{ background: 'none', border: 'none', color: '#38bdf8', fontSize: '0.75rem', cursor: 'pointer' }}>
-                            <Eye size={12} /> {abierto ? 'Ocultar' : 'Ver Retroalimentación'}
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  {abierto && (
-                    <div style={{ marginTop: '0.6rem', background: 'var(--bg-input)', padding: '0.75rem', borderRadius: '8px', fontSize: '0.8rem' }}>
-                      {detalle.map((d, idx) => (
-                        <div key={idx} style={{ marginBottom: '0.4rem' }}>
-                          <strong>{idx + 1}. {d.enunciado}</strong> — Tu respuesta: {d.respuesta_estudiante} (Correcta: {d.opcion_correcta})
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })
-          )}
+        <div className="card-pro" style={{ border: '2px solid #a855f7' }}>
+          <h3 className="pixel-font" style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>🏆 LOGROS Y RESULTADOS</h3>
+          {calificaciones.map(cal => (
+            <div key={cal.id} style={{ padding: '0.75rem 0', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between' }}>
+              <div>
+                <strong>{cal.evaluacion_titulo}</strong>
+                <div style={{ fontSize: '0.78rem', color: '#4ade80' }}>+{cal.xp_ganada || 150} XP • {cal.aciertos}/{cal.total_preguntas} aciertos</div>
+              </div>
+              <strong style={{ fontSize: '1.15rem', color: cal.puntaje >= 60 ? '#4ade80' : '#f87171' }}>{cal.puntaje}%</strong>
+            </div>
+          ))}
         </div>
       )}
 
       {/* =====================================================================
-          4. HOTBAR INFERIOR DE 5 SLOTS (IDÉNTICA A 7468.jpg)
+          4. BOTTOM HUD (BARRA HORIZONTAL CON 5 ICONOS LIMPIOS)
          ===================================================================== */}
-      <div className="rpg-hotbar">
+      <div className="rpg-hotbar" style={{ marginTop: '0.85rem', border: '3px solid #a855f7' }}>
         <button className={`rpg-hotbar-slot ${vistaHotbar === 'mapa' ? 'active' : ''}`} onClick={() => setVistaHotbar('mapa')}>
-          <Map size={20} color="#34d399" />
-          <span>Map</span>
+          <Map size={20} color="#4ade80" />
+          <span className="pixel-font" style={{ fontSize: '0.55rem' }}>Mapa</span>
         </button>
         <button className={`rpg-hotbar-slot ${vistaHotbar === 'inventario' ? 'active' : ''}`} onClick={() => setVistaHotbar('inventario')}>
-          <Backpack size={20} color="#f97316" />
-          <span>Inventario</span>
+          <Backpack size={20} color="#fb923c" />
+          <span className="pixel-font" style={{ fontSize: '0.55rem' }}>Inventario</span>
         </button>
         <button className={`rpg-hotbar-slot ${vistaHotbar === 'pergaminos' ? 'active' : ''}`} onClick={() => setVistaHotbar('pergaminos')}>
           <Scroll size={20} color="#fde047" />
-          <span>Pergaminos</span>
+          <span className="pixel-font" style={{ fontSize: '0.55rem' }}>Pergaminos</span>
         </button>
         <button className={`rpg-hotbar-slot ${vistaHotbar === 'gremio' ? 'active' : ''}`} onClick={() => setVistaHotbar('gremio')}>
           <Users size={20} color="#38bdf8" />
-          <span>Gremio</span>
+          <span className="pixel-font" style={{ fontSize: '0.55rem' }}>Gremio</span>
         </button>
         <button className={`rpg-hotbar-slot ${vistaHotbar === 'logros' ? 'active' : ''}`} onClick={() => setVistaHotbar('logros')}>
           <Trophy size={20} color="#fbbf24" />
-          <span>Logros</span>
+          <span className="pixel-font" style={{ fontSize: '0.55rem' }}>Logros</span>
         </button>
       </div>
     </div>

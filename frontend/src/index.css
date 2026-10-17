@@ -1,5 +1,104 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&family=Press+Start+2P&display=swap');
+/* ========================================================
+   VARIABLES DE MODO CLARO (ACADEMIA DE DÍA / PERGAMINO)
+   ======================================================== */
+[data-theme="light"] {
+  --bg-app: #f1f5f9;
+  --bg-surface: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f8fafc;
+  --bg-input: #f1f5f9;
+  --bg-sidebar: rgba(255, 255, 255, 0.92);
 
+  /* Bordes y Líneas en Modo Claro */
+  --border: rgba(109, 40, 217, 0.18);
+  --border-color: rgba(109, 40, 217, 0.18);
+  --border-light: rgba(124, 58, 237, 0.35);
+  --border-focus: #7c3aed;
+
+  /* Textos de Alto Contraste para lectura de día */
+  --text-main: #0f172a;
+  --text-muted: #475569;
+  --text-dim: #64748b;
+
+  /* Sombras suaves de día */
+  --shadow-card: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 4px 10px -3px rgba(124, 58, 237, 0.06);
+  --shadow-glow: 0 0 20px rgba(124, 58, 237, 0.15);
+}
+
+/* Ajustes automáticos de componentes cuando el Modo Claro está activo */
+[data-theme="light"] body {
+  background-image: 
+    radial-gradient(circle at 15% 15%, rgba(139, 92, 246, 0.08) 0%, transparent 35%),
+    radial-gradient(circle at 85% 80%, rgba(56, 189, 248, 0.08) 0%, transparent 35%);
+}
+
+[data-theme="light"] .header-pro {
+  background: rgba(255, 255, 255, 0.92);
+  border-bottom: 2px solid rgba(124, 58, 237, 0.25);
+  box-shadow: 0 4px 15px rgba(15, 23, 42, 0.06);
+}
+
+[data-theme="light"] .brand-title {
+  color: #1e1b4b;
+  text-shadow: none;
+}
+
+[data-theme="light"] .brand-subtitle {
+  color: #6d28d9;
+}
+
+[data-theme="light"] .user-profile-badge {
+  background: #f8fafc;
+}
+
+[data-theme="light"] .kpi-card {
+  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+}
+
+[data-theme="light"] .rpg-hud-box {
+  background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+  border-color: #7c3aed;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.12);
+}
+
+[data-theme="light"] .rpg-hotbar {
+  background: linear-gradient(180deg, #ffffff 0%, #e2e8f0 100%);
+  border-color: #7c3aed;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
+}
+
+[data-theme="light"] .rpg-hotbar-slot {
+  background: #f8fafc;
+  color: #334155;
+  border-color: rgba(124, 58, 237, 0.25);
+}
+
+[data-theme="light"] .rpg-hotbar-slot.active,
+[data-theme="light"] .rpg-hotbar-slot:hover {
+  background: #7c3aed;
+  color: #ffffff;
+}
+
+/* Botón Conmutador Sol / Luna */
+.btn-theme-toggle {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid var(--border-light);
+  background: var(--bg-input);
+  color: var(--text-main);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-theme-toggle:hover {
+  transform: rotate(12deg) scale(1.05);
+  border-color: #fbbf24;
+}
 :root {
   /* Paleta Base Arcade / RPG Dark */
   --bg-app: #070913;

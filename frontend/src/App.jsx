@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Home from './pages/Home';
@@ -8,13 +8,25 @@ import PanelProfesor from './pages/PanelProfesor';
 import PanelEstudiante from './pages/PanelEstudiante';
 import RendirEvaluacion from './pages/RendirEvaluacion';
 import { 
-  LogOut, Swords, ArrowLeft, Sparkles, Shield, Crown 
+  LogOut, Swords, ArrowLeft, Sparkles, Shield, Crown, Sun, Moon 
 } from 'lucide-react';
 
 const HeaderGlobal = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Estado para Modo Claro / Modo Oscuro persistente
+  const [tema, setTema] = useState(() => localStorage.getItem('saga_theme') || 'dark');
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', tema);
+    localStorage.setItem('saga_theme', tema);
+  }, [tema]);
+
+  const alternarTema = () => {
+    setTema(prev => (prev === 'dark' ? 'light' : 'dark'));
+  };
 
   const mostrarBotonRegresar = location.pathname !== '/';
 
@@ -59,7 +71,16 @@ const HeaderGlobal = () => {
         </Link>
       </div>
 
-      <div className="header-right">
+      <div className="header-right" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        {/* Botón de Modo Claro / Modo Oscuro */}
+        <button
+          onClick={alternarTema}
+          className="btn-theme-toggle"
+          title={tema === 'dark' ? 'Cambiar a Modo Claro (Día)' : 'Cambiar a Modo Oscuro (Noche)'}
+        >
+          {tema === 'dark' ? <Sun size={18} color="#fbbf24" /> : <Moon size={18} color="#6d28d9" />}
+        </button>
+
         {user ? (
           <div className="user-profile-badge">
             <div className="avatar-circle">
