@@ -3,8 +3,9 @@ import Database from 'better-sqlite3';
 const db = new Database('database.sqlite');
 db.pragma('foreign_keys = ON');
 
+// 1. Estructura base compatible con la versión actual
 db.exec(`
-  -- 1. Profesores (Game Masters)
+  -- Profesores (Game Masters - Req. 2 y 4)
   CREATE TABLE IF NOT EXISTS profesores (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nombre TEXT NOT NULL,
@@ -12,7 +13,7 @@ db.exec(`
     password TEXT NOT NULL
   );
 
-  -- 2. Estudiantes (Aventureros)
+  -- Estudiantes (Héroes del Gremio - Req. 3, 6, 7 y 14)
   CREATE TABLE IF NOT EXISTS estudiantes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nombre TEXT NOT NULL,
@@ -20,14 +21,14 @@ db.exec(`
     fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP
   );
 
-  -- 3. Temas Académicos (Biomas del Mapa 2D)
+  -- Temas Académicos / Biomas del Mapa (Req. 8)
   CREATE TABLE IF NOT EXISTS temas (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     titulo TEXT NOT NULL,
     descripcion TEXT NOT NULL
   );
 
-  -- 4. Ejemplos de Estudio (Pergaminos / Cofres de Teoría)
+  -- Ejemplos / Pergaminos de Estudio (Req. 9)
   CREATE TABLE IF NOT EXISTS ejemplos (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     tema_id INTEGER NOT NULL,
@@ -36,7 +37,7 @@ db.exec(`
     FOREIGN KEY (tema_id) REFERENCES temas(id) ON DELETE CASCADE
   );
 
-  -- 5. Evaluaciones (Misiones y Jefes Finales)
+  -- Evaluaciones Objetivas / Jefes Finales (Req. 10)
   CREATE TABLE IF NOT EXISTS evaluaciones (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     tema_id INTEGER NOT NULL,
@@ -44,7 +45,7 @@ db.exec(`
     FOREIGN KEY (tema_id) REFERENCES temas(id) ON DELETE CASCADE
   );
 
-  -- 6. Preguntas de Evaluaciones (Ataques / Acertijos del Jefe)
+  -- Preguntas Objetivas / Conjuros de Ataque (Req. 11)
   CREATE TABLE IF NOT EXISTS preguntas (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     evaluacion_id INTEGER NOT NULL,
@@ -57,21 +58,7 @@ db.exec(`
     FOREIGN KEY (evaluacion_id) REFERENCES evaluaciones(id) ON DELETE CASCADE
   );
 
-  -- 7. Registro de Respuestas Individuales (Requisito 12 de la Rúbrica)
-  CREATE TABLE IF NOT EXISTS respuestas_estudiante (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    estudiante_id INTEGER NOT NULL,
-    evaluacion_id INTEGER NOT NULL,
-    pregunta_id INTEGER NOT NULL,
-    opcion_elegida TEXT NOT NULL,
-    es_correcta INTEGER NOT NULL,
-    fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (estudiante_id) REFERENCES estudiantes(id) ON DELETE CASCADE,
-    FOREIGN KEY (evaluacion_id) REFERENCES evaluaciones(id) ON DELETE CASCADE,
-    FOREIGN KEY (pregunta_id) REFERENCES preguntas(id) ON DELETE CASCADE
-  );
-
-  -- 8. Calificaciones y XP (Requisito 14 de la Rúbrica)
+  -- Calificaciones de Exámenes (Req. 12, 13, 14 y 15)
   CREATE TABLE IF NOT EXISTS calificaciones (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     estudiante_id INTEGER NOT NULL,
@@ -84,7 +71,7 @@ db.exec(`
     FOREIGN KEY (evaluacion_id) REFERENCES evaluaciones(id) ON DELETE CASCADE
   );
 
-  -- 9. Trabajos Prácticos (Misiones de Gremio)
+  -- Trabajos Prácticos / Misiones de Laboratorio
   CREATE TABLE IF NOT EXISTS tareas (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     tema_id INTEGER NOT NULL,
@@ -95,7 +82,7 @@ db.exec(`
     FOREIGN KEY (tema_id) REFERENCES temas(id) ON DELETE CASCADE
   );
 
-  -- 10. Entregas de Trabajos Prácticos
+  -- Entregas de Tareas por Estudiantes
   CREATE TABLE IF NOT EXISTS entregas (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     tarea_id INTEGER NOT NULL,
@@ -107,15 +94,68 @@ db.exec(`
     FOREIGN KEY (tarea_id) REFERENCES tareas(id) ON DELETE CASCADE,
     FOREIGN KEY (estudiante_id) REFERENCES estudiantes(id) ON DELETE CASCADE
   );
+
+  -- Sesiones Activas para Manejo Seguro (Req. 19 y 20)
+  CREATE TABLE IF NOT EXISTS sesiones (
+    token TEXT PRIMARY KEY,
+    usuario_id INTEGER NOT NULL,
+    rol TEXT NOT NULL,
+    creado_en DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
 `);
 
-// Semilla inicial (Seed) si la base de datos está vacía
+// 2. Migraciones automáticas seguras para agregar columnas RPG sin perder datos existentes
+const asegurarColumna = (tabla, columna, definicion) => {
+  const columnas = db.prepare(`PRAGMA table_info(${tabla})`).all();
+  const existe = columnas.some(c => c.name === columna);
+  if (!existe) {
+    db.exec(`ALTER TABLE ${tabla} ADD COLUMN ${columna} ${definicion}`);
+  }
+};
+
+// Columnas RPG para estudiantes (Nivel, XP, HP, Clase y Avatar)
+asegurarColumna('estudiantes', 'xp', 'INTEGER DEFAULT 150');
+asegurarColumna('estudiantes', 'nivel', 'INTEGER DEFAULT 1');
+asegurarColumna('estudiantes', 'hp', 'INTEGER DEFAULT 100');
+asegurarColumna('estudiantes', 'clase_rpg', "TEXT DEFAULT 'Mago de Código'");
+asegurarColumna('estudiantes', 'avatar', "TEXT DEFAULT 'mago'");
+
+// Columnas de Mapa 2D para temas (Bioma y coordenadas)
+asegurarColumna('temas', 'bioma', "TEXT DEFAULT 'mazmorra'");
+asegurarColumna('temas', 'coord_x', 'INTEGER DEFAULT 50');
+asegurarColumna('temas', 'coord_y', 'INTEGER DEFAULT 50');
+
+// Columnas de Jefes para evaluaciones
+asegurarColumna('evaluaciones', 'nombre_jefe', "TEXT DEFAULT 'Guardián del Algoritmo'");
+asegurarColumna('evaluaciones', 'es_jefe_final', 'INTEGER DEFAULT 1');
+asegurarColumna('evaluaciones', 'xp_recompensa', 'INTEGER DEFAULT 300');
+asegurarColumna('evaluaciones', 'fecha_limite', "TEXT DEFAULT '24h'");
+
+// Columnas de Retroalimentación y Registro de Respuestas (Req. 12 y 15)
+asegurarColumna('preguntas', 'explicacion', "TEXT DEFAULT 'Revisa los pergaminos del tema para dominar este conjuro.'");
+asegurarColumna('calificaciones', 'xp_ganada', 'INTEGER DEFAULT 0');
+asegurarColumna('calificaciones', 'detalle_respuestas', "TEXT DEFAULT '{}'");
+asegurarColumna('calificaciones', 'retroalimentacion', "TEXT DEFAULT ''");
+
+// 3. Semilla inicial de Profesor Game Master
 const existeProfesor = db.prepare('SELECT COUNT(*) as total FROM profesores').get();
 if (existeProfesor.total === 0) {
   db.prepare(`
     INSERT INTO profesores (nombre, correo, password) 
-    VALUES ('Game Master Principal', 'admin@universidad.com', 'admin123')
+    VALUES ('Profesor Game Master', 'admin@universidad.com', 'admin123')
   `).run();
+}
+
+// 4. Asegurar compañeros de Gremio de ejemplo para que el HUD del Mapa luzca como el mockup
+const totalEstudiantes = db.prepare('SELECT COUNT(*) as total FROM estudiantes').get().total;
+if (totalEstudiantes < 3) {
+  const insertarCompanero = db.prepare(`
+    INSERT OR IGNORE INTO estudiantes (nombre, codigo_unico, xp, nivel, hp, clase_rpg, avatar)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `);
+  insertarCompanero.run('Leo', 'EST-LEO1', 1450, 8, 92, 'Paladín de Datos', 'guerrero');
+  insertarCompanero.run('Sofía', 'EST-SOF2', 2100, 11, 98, 'Arquera Lógica', 'arquera');
+  insertarCompanero.run('Ana', 'EST-ANA3', 1820, 10, 88, 'Alquimista SQL', 'mago');
 }
 
 export default db;
