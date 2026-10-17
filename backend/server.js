@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import crypto from 'crypto';
 import db from './db.js';
 
 dotenv.config();
@@ -11,12 +12,50 @@ const PORT = process.env.PORT || 4000;
 app.use(cors());
 app.use(express.json());
 
-// --- 1. AUTENTICACIÓN ---
+// Función auxiliar para calcular Nivel en base a XP (Req. 14)
+// Cada 250 XP sube 1 nivel de personaje
+const calcularNivel = (xpTotal) => Math.max(1, Math.floor((xpTotal || 0) / 250) + 1);
+
+const obtenerTituloClase = (nivel, claseActual) => {
+  if (nivel >= 12) return 'Archimago de Sistemas';
+  if (nivel >= 8) return 'Hechicero Senior';
+  if (nivel >= 4) return 'Mago de Código';
+  return claseActual || 'Aprendiz de Código';
+};
+
+// Recalcular XP y Nivel de un estudiante sumando exámenes y tareas calificadas
+const sincronizarProgresoEstudiante = (estudianteId) => {
+  const examenes = db.prepare('SELECT COALESCE(SUM(xp_ganada), 0) as xp_eval FROM calificaciones WHERE estudiante_id = ?').get(estudianteId);
+  const tareas = db.prepare('SELECT COALESCE(SUM(calificacion * 2), 0) as xp_tar FROM entregas WHERE estudiante_id = ? AND calificacion IS NOT NULL').get(estudianteId);
+  
+  const xpBase = 150; // XP inicial de bienvenida al gremio
+  const xpTotal = Math.round(xpBase + (examenes?.xp_eval || 0) + (tareas?.xp_tar || 0));
+  const nuevoNivel = calcularNivel(xpTotal);
+
+  const estActual = db.prepare('SELECT clase_rpg FROM estudiantes WHERE id = ?').get(estudianteId);
+  const nuevaClase = obtenerTituloClase(nuevoNivel, estActual?.clase_rpg);
+
+  db.prepare(`
+    UPDATE estudiantes 
+    SET xp = ?, nivel = ?, clase_rpg = ?
+    WHERE id = ?
+  `).run(xpTotal, nuevoNivel, nuevaClase, estudianteId);
+
+  return db.prepare('SELECT * FROM estudiantes WHERE id = ?').get(estudianteId);
+};
+
+// --- AUTENTICACIÓN Y MANEJO SEGURO DE SESIONES (Req. 2, 3, 18, 19 y 20) ---
 app.post('/api/auth/profesor', (req, res) => {
   const { correo, password } = req.body;
-  const profesor = db.prepare('SELECT id, nombre, correo FROM profesores WHERE correo = ? AND password = ?').get(correo, password);
+  if (!correo?.trim() || !password?.trim()) {
+    return res.status(400).json({ error: 'Debes ingresar correo y contraseña.' });
+  }
+
+  const profesor = db.prepare('SELECT id, nombre, correo FROM profesores WHERE correo = ? AND password = ?').get(correo.trim(), password);
   if (profesor) {
-    res.json({ success: true, profesor });
+    const sessionToken = crypto.randomBytes(24).toString('hex');
+    db.prepare('INSERT INTO sesiones (token, usuario_id, rol) VALUES (?, ?, ?)').run(sessionToken, profesor.id, 'profesor');
+    res.json({ success: true, profesor: { ...profesor, sessionToken } });
   } else {
     res.status(401).json({ error: 'Credenciales inválidas. Usa admin@universidad.com / admin123' });
   }
@@ -24,27 +63,67 @@ app.post('/api/auth/profesor', (req, res) => {
 
 app.post('/api/auth/estudiante', (req, res) => {
   const { codigo } = req.body;
-  const estudiante = db.prepare('SELECT * FROM estudiantes WHERE codigo_unico = ?').get(codigo?.trim().toUpperCase());
+  const codigoLimpio = codigo?.trim().toUpperCase();
+  if (!codigoLimpio || codigoLimpio.length < 4) {
+    return res.status(400).json({ error: 'Ingresa un código de gremio válido (ej: EST-XXXX).' });
+  }
+
+  let estudiante = db.prepare('SELECT * FROM estudiantes WHERE codigo_unico = ?').get(codigoLimpio);
   if (estudiante) {
-    res.json({ success: true, estudiante });
+    estudiante = sincronizarProgresoEstudiante(estudiante.id);
+    const sessionToken = crypto.randomBytes(24).toString('hex');
+    db.prepare('INSERT INTO sesiones (token, usuario_id, rol) VALUES (?, ?, ?)').run(sessionToken, estudiante.id, 'estudiante');
+    res.json({ success: true, estudiante: { ...estudiante, sessionToken } });
   } else {
-    res.status(404).json({ error: 'Token de gremio no encontrado. Verifica con tu profesor.' });
+    res.status(404).json({ error: 'Código de estudiante no encontrado en el Gremio.' });
   }
 });
 
-// --- 2. ESTUDIANTES ---
+// Cierre de sesión seguro en servidor (Req. 19 y 20)
+app.post('/api/auth/logout', (req, res) => {
+  const { token } = req.body;
+  if (token) {
+    db.prepare('DELETE FROM sesiones WHERE token = ?').run(token);
+  }
+  res.json({ success: true, mensaje: 'Sesión cerrada de forma segura.' });
+});
+
+// Obtener datos actualizados de un estudiante (XP, Nivel, HP)
+app.get('/api/estudiantes/:id/perfil', (req, res) => {
+  const est = sincronizarProgresoEstudiante(req.params.id);
+  if (!est) return res.status(404).json({ error: 'Estudiante no encontrado' });
+  res.json(est);
+});
+
+// --- ESTUDIANTES Y GREMIO (Req. 6 y 7) ---
 app.get('/api/estudiantes', (req, res) => {
-  const estudiantes = db.prepare('SELECT * FROM estudiantes ORDER BY id DESC').all();
+  const estudiantes = db.prepare('SELECT * FROM estudiantes ORDER BY xp DESC, id DESC').all();
   res.json(estudiantes);
 });
 
+app.get('/api/gremio', (req, res) => {
+  const miembros = db.prepare(`
+    SELECT id, nombre, codigo_unico, xp, nivel, hp, clase_rpg, avatar 
+    FROM estudiantes 
+    ORDER BY xp DESC 
+    LIMIT 8
+  `).all();
+  res.json(miembros);
+});
+
 app.post('/api/estudiantes', (req, res) => {
-  const { nombre } = req.body;
-  if (!nombre?.trim()) return res.status(400).json({ error: 'El nombre es obligatorio' });
+  const { nombre, clase_rpg } = req.body;
+  if (!nombre?.trim()) return res.status(400).json({ error: 'El nombre del estudiante es obligatorio' });
 
   const codigoUnico = 'EST-' + Math.random().toString(36).substring(2, 6).toUpperCase();
-  const info = db.prepare('INSERT INTO estudiantes (nombre, codigo_unico) VALUES (?, ?)').run(nombre.trim(), codigoUnico);
-  res.status(201).json({ id: info.lastInsertRowid, nombre, codigo_unico: codigoUnico });
+  const claseInicial = clase_rpg || 'Mago de Código';
+  const info = db.prepare(`
+    INSERT INTO estudiantes (nombre, codigo_unico, xp, nivel, hp, clase_rpg) 
+    VALUES (?, ?, 150, 1, 100, ?)
+  `).run(nombre.trim(), codigoUnico, claseInicial);
+
+  const nuevo = db.prepare('SELECT * FROM estudiantes WHERE id = ?').get(info.lastInsertRowid);
+  res.status(201).json(nuevo);
 });
 
 app.delete('/api/estudiantes/:id', (req, res) => {
