@@ -1,23 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate, Link } from 'react-router-dom';
-import { Swords, ArrowRight, AlertCircle } from 'lucide-react';
+import { KeyRound, Swords, Sparkles, AlertCircle } from 'lucide-react';
 
 export default function AccesoEstudiante() {
   const [codigo, setCodigo] = useState('');
   const [error, setError] = useState('');
   const [cargando, setCargando] = useState(false);
-
-  const { loginEstudiante } = useAuth();
+  const { user, loginEstudiante } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user && user.rol === 'estudiante') {
+      navigate('/panel-estudiante');
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
     const codigoLimpio = codigo.trim().toUpperCase();
-    if (!codigoLimpio) {
-      return setError('Ingresa tu código único de gremio (Ej: EST-XXXX).');
+    // Validación estricta de formato de token (Requisito 18)
+    const tokenRegex = /^[A-Z0-9-]{4,15}$/;
+    if (!codigoLimpio || !tokenRegex.test(codigoLimpio)) {
+      setError('Ingresa un código de gremio válido (ejemplo: EST-F8AO).');
+      return;
     }
 
     setCargando(true);
@@ -29,71 +37,79 @@ export default function AccesoEstudiante() {
       });
       const data = await res.json();
 
-      if (res.ok) {
+      if (res.ok && data.success) {
         loginEstudiante(data.estudiante);
         navigate('/panel-estudiante');
       } else {
-        setError(data.error || 'Token de gremio no encontrado.');
+        setError(data.error || 'Código inválido o no registrado en el Gremio.');
       }
     } catch {
-      setError('Error al conectar con el servidor.');
+      setError('Error al comunicarse con el servidor.');
     } finally {
       setCargando(false);
     }
   };
 
   return (
-    <div className="container" style={{ maxWidth: '460px', marginTop: '3.5rem' }}>
-      <div className="rpg-box" style={{ padding: '2.5rem' }}>
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+    <div className="container" style={{ maxWidth: '450px', marginTop: '3rem' }}>
+      <div className="card-pro" style={{ padding: '2.25rem', border: '2px solid #9333ea' }}>
+        <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
           <div style={{
-            width: '56px',
-            height: '56px',
+            width: '58px',
+            height: '58px',
             borderRadius: '14px',
-            background: 'rgba(251, 191, 36, 0.15)',
-            color: '#fbbf24',
-            border: '2px solid #fbbf24',
+            background: 'rgba(168, 85, 247, 0.18)',
+            border: '2px solid #c084fc',
+            color: '#e9d5ff',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            margin: '0 auto 1rem auto'
+            margin: '0 auto 1rem auto',
+            boxShadow: '0 0 18px rgba(168, 85, 247, 0.35)'
           }}>
-            <Swords size={28} />
+            <KeyRound size={28} />
           </div>
-          <h2 className="font-pixel" style={{ fontSize: '1.15rem', color: '#fbbf24' }}>PORTAL DE AVENTUREROS</h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '0.5rem' }}>
-            Ingresa tu Token Único de Gremio asignado por el Game Master para entrar al Mapa 2D.
+          <h2 className="pixel-font" style={{ fontSize: '1.05rem', color: '#fff' }}>PORTAL DEL GREMIO</h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.86rem', marginTop: '0.45rem' }}>
+            Ingresa tu Token Único asignado por el Game Master para desplegar el Mapa del Semestre
           </p>
         </div>
 
         {error && (
           <div style={{
-            background: 'rgba(239, 68, 68, 0.15)',
-            border: '1px solid #ef4444',
-            color: '#f87171',
-            padding: '0.85rem',
+            background: 'rgba(239, 68, 68, 0.14)',
+            border: '1px solid rgba(239, 68, 68, 0.4)',
+            color: '#fca5a5',
+            padding: '0.8rem',
             borderRadius: '10px',
+            marginBottom: '1.2rem',
             fontSize: '0.86rem',
             display: 'flex',
             alignItems: 'center',
-            gap: '0.6rem',
-            marginBottom: '1.25rem'
+            gap: '0.5rem'
           }}>
             <AlertCircle size={18} />
             <span>{error}</span>
           </div>
         )}
 
-        <form onSubmit={handleSubmit}>
-          <div className="input-group">
-            <label className="input-label">Código Único de Estudiante:</label>
-            <input 
-              type="text" 
+        <form onSubmit={handleSubmit} noValidate>
+          <div style={{ marginBottom: '1.35rem' }}>
+            <label className="input-label" style={{ textAlign: 'center' }}>Token / Código Único de Gremio:</label>
+            <input
+              type="text"
               className="input-pro"
-              placeholder="Ej: EST-F8A0"
+              style={{ 
+                textAlign: 'center', 
+                letterSpacing: '3px', 
+                fontWeight: '800', 
+                fontSize: '1.15rem',
+                fontFamily: 'JetBrains Mono, monospace',
+                color: '#38bdf8'
+              }}
               value={codigo}
               onChange={(e) => setCodigo(e.target.value.toUpperCase())}
-              style={{ textAlign: 'center', fontFamily: 'monospace', fontSize: '1.2rem', fontWeight: '800', letterSpacing: '0.08em' }}
+              placeholder="EST-XXXX"
               required
             />
           </div>
@@ -101,16 +117,41 @@ export default function AccesoEstudiante() {
           <button 
             type="submit" 
             disabled={cargando}
-            className="btn-pro"
-            style={{ width: '100%', padding: '0.95rem', background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)', color: '#090d16', fontWeight: '800' }}
+            className="btn-pro btn-pro-ai" 
+            style={{ width: '100%', padding: '0.9rem' }}
           >
-            <span>{cargando ? 'Abriendo portal...' : '⚔️ Entrar al Mundo 2D'}</span>
-            <ArrowRight size={16} />
+            <Swords size={18} />
+            <span>{cargando ? 'Invocando Héroe...' : 'Entrar al Mapa del Semestre'}</span>
           </button>
         </form>
 
-        <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.84rem', color: 'var(--text-dim)' }}>
-          ¿Eres el docente? <Link to="/profesor" style={{ color: '#fbbf24', textDecoration: 'none', fontWeight: '700' }}>Ir a Consola Game Master</Link>
+        {/* Accesos rápidos de prueba para demostración */}
+        <div style={{ marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px solid var(--border)', textAlign: 'center' }}>
+          <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)', display: 'block', marginBottom: '0.5rem' }}>
+            <Sparkles size={12} style={{ display: 'inline', marginRight: '4px' }} />
+            Tokens rápidos de prueba:
+          </span>
+          <div style={{ display: 'flex', gap: '0.45rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+            {['EST-F8AO', 'EST-LEO1', 'EST-SOF2', 'EST-ANA3'].map(tok => (
+              <button
+                key={tok}
+                type="button"
+                onClick={() => setCodigo(tok)}
+                style={{
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid var(--border-light)',
+                  color: '#c4b5fd',
+                  padding: '0.3rem 0.6rem',
+                  borderRadius: '6px',
+                  fontSize: '0.75rem',
+                  fontFamily: 'monospace',
+                  cursor: 'pointer'
+                }}
+              >
+                {tok}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>
