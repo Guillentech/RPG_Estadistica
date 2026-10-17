@@ -131,23 +131,33 @@ app.delete('/api/estudiantes/:id', (req, res) => {
   res.json({ success: true });
 });
 
-// --- 3. TEMAS (BIOMAS) Y EJEMPLOS (PERGAMINOS) ---
+// --- TEMAS / BIOMAS Y EJEMPLOS / PERGAMINOS (Req. 8 y 9) ---
 app.get('/api/temas', (req, res) => {
-  const temas = db.prepare('SELECT * FROM temas ORDER BY id DESC').all();
+  const temas = db.prepare('SELECT * FROM temas ORDER BY id ASC').all();
   const ejemplos = db.prepare('SELECT * FROM ejemplos').all();
   
-  const data = temas.map(t => ({
+  const data = temas.map((t, index) => ({
     ...t,
+    bioma: t.bioma || ['mazmorra', 'bosque', 'ruinas', 'laboratorio'][index % 4],
     ejemplos: ejemplos.filter(e => e.tema_id === t.id)
   }));
   res.json(data);
 });
 
 app.post('/api/temas', (req, res) => {
-  const { titulo, descripcion } = req.body;
-  if (!titulo?.trim()) return res.status(400).json({ error: 'El título es obligatorio' });
-  const info = db.prepare('INSERT INTO temas (titulo, descripcion) VALUES (?, ?)').run(titulo.trim(), descripcion?.trim() || '');
-  res.status(201).json({ id: info.lastInsertRowid, titulo, descripcion });
+  const { titulo, descripcion, bioma, coord_x, coord_y } = req.body;
+  if (!titulo?.trim()) return res.status(400).json({ error: 'El título del tema/bioma es obligatorio' });
+
+  const biomaElegido = bioma || 'bosque';
+  const x = coord_x ?? Math.floor(20 + Math.random() * 60);
+  const y = coord_y ?? Math.floor(25 + Math.random() * 50);
+
+  const info = db.prepare(`
+    INSERT INTO temas (titulo, descripcion, bioma, coord_x, coord_y) 
+    VALUES (?, ?, ?, ?, ?)
+  `).run(titulo.trim(), descripcion?.trim() || '', biomaElegido, x, y);
+
+  res.status(201).json({ id: info.lastInsertRowid, titulo, descripcion, bioma: biomaElegido });
 });
 
 app.delete('/api/temas/:id', (req, res) => {
@@ -158,7 +168,7 @@ app.delete('/api/temas/:id', (req, res) => {
 app.post('/api/ejemplos', (req, res) => {
   const { tema_id, titulo, contenido } = req.body;
   if (!tema_id || !titulo?.trim() || !contenido?.trim()) {
-    return res.status(400).json({ error: 'Tema, título y contenido son obligatorios' });
+    return res.status(400).json({ error: 'Tema, título y contenido del pergamino son obligatorios' });
   }
   const info = db.prepare('INSERT INTO ejemplos (tema_id, titulo, contenido) VALUES (?, ?, ?)').run(tema_id, titulo.trim(), contenido.trim());
   res.status(201).json({ id: info.lastInsertRowid, tema_id, titulo, contenido });
