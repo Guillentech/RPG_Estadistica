@@ -1,11 +1,15 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useCallback } from 'react';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
-    const sesionGuardada = localStorage.getItem('usuario_lms');
-    return sesionGuardada ? JSON.parse(sesionGuardada) : null;
+    try {
+      const sesionGuardada = localStorage.getItem('usuario_lms');
+      return sesionGuardada ? JSON.parse(sesionGuardada) : null;
+    } catch {
+      return null;
+    }
   });
 
   const loginProfesor = (profesorData) => {
@@ -20,13 +24,42 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('usuario_lms', JSON.stringify(session));
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('usuario_lms');
+  // Permite actualizar XP, Nivel y HP del estudiante en tiempo real tras derrotar a un Jefe
+  const refrescarEstudiante = useCallback(async () => {
+    if (!user || user.rol !== 'estudiante' || !user.id) return;
+    try {
+      const res = await fetch(`http://localhost:4000/api/estudiantes/${user.id}/perfil`);
+      if (res.ok) {
+        const actualizado = await res.json();
+        const nuevaSesion = { ...user, ...actualizado, rol: 'estudiante' };
+        setUser(nuevaSesion);
+        localStorage.setItem('usuario_lms', JSON.stringify(nuevaSesion));
+      }
+    } catch {
+      // Silencioso si el servidor no responde momentáneamente
+    }
+  }, [user]);
+
+  // Cierre de sesión seguro en cliente y servidor (Req. 19 y 20)
+  const logout = async () => {
+    try {
+      if (user?.sessionToken) {
+        await fetch('http://localhost:4000/api/auth/logout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: user.sessionToken })
+        });
+      }
+    } catch {
+      // Continúa limpiando la sesión local aunque el servidor esté apagado
+    } finally {
+      setUser(null);
+      localStorage.removeItem('usuario_lms');
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ user, loginProfesor, loginEstudiante, logout }}>
+    <AuthContext.Provider value={{ user, loginProfesor, loginEstudiante, refrescarEstudiante, logout }}>
       {children}
     </AuthContext.Provider>
   );
