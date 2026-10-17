@@ -7,40 +7,29 @@ import AccesoEstudiante from './pages/AccesoEstudiante';
 import PanelProfesor from './pages/PanelProfesor';
 import PanelEstudiante from './pages/PanelEstudiante';
 import RendirEvaluacion from './pages/RendirEvaluacion';
-import { LogOut, Swords, ArrowLeft, User, Shield, Compass } from 'lucide-react';
+import { 
+  LogOut, Swords, ArrowLeft, Sparkles, Shield, Crown 
+} from 'lucide-react';
 
 const HeaderGlobal = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const enInicio = location.pathname === '/';
-  const enCombate = location.pathname.startsWith('/evaluacion/');
+  const mostrarBotonRegresar = location.pathname !== '/';
 
-  // Etiqueta adaptativa del botón de retroceso según la pantalla actual
-  const obtenerTextoRetroceso = () => {
-    if (enCombate) return 'Huir al Mapa 2D';
-    if (location.pathname === '/profesor' || location.pathname === '/estudiante') return 'Volver al Inicio';
-    if (location.pathname === '/panel-profesor' || location.pathname === '/panel-estudiante') return 'Ir a Portada';
-    return 'Volver';
-  };
-
-  // Acción inteligente sin bucles de redirección
   const manejarRetroceso = () => {
-    if (enCombate) {
-      if (window.confirm('⚠️ ¿Deseas retirarte del combate? Las respuestas no enviadas se perderán.')) {
-        navigate('/panel-estudiante');
+    if (location.pathname.startsWith('/evaluacion/')) {
+      if (!window.confirm('⚠️ ¿Deseas huir del combate contra el Jefe? El intento no enviado se perderá.')) {
+        return;
       }
-      return;
     }
-
-    // Desde cualquier otra vista secundaria, regresar limpiamente a la portada principal
-    navigate('/');
+    navigate(-1);
   };
 
-  const handleCerrarSesion = () => {
-    if (window.confirm('¿Deseas cerrar tu sesión actual de forma segura?')) {
-      logout();
+  const handleCerrarSesion = async () => {
+    if (window.confirm('¿Deseas cerrar tu sesión en Saga Académica de forma segura?')) {
+      await logout();
       navigate('/');
     }
   };
@@ -48,68 +37,62 @@ const HeaderGlobal = () => {
   return (
     <header className="header-pro">
       <div className="header-left">
-        {!enInicio && (
+        {mostrarBotonRegresar && (
           <button 
             onClick={manejarRetroceso} 
-            className="btn-retroceso"
+            className="btn-retroceso" 
             title="Regresar a la pantalla anterior"
           >
-            <ArrowLeft size={16} />
-            <span>{obtenerTextoRetroceso()}</span>
+            <ArrowLeft size={17} />
+            <span>Mapa Anterior</span>
           </button>
         )}
 
         <Link to="/" className="brand-logo">
           <div className="brand-icon">
-            <Swords size={22} color="#090d16" />
+            <Swords size={22} color="#ffffff" />
           </div>
           <div className="brand-text">
             <span className="brand-title">SAGA ACADÉMICA</span>
-            <span className="brand-subtitle">LMS RPG & Game Master Console</span>
+            <span className="brand-subtitle">LMS RPG 2D • Gremio Universitario</span>
           </div>
         </Link>
       </div>
 
       <div className="header-right">
         {user ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-            {/* Si está en la portada pero ya tiene sesión, botón directo para volver a su panel */}
-            {enInicio && (
-              <Link 
-                to={user.rol === 'profesor' ? '/panel-profesor' : '/panel-estudiante'} 
-                className="btn-guest btn-guest-student"
-                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
-              >
-                <Compass size={16} />
-                <span>{user.rol === 'profesor' ? 'Ir a Mi Consola' : 'Ir a Mi Mapa 2D'}</span>
-              </Link>
-            )}
-
-            <div className="user-profile-badge">
-              <div className="avatar-circle">
-                {user.rol === 'profesor' ? <Shield size={16} /> : <User size={16} />}
-              </div>
-
-              <div className="user-info">
-                <span className="user-name">{user.nombre}</span>
-                <span className="user-role">
-                  {user.rol === 'profesor' ? '🧙‍♂️ Game Master' : `🛡️ Gremio: ${user.codigo_unico}`}
-                </span>
-              </div>
-
-              <button onClick={handleCerrarSesion} className="btn-salir">
-                <LogOut size={15} />
-                <span>Salir</span>
-              </button>
+          <div className="user-profile-badge">
+            <div className="avatar-circle">
+              {user.rol === 'profesor' ? <Crown size={18} color="#fbbf24" /> : <Sparkles size={17} color="#c084fc" />}
             </div>
+
+            <div className="user-info">
+              <span className="user-name">
+                {user.nombre} {user.rol === 'estudiante' && `• Nvl ${user.nivel || 1}`}
+              </span>
+              <span className="user-role">
+                {user.rol === 'profesor' 
+                  ? 'Consola Game Master' 
+                  : `${user.clase_rpg || 'Mago de Código'} | ${user.xp || 150} XP | ${user.codigo_unico}`}
+              </span>
+            </div>
+
+            <button 
+              onClick={handleCerrarSesion} 
+              className="btn-salir"
+              title="Cerrar sesión de forma segura"
+            >
+              <LogOut size={15} />
+              <span>Salir</span>
+            </button>
           </div>
         ) : (
           <div className="header-actions-guest">
             <Link to="/estudiante" className="btn-guest btn-guest-student">
-              ⚔️ Acceso Aventurero
+              <Swords size={15} /> Entrar al Gremio
             </Link>
             <Link to="/profesor" className="btn-guest btn-guest-teacher">
-              🧙‍♂️ Consola Game Master
+              <Shield size={15} /> Game Master
             </Link>
           </div>
         )}
@@ -118,6 +101,7 @@ const HeaderGlobal = () => {
   );
 };
 
+// Guardián de seguridad para rutas protegidas
 const RutaProtegida = ({ children, rolRequerido }) => {
   const { user } = useAuth();
   if (!user) return <Navigate to="/" replace />;
