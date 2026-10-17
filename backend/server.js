@@ -179,10 +179,10 @@ app.delete('/api/ejemplos/:id', (req, res) => {
   res.json({ success: true });
 });
 
-// --- 4. EVALUACIONES (JEFES FINALES) Y PREGUNTAS ---
+// --- EVALUACIONES / JEFES FINALES Y PREGUNTAS (Req. 10 y 11) ---
 app.get('/api/evaluaciones', (req, res) => {
   const query = `
-    SELECT e.*, t.titulo as tema_titulo, 
+    SELECT e.*, t.titulo as tema_titulo, t.bioma as tema_bioma,
            (SELECT COUNT(*) FROM preguntas WHERE evaluacion_id = e.id) as total_preguntas 
     FROM evaluaciones e
     JOIN temas t ON e.tema_id = t.id
@@ -193,10 +193,19 @@ app.get('/api/evaluaciones', (req, res) => {
 });
 
 app.post('/api/evaluaciones', (req, res) => {
-  const { tema_id, titulo } = req.body;
+  const { tema_id, titulo, nombre_jefe, xp_recompensa, fecha_limite } = req.body;
   if (!tema_id || !titulo?.trim()) return res.status(400).json({ error: 'Tema y título son obligatorios' });
-  const info = db.prepare('INSERT INTO evaluaciones (tema_id, titulo) VALUES (?, ?)').run(tema_id, titulo.trim());
-  res.status(201).json({ id: info.lastInsertRowid, tema_id, titulo });
+
+  const jefe = nombre_jefe?.trim() || `Befe Final: ${titulo.trim()}`;
+  const xp = parseInt(xp_recompensa, 10) || 300;
+  const limite = fecha_limite?.trim() || '24h';
+
+  const info = db.prepare(`
+    INSERT INTO evaluaciones (tema_id, titulo, nombre_jefe, xp_recompensa, fecha_limite) 
+    VALUES (?, ?, ?, ?, ?)
+  `).run(tema_id, titulo.trim(), jefe, xp, limite);
+
+  res.status(201).json({ id: info.lastInsertRowid, tema_id, titulo, nombre_jefe: jefe, xp_recompensa: xp });
 });
 
 app.delete('/api/evaluaciones/:id', (req, res) => {
@@ -204,25 +213,36 @@ app.delete('/api/evaluaciones/:id', (req, res) => {
   res.json({ success: true });
 });
 
+// Endpoint para el estudiante (Oculta opcion_correcta por seguridad)
 app.get('/api/evaluaciones/:id/preguntas', (req, res) => {
   const preguntas = db.prepare('SELECT id, evaluacion_id, enunciado, opcion_a, opcion_b, opcion_c, opcion_d FROM preguntas WHERE evaluacion_id = ?').all(req.params.id);
   res.json(preguntas);
 });
 
+// Endpoint para el docente (Incluye opcion_correcta y explicacion)
 app.get('/api/evaluaciones/:id/preguntas-docente', (req, res) => {
   const preguntas = db.prepare('SELECT * FROM preguntas WHERE evaluacion_id = ?').all(req.params.id);
   res.json(preguntas);
 });
 
 app.post('/api/preguntas', (req, res) => {
-  const { evaluacion_id, enunciado, opcion_a, opcion_b, opcion_c, opcion_d, opcion_correcta } = req.body;
-  if (!evaluacion_id || !enunciado?.trim() || !opcion_correcta) {
-    return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+  const { evaluacion_id, enunciado, opcion_a, opcion_b, opcion_c, opcion_d, opcion_correcta, explicacion } = req.body;
+  if (!evaluacion_id || !enunciado?.trim() || !opcion_a?.trim() || !opcion_b?.trim() || !opcion_c?.trim() || !opcion_d?.trim() || !opcion_correcta) {
+    return res.status(400).json({ error: 'Todos los campos de la pregunta son obligatorios' });
   }
   const info = db.prepare(`
-    INSERT INTO preguntas (evaluacion_id, enunciado, opcion_a, opcion_b, opcion_c, opcion_d, opcion_correcta)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-  `).run(evaluacion_id, enunciado.trim(), opcion_a.trim(), opcion_b.trim(), opcion_c.trim(), opcion_d.trim(), opcion_correcta.toUpperCase());
+    INSERT INTO preguntas (evaluacion_id, enunciado, opcion_a, opcion_b, opcion_c, opcion_d, opcion_correcta, explicacion)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    evaluacion_id,
+    enunciado.trim(),
+    opcion_a.trim(),
+    opcion_b.trim(),
+    opcion_c.trim(),
+    opcion_d.trim(),
+    opcion_correcta.toUpperCase(),
+    explicacion?.trim() || 'Revisa los pergaminos del tema para reforzar este concepto.'
+  );
   
   res.status(201).json({ id: info.lastInsertRowid, evaluacion_id });
 });
@@ -232,74 +252,88 @@ app.delete('/api/preguntas/:id', (req, res) => {
   res.json({ success: true });
 });
 
-// --- 5. MOTOR DE CORRECCIÓN, REGISTRO DE RESPUESTAS Y XP ---
+// --- MOTOR DE CORRECCIÓN RPG: REGISTRO DE RESPUESTAS, XP Y NIVEL (Req. 12, 13, 14 y 15) ---
 app.post('/api/evaluaciones/:id/calificar', (req, res) => {
   const evaluacionId = req.params.id;
   const { estudiante_id, respuestas } = req.body;
 
   if (!estudiante_id || !respuestas) {
-    return res.status(400).json({ error: 'Datos incompletos para calificar' });
+    return res.status(400).json({ error: 'Datos incompletos para calificar el enfrentamiento' });
   }
 
   const intentoPrevio = db.prepare('SELECT id, puntaje FROM calificaciones WHERE estudiante_id = ? AND evaluacion_id = ?').get(estudiante_id, evaluacionId);
   if (intentoPrevio) {
     return res.status(400).json({ 
-      error: `Ya has enfrentado a este Jefe previamente con un puntaje de ${intentoPrevio.puntaje}%. No se permiten múltiples intentos.` 
+      error: `Ya te enfrentaste a este Jefe previamente obteniendo ${intentoPrevio.puntaje}%. Solo se permite un intento por mazmorra.` 
     });
   }
 
+  const evaluacion = db.prepare('SELECT * FROM evaluaciones WHERE id = ?').get(evaluacionId);
   const preguntas = db.prepare('SELECT * FROM preguntas WHERE evaluacion_id = ?').all(evaluacionId);
   if (preguntas.length === 0) {
-    return res.status(400).json({ error: 'La evaluación no contiene preguntas' });
+    return res.status(400).json({ error: 'Esta mazmorra aún no contiene preguntas configuradas' });
   }
 
   let aciertos = 0;
-  const detalleRetroalimentacion = [];
-
-  const insertRespuesta = db.prepare(`
-    INSERT INTO respuestas_estudiante (estudiante_id, evaluacion_id, pregunta_id, opcion_elegida, es_correcta)
-    VALUES (?, ?, ?, ?, ?)
-  `);
+  const desglose = [];
 
   preguntas.forEach((p) => {
-    const elegida = (respuestas[p.id] || 'SIN_RESPONDER').toUpperCase();
+    const marcada = respuestas[p.id] ? respuestas[p.id].toUpperCase() : 'SIN RESPONDER';
     const correcta = p.opcion_correcta.toUpperCase();
-    const acertada = elegida === correcta ? 1 : 0;
+    const esCorrecta = marcada === correcta;
+    if (esCorrecta) aciertos++;
 
-    if (acertada) aciertos++;
-
-    insertRespuesta.run(estudiante_id, evaluacionId, p.id, elegida, acertada);
-
-    detalleRetroalimentacion.push({
+    desglose.push({
       pregunta_id: p.id,
       enunciado: p.enunciado,
-      opcion_elegida: elegida,
+      respuesta_estudiante: marcada,
       opcion_correcta: correcta,
-      es_correcta: acertada === 1
+      es_correcta: esCorrecta,
+      explicacion: p.explicacion || `La respuesta correcta era la opción ${correcta}.`
     });
   });
 
   const puntaje = Math.round((aciertos / preguntas.length) * 100);
-  const xpGanada = puntaje * 5;
+  const xpBaseEval = evaluacion?.xp_recompensa || 300;
+  const xpGanada = Math.round((puntaje / 100) * xpBaseEval) + (puntaje >= 60 ? 50 : 15);
+  const retroGeneral = puntaje >= 80
+    ? '¡Victoria Épica! Dominaste los conjuros del tema y derrotaste al Jefe sin sufrir daño.'
+    : puntaje >= 60
+    ? '¡Jefe Derrotado! Lograste superar la mazmorra, pero revisa los pergaminos en los puntos donde fallaste.'
+    : 'El Jefe resistió tu ataque. Repasa los Pergaminos de Estudio del mapa para recuperar HP y subir tu nivel.';
 
   const info = db.prepare(`
-    INSERT INTO calificaciones (estudiante_id, evaluacion_id, puntaje, total_preguntas, aciertos)
-    VALUES (?, ?, ?, ?, ?)
-  `).run(estudiante_id, evaluacionId, puntaje, preguntas.length, aciertos);
+    INSERT INTO calificaciones (estudiante_id, evaluacion_id, puntaje, total_preguntas, aciertos, xp_ganada, detalle_respuestas, retroalimentacion)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    estudiante_id,
+    evaluacionId,
+    puntaje,
+    preguntas.length,
+    aciertos,
+    xpGanada,
+    JSON.stringify(desglose),
+    retroGeneral
+  );
+
+  // Actualizar XP y Nivel del Estudiante (Req. 14)
+  const perfilActualizado = sincronizarProgresoEstudiante(estudiante_id);
 
   res.json({
     id: info.lastInsertRowid,
     puntaje,
-    xp_ganada: xpGanada,
     total_preguntas: preguntas.length,
     aciertos,
-    retroalimentacion: detalleRetroalimentacion
+    xp_ganada: xpGanada,
+    retroalimentacion: retroGeneral,
+    desglose,
+    estudiante: perfilActualizado
   });
 });
 
 app.get('/api/calificaciones', (req, res) => {
   const query = `
-    SELECT c.*, e.nombre as estudiante_nombre, e.codigo_unico, ev.titulo as evaluacion_titulo
+    SELECT c.*, e.nombre as estudiante_nombre, e.codigo_unico, e.nivel as estudiante_nivel, ev.titulo as evaluacion_titulo
     FROM calificaciones c
     JOIN estudiantes e ON c.estudiante_id = e.id
     JOIN evaluaciones ev ON c.evaluacion_id = ev.id
@@ -311,7 +345,7 @@ app.get('/api/calificaciones', (req, res) => {
 
 app.get('/api/calificaciones/estudiante/:id', (req, res) => {
   const query = `
-    SELECT c.*, ev.titulo as evaluacion_titulo
+    SELECT c.*, ev.titulo as evaluacion_titulo, ev.nombre_jefe
     FROM calificaciones c
     JOIN evaluaciones ev ON c.evaluacion_id = ev.id
     WHERE c.estudiante_id = ?
