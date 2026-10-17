@@ -355,10 +355,10 @@ app.get('/api/calificaciones/estudiante/:id', (req, res) => {
   res.json(notas);
 });
 
-// --- 6. TRABAJOS PRÁCTICOS (MISIONES DE GREMIO) ---
+// --- TRABAJOS PRÁCTICOS / MISIONES DE LABORATORIO ---
 app.get('/api/tareas', (req, res) => {
   const query = `
-    SELECT t.*, te.titulo as tema_titulo,
+    SELECT t.*, te.titulo as tema_titulo, te.bioma as tema_bioma,
            (SELECT COUNT(*) FROM entregas WHERE tarea_id = t.id) as total_entregas
     FROM tareas t
     JOIN temas te ON t.tema_id = te.id
@@ -376,7 +376,7 @@ app.post('/api/tareas', (req, res) => {
   const info = db.prepare(`
     INSERT INTO tareas (tema_id, titulo, descripcion, fecha_limite)
     VALUES (?, ?, ?, ?)
-  `).run(tema_id, titulo.trim(), descripcion.trim(), fecha_limite || 'Sin fecha');
+  `).run(tema_id, titulo.trim(), descripcion.trim(), fecha_limite || 'Viernes 23:59 hrs');
   res.status(201).json({ id: info.lastInsertRowid });
 });
 
@@ -387,7 +387,7 @@ app.delete('/api/tareas/:id', (req, res) => {
 
 app.get('/api/tareas/:id/entregas', (req, res) => {
   const query = `
-    SELECT en.*, es.nombre as estudiante_nombre, es.codigo_unico
+    SELECT en.*, es.nombre as estudiante_nombre, es.codigo_unico, es.nivel
     FROM entregas en
     JOIN estudiantes es ON en.estudiante_id = es.id
     WHERE en.tarea_id = ?
@@ -400,20 +400,20 @@ app.get('/api/tareas/:id/entregas', (req, res) => {
 app.post('/api/entregas', (req, res) => {
   const { tarea_id, estudiante_id, contenido } = req.body;
   if (!tarea_id || !estudiante_id || !contenido?.trim()) {
-    return res.status(400).json({ error: 'Debes redactar tu entrega.' });
+    return res.status(400).json({ error: 'Debes redactar el pergamino de tu entrega antes de enviarlo.' });
   }
 
   const previa = db.prepare('SELECT id FROM entregas WHERE tarea_id = ? AND estudiante_id = ?').get(tarea_id, estudiante_id);
   if (previa) {
     db.prepare('UPDATE entregas SET contenido = ?, fecha = CURRENT_TIMESTAMP WHERE id = ?').run(contenido.trim(), previa.id);
-    return res.json({ success: true, mensaje: 'Entrega actualizada con éxito.' });
+    return res.json({ success: true, mensaje: '¡Misión actualizada en el Gremio con éxito!' });
   }
 
   const info = db.prepare(`
     INSERT INTO entregas (tarea_id, estudiante_id, contenido)
     VALUES (?, ?, ?)
   `).run(tarea_id, estudiante_id, contenido.trim());
-  res.status(201).json({ id: info.lastInsertRowid, mensaje: 'Entrega enviada con éxito.' });
+  res.status(201).json({ id: info.lastInsertRowid, mensaje: '¡Misión entregada! Cuando el Game Master la califique recibirás tu XP.' });
 });
 
 app.get('/api/entregas/estudiante/:id', (req, res) => {
@@ -434,46 +434,57 @@ app.put('/api/entregas/:id/calificar', (req, res) => {
     SET calificacion = ?, retroalimentacion = ? 
     WHERE id = ?
   `).run(calificacion, retroalimentacion?.trim() || '', req.params.id);
+
+  // Actualizar XP y Nivel del estudiante al recibir nota de tarea
+  const entrega = db.prepare('SELECT estudiante_id FROM entregas WHERE id = ?').get(req.params.id);
+  if (entrega) {
+    sincronizarProgresoEstudiante(entrega.estudiante_id);
+  }
+
   res.json({ success: true });
 });
 
-// --- 7. COPILOTO DE IA LIBRE Y MULTIFUNCIONAL ---
+// --- COPILOTO DE IA DOCENTE + SABIO ALQUIMISTA AI (MÚLTIPLES MODOS) ---
 app.post('/api/ia/asistente', async (req, res) => {
-  const { mensaje, modo = 'chat' } = req.body;
+  const { mensaje, modo = 'chat', contexto = '' } = req.body;
   const apiKey = process.env.GEMINI_API_KEY;
 
   if (!mensaje?.trim()) {
-    return res.status(400).json({ error: 'Por favor escribe tu consulta o información.' });
+    return res.status(400).json({ error: 'Por favor escribe tu consulta o instrucción para el Sabio Alquimista.' });
   }
 
-  if (!apiKey || apiKey === 'tu_api_key_aqui' || apiKey === '') {
+  // MODO SIN API KEY: Respuestas inteligentes e instantáneas para demostración académica
+  if (!apiKey || apiKey === 'tu_api_key_aqui') {
     if (modo === 'preguntas') {
       return res.json({
         tipo: 'preguntas',
         resultado: [
           {
-            enunciado: `Sobre "${mensaje.slice(0, 40)}": ¿Cuál es el principio fundamental en programación?`,
-            opcion_a: "Modularidad, reutilización y control seguro en memoria",
-            opcion_b: "Ejecución exclusiva en modo monohilo sin funciones",
-            opcion_c: "Omitir la validación de tipos de datos",
-            opcion_d: "Deshabilitar el uso de parámetros",
-            opcion_correcta: "A"
+            enunciado: `En la mazmorra de "${mensaje.slice(0, 45)}", ¿cuál es el principio fundamental para superar el desafío?`,
+            opcion_a: "Estructurar la lógica de forma modular, validando entradas y estado",
+            opcion_b: "Omitir las reglas de encapsulamiento y control de flujo",
+            opcion_c: "Ejecutar ciclos infinitos sin condición de parada",
+            opcion_d: "Depender únicamente de variables globales sin tipo",
+            opcion_correcta: "A",
+            explicacion: "La modularidad y validación garantizan que el código o modelo estadístico sea mantenible y libre de errores."
           },
           {
-            enunciado: `¿Qué buena práctica evita errores críticos al implementar este tema?`,
-            opcion_a: "Concentrar todo el código en una sola línea",
-            opcion_b: "Validar entradas, liberar recursos y estructurar clases limpias",
-            opcion_c: "Evitar el uso de constructores o funciones",
-            opcion_d: "Declarar todas las variables como globales",
-            opcion_correcta: "B"
+            enunciado: `¿Qué estrategia permite optimizar la resolución práctica de "${mensaje.slice(0, 35)}"?`,
+            opcion_a: "Duplicar funciones en cada archivo del proyecto",
+            opcion_b: "Dividir el problema en subprocesos claros y verificables",
+            opcion_c: "Ignorar los casos borde o valores atípicos",
+            opcion_d: "Eliminar las pruebas de verificación",
+            opcion_correcta: "B",
+            explicacion: "El diseño divide y vencerás facilita depurar cada etapa antes de enfrentar al Jefe Final."
           },
           {
-            enunciado: `¿Qué ventaja obtiene un sistema bien diseñado bajo este concepto?`,
-            opcion_a: "Código escalable, fácil de depurar y mantener en equipo",
-            opcion_b: "Mayor consumo innecesario de memoria RAM",
-            opcion_c: "Incompatibilidad con bases de datos relacionales",
-            opcion_d: "Bloqueo del flujo de compilación",
-            opcion_correcta: "A"
+            enunciado: `¿Cuál es el resultado directo de aplicar correctamente los pergaminos teóricos de este bioma?`,
+            opcion_a: "Código y análisis robustos, escalables y fáciles de auditar",
+            opcion_b: "Pérdida de precisión en los resultados obtenidos",
+            opcion_c: "Bloqueo de la interfaz del usuario",
+            opcion_d: "Incompatibilidad con bases de datos relacionales",
+            opcion_correcta: "A",
+            explicacion: "Aplicar la teoría garantiza precisión técnica y te otorga el máximo de XP en la evaluación."
           }
         ]
       });
