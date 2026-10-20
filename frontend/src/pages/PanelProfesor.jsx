@@ -1,3 +1,4 @@
+import { useAuth } from '../context/AuthContext';
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Users, BookOpen, FileCheck, Award, Sparkles, 
@@ -7,6 +8,7 @@ import {
 } from 'lucide-react';
 
 export default function PanelProfesor() {
+  const { actualizarAvatar } = useAuth(); // Añadir esta línea
   const [pestana, setPestana] = useState('estudiantes');
 
   // Estados de datos
@@ -803,7 +805,14 @@ export default function PanelProfesor() {
               <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Configura tu identidad docente y foto de perfil.</p>
             </div>
           </div>
-          <form onSubmit={(e) => { e.preventDefault(); alert('¡Perfil actualizado con éxito!'); }}>
+            <form onSubmit={(e) => { 
+              e.preventDefault(); 
+              if (perfilDocente.avatar) {
+             actualizarAvatar(perfilDocente.avatar);
+              }
+              alert('¡Perfil del Game Master actualizado en tiempo real!'); 
+             }}>
+          
             <div className="input-group"><label className="input-label">Nombre del Docente:</label><input type="text" className="input-pro" value={perfilDocente.nombre} onChange={(e) => setPerfilDocente({...perfilDocente, nombre: e.target.value})} required /></div>
             <div className="input-group"><label className="input-label">Título o Clase RPG:</label><input type="text" className="input-pro" value={perfilDocente.titulo} onChange={(e) => setPerfilDocente({...perfilDocente, titulo: e.target.value})} required /></div>
             <div className="input-group"><label className="input-label">Correo Institucional:</label><input type="email" className="input-pro" value={perfilDocente.correo} onChange={(e) => setPerfilDocente({...perfilDocente, correo: e.target.value})} required /></div>

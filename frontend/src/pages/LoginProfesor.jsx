@@ -1,7 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
-import { Shield, ArrowRight, AlertCircle, Sparkles } from 'lucide-react';
+import { AlertCircle, KeyRound, Sparkles } from 'lucide-react';
+
+// 💡 Sprite Pixel Art 16-bit: El Grimorio del Game Master
+const GrimoireSprite = () => (
+  <svg width="64" height="64" viewBox="0 0 16 16" shapeRendering="crispEdges">
+    <rect x="2" y="1" width="12" height="14" fill="#3b0764" />
+    <rect x="3" y="2" width="10" height="12" fill="#6b21a8" />
+    <rect x="5" y="4" width="6" height="8" fill="#9333ea" />
+    <rect x="7" y="6" width="2" height="4" fill="#fde047" />
+    <rect x="4" y="1" width="1" height="14" fill="#fbbf24" />
+    <rect x="11" y="1" width="1" height="14" fill="#fbbf24" />
+    <rect x="2" y="3" width="12" height="1" fill="#fbbf24" />
+    <rect x="2" y="12" width="12" height="1" fill="#fbbf24" />
+  </svg>
+);
 
 export default function LoginProfesor() {
   const [correo, setCorreo] = useState('admin@universidad.com');
@@ -13,18 +27,13 @@ export default function LoginProfesor() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user && user.rol === 'profesor') {
-      navigate('/panel-profesor');
-    }
+    if (user && user.rol === 'profesor') navigate('/panel-profesor');
   }, [user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-
-    if (!correo.trim() || !password.trim()) {
-      return setError('Todos los campos son obligatorios.');
-    }
+    if (!correo.trim() || !password.trim()) return setError('Todos los campos son obligatorios.');
 
     setCargando(true);
     try {
@@ -49,92 +58,71 @@ export default function LoginProfesor() {
   };
 
   return (
-    <div className="container" style={{ maxWidth: '470px', marginTop: '3.5rem' }}>
-      <div className="card-pro" style={{ padding: '2.5rem', border: '1px solid rgba(59, 130, 246, 0.4)' }}>
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <div style={{
-            width: '56px',
-            height: '56px',
-            borderRadius: '14px',
-            background: 'rgba(59, 130, 246, 0.15)',
-            color: '#3b82f6',
-            border: '2px solid rgba(59, 130, 246, 0.4)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            margin: '0 auto 1rem auto'
-          }}>
-            <Shield size={28} />
+    <div className="container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '82vh' }}>
+      <div style={{
+        background: 'linear-gradient(180deg, #13092b 0%, #0f172a 100%)',
+        border: '3px solid #a855f7',
+        borderRadius: '16px',
+        padding: '2.5rem',
+        maxWidth: '460px',
+        width: '100%',
+        boxShadow: '0 0 40px rgba(168, 85, 247, 0.25), inset 0 0 20px rgba(0,0,0,0.8)'
+      }}>
+        
+        <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+          <div style={{ display: 'inline-block', padding: '1rem', background: '#050811', border: '2px solid #c084fc', borderRadius: '14px', boxShadow: '0 0 20px rgba(192, 132, 252, 0.4)' }}>
+            <GrimoireSprite />
           </div>
-
-          <span style={{ fontSize: '0.75rem', color: '#60a5fa', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-            Administración Académica
-          </span>
-          <h2 style={{ fontSize: '1.6rem', fontWeight: '800', marginTop: '0.2rem' }}>
-            Consola del Game Master
+          <h2 className="pixel-font" style={{ color: '#fde047', fontSize: '0.9rem', marginTop: '1.2rem', textShadow: '2px 2px 0px #78350f', lineHeight: 1.4 }}>
+            PORTAL DEL<br/>GAME MASTER
           </h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '0.4rem' }}>
-            Acceso exclusivo para docentes. Gestiona Biomas, Pergaminos, Jefes Finales y calificaciones.
+          <p style={{ color: '#94a3b8', fontSize: '0.85rem', marginTop: '0.75rem' }}>
+            Acceso restringido. Autentica tu identidad arcana para gestionar el Gremio y los Biomas.
           </p>
         </div>
 
         {error && (
-          <div style={{
-            background: 'rgba(239, 68, 68, 0.12)',
-            border: '1px solid rgba(239, 68, 68, 0.35)',
-            color: '#f87171',
-            padding: '0.85rem',
-            borderRadius: '10px',
-            fontSize: '0.86rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.6rem',
-            marginBottom: '1.5rem'
-          }}>
-            <AlertCircle size={18} />
-            <span>{error}</span>
+          <div style={{ background: 'rgba(239, 68, 68, 0.15)', border: '1px solid #ef4444', color: '#fca5a5', padding: '0.85rem', borderRadius: '8px', fontSize: '0.86rem', display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.5rem' }}>
+            <AlertCircle size={18} /><span>{error}</span>
           </div>
         )}
 
         <form onSubmit={handleSubmit}>
           <div className="input-group">
-            <label className="input-label">Correo Institucional del Docente:</label>
+            <label className="input-label" style={{ color: '#c084fc', fontWeight: 'bold' }}>Correo Institucional del Docente:</label>
             <input 
               type="email" 
               className="input-pro"
+              style={{ background: '#050811', border: '1px solid #7e22ce', color: '#fff' }}
               value={correo}
               onChange={(e) => setCorreo(e.target.value)}
-              placeholder="admin@universidad.com"
               required
             />
           </div>
 
           <div className="input-group">
-            <label className="input-label">Contraseña de Seguridad:</label>
+            <label className="input-label" style={{ color: '#c084fc', fontWeight: 'bold' }}>Contraseña de Seguridad:</label>
             <input 
               type="password" 
               className="input-pro"
+              style={{ background: '#050811', border: '1px solid #7e22ce', color: '#fff' }}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
               required
             />
           </div>
 
-          <button 
-            type="submit" 
-            disabled={cargando}
-            className="btn-pro btn-pro-primary"
-            style={{ width: '100%', padding: '0.95rem', marginTop: '0.5rem', fontWeight: '700' }}
-          >
-            <span>{cargando ? 'Autenticando...' : '🧙‍♂️ Entrar a la Consola Docente'}</span>
-            <ArrowRight size={16} />
+          <button type="submit" disabled={cargando} className="btn-pro btn-pro-primary" style={{ width: '100%', padding: '0.95rem', marginTop: '0.5rem', fontWeight: '800', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
+            {cargando ? 'Autenticando...' : <><KeyRound size={18} /> Entrar a la Consola Game Master</>}
           </button>
         </form>
 
-        <div style={{ marginTop: '1.75rem', textAlign: 'center', fontSize: '0.84rem', color: 'var(--text-dim)' }}>
-          ¿Eres estudiante? <Link to="/estudiante" style={{ color: '#fbbf24', textDecoration: 'none', fontWeight: '700' }}>Ir al Portal de Aventureros</Link>
+        <div style={{ marginTop: '1.75rem', textAlign: 'center', fontSize: '0.84rem' }}>
+          <Link to="/estudiante" style={{ color: '#fbbf24', textDecoration: 'none', fontWeight: '800', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+            <Sparkles size={14} /> ¿Eres estudiante? Ir al Mapa 2D
+          </Link>
         </div>
+
       </div>
     </div>
   );

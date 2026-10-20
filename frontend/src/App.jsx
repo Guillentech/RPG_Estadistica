@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Home from './pages/Home';
@@ -7,8 +7,9 @@ import AccesoEstudiante from './pages/AccesoEstudiante';
 import PanelProfesor from './pages/PanelProfesor';
 import PanelEstudiante from './pages/PanelEstudiante';
 import RendirEvaluacion from './pages/RendirEvaluacion';
+// 💡 CORRECCIÓN CRÍTICA: Se añadieron 'User' y 'Compass' a las importaciones
 import { 
-  LogOut, Swords, ArrowLeft, Sparkles, Shield, Crown, Sun, Moon 
+  LogOut, Swords, ArrowLeft, Sparkles, Shield, Crown, Sun, Moon, User, Compass 
 } from 'lucide-react';
 
 const HeaderGlobal = () => {
@@ -16,32 +17,29 @@ const HeaderGlobal = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Estado para Modo Claro / Modo Oscuro persistente
-  const [tema, setTema] = useState(() => localStorage.getItem('saga_theme') || 'dark');
+  const enInicio = location.pathname === '/';
+  const enCombate = location.pathname.startsWith('/evaluacion/');
 
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', tema);
-    localStorage.setItem('saga_theme', tema);
-  }, [tema]);
-
-  const alternarTema = () => {
-    setTema(prev => (prev === 'dark' ? 'light' : 'dark'));
+  const obtenerTextoRetroceso = () => {
+    if (enCombate) return 'Huir al Mapa 2D';
+    if (location.pathname === '/profesor' || location.pathname === '/estudiante') return 'Volver al Inicio';
+    if (location.pathname === '/panel-profesor' || location.pathname === '/panel-estudiante') return 'Ir a Portada';
+    return 'Volver';
   };
-
-  const mostrarBotonRegresar = location.pathname !== '/';
 
   const manejarRetroceso = () => {
-    if (location.pathname.startsWith('/evaluacion/')) {
-      if (!window.confirm('⚠️ ¿Deseas huir del combate contra el Jefe? El intento no enviado se perderá.')) {
-        return;
+    if (enCombate) {
+      if (window.confirm('⚠️ ¿Deseas retirarte del combate? Las respuestas no enviadas se perderán.')) {
+        navigate('/panel-estudiante');
       }
+      return;
     }
-    navigate(-1);
+    navigate('/');
   };
 
-  const handleCerrarSesion = async () => {
-    if (window.confirm('¿Deseas cerrar tu sesión en Saga Académica de forma segura?')) {
-      await logout();
+  const handleCerrarSesion = () => {
+    if (window.confirm('¿Deseas cerrar tu sesión actual de forma segura?')) {
+      logout();
       navigate('/');
     }
   };
@@ -49,72 +47,57 @@ const HeaderGlobal = () => {
   return (
     <header className="header-pro">
       <div className="header-left">
-        {mostrarBotonRegresar && (
-          <button 
-            onClick={manejarRetroceso} 
-            className="btn-retroceso" 
-            title="Regresar a la pantalla anterior"
-          >
-            <ArrowLeft size={17} />
-            <span>Mapa Anterior</span>
+        {!enInicio && (
+          <button onClick={manejarRetroceso} className="btn-retroceso" title="Regresar">
+            <ArrowLeft size={16} /><span>{obtenerTextoRetroceso()}</span>
           </button>
         )}
 
         <Link to="/" className="brand-logo">
-          <div className="brand-icon">
-            <Swords size={22} color="#ffffff" />
-          </div>
+          <div className="brand-icon"><Swords size={22} color="#090d16" /></div>
           <div className="brand-text">
             <span className="brand-title">SAGA ACADÉMICA</span>
-            <span className="brand-subtitle">LMS RPG 2D • Gremio Universitario</span>
+            <span className="brand-subtitle">LMS RPG 2D • GREMIO UNIVERSITARIO</span>
           </div>
         </Link>
       </div>
 
-      <div className="header-right" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-        {/* Botón de Modo Claro / Modo Oscuro */}
-        <button
-          onClick={alternarTema}
-          className="btn-theme-toggle"
-          title={tema === 'dark' ? 'Cambiar a Modo Claro (Día)' : 'Cambiar a Modo Oscuro (Noche)'}
-        >
-          {tema === 'dark' ? <Sun size={18} color="#fbbf24" /> : <Moon size={18} color="#6d28d9" />}
-        </button>
-
+      <div className="header-right">
         {user ? (
-          <div className="user-profile-badge">
-            <div className="avatar-circle">
-              {user.rol === 'profesor' ? <Crown size={18} color="#fbbf24" /> : <Sparkles size={17} color="#c084fc" />}
-            </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+            {enInicio && (
+              <Link to={user.rol === 'profesor' ? '/panel-profesor' : '/panel-estudiante'} className="btn-guest btn-guest-student" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+                <Compass size={16} /><span>{user.rol === 'profesor' ? 'Ir a Mi Consola' : 'Ir a Mi Mapa 2D'}</span>
+              </Link>
+            )}
 
-            <div className="user-info">
-              <span className="user-name">
-                {user.nombre} {user.rol === 'estudiante' && `• Nvl ${user.nivel || 1}`}
-              </span>
-              <span className="user-role">
-                {user.rol === 'profesor' 
-                  ? 'Consola Game Master' 
-                  : `${user.clase_rpg || 'Mago de Código'} | ${user.xp || 150} XP | ${user.codigo_unico}`}
-              </span>
-            </div>
+            <div className="user-profile-badge">
+              
+              {/* 💡 AQUÍ SE MUESTRA LA FOTO DE PERFIL EN TIEMPO REAL */}
+              <div className="avatar-circle" style={{ padding: user.avatar ? 0 : '', overflow: 'hidden' }}>
+                {user.avatar ? (
+                  <img src={user.avatar} alt="Perfil" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  user.rol === 'profesor' ? <Shield size={16} /> : <User size={16} />
+                )}
+              </div>
 
-            <button 
-              onClick={handleCerrarSesion} 
-              className="btn-salir"
-              title="Cerrar sesión de forma segura"
-            >
-              <LogOut size={15} />
-              <span>Salir</span>
-            </button>
+              <div className="user-info">
+                <span className="user-name">{user.nombre}</span>
+                <span className="user-role">
+                  {user.rol === 'profesor' ? '🧙‍♂️ Game Master' : `🛡️ Nivel ${user.nivel || 1} • ${user.clase_rpg || 'Guerrero'}`}
+                </span>
+              </div>
+
+              <button onClick={handleCerrarSesion} className="btn-salir">
+                <LogOut size={15} /><span>Salir</span>
+              </button>
+            </div>
           </div>
         ) : (
           <div className="header-actions-guest">
-            <Link to="/estudiante" className="btn-guest btn-guest-student">
-              <Swords size={15} /> Entrar al Gremio
-            </Link>
-            <Link to="/profesor" className="btn-guest btn-guest-teacher">
-              <Shield size={15} /> Game Master
-            </Link>
+            <Link to="/estudiante" className="btn-guest btn-guest-student">⚔️ Entrar al Gremio</Link>
+            <Link to="/profesor" className="btn-guest btn-guest-teacher">🧙‍♂️ Game Master</Link>
           </div>
         )}
       </div>
@@ -122,7 +105,6 @@ const HeaderGlobal = () => {
   );
 };
 
-// Guardián de seguridad para rutas protegidas
 const RutaProtegida = ({ children, rolRequerido }) => {
   const { user } = useAuth();
   if (!user) return <Navigate to="/" replace />;
