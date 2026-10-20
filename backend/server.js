@@ -10,7 +10,9 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 
 app.use(cors());
-app.use(express.json());
+// 💡 Aumentamos el límite del body a 50mb para permitir subir PDFs/Word largos en Base64
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Función auxiliar para calcular Nivel en base a XP (Req. 14)
 // Cada 250 XP sube 1 nivel de personaje
@@ -196,7 +198,7 @@ app.post('/api/evaluaciones', (req, res) => {
   const { tema_id, titulo, nombre_jefe, xp_recompensa, fecha_limite } = req.body;
   if (!tema_id || !titulo?.trim()) return res.status(400).json({ error: 'Tema y título son obligatorios' });
 
-  const jefe = nombre_jefe?.trim() || `Befe Final: ${titulo.trim()}`;
+  const jefe = nombre_jefe?.trim() || `Jefe Final: ${titulo.trim()}`;
   const xp = parseInt(xp_recompensa, 10) || 300;
   const limite = fecha_limite?.trim() || '24h';
 
@@ -316,7 +318,6 @@ app.post('/api/evaluaciones/:id/calificar', (req, res) => {
     retroGeneral
   );
 
-  // Actualizar XP y Nivel del Estudiante (Req. 14)
   const perfilActualizado = sincronizarProgresoEstudiante(estudiante_id);
 
   res.json({
@@ -355,7 +356,15 @@ app.get('/api/calificaciones/estudiante/:id', (req, res) => {
   res.json(notas);
 });
 
-// --- TRABAJOS PRÁCTICOS / MISIONES DE LABORATORIO ---
+// --- 6. TRABAJOS PRÁCTICOS / MISIONES DE LABORATORIO ---
+
+// 💡 MIGRACIÓN AUTOMÁTICA: Añadir columna para archivos adjuntos sin romper datos
+try {
+  db.prepare("ALTER TABLE tareas ADD COLUMN archivo_adjunto TEXT").run();
+} catch (e) {
+  // Se ignora el error de forma silenciosa si la columna ya existe
+}
+
 app.get('/api/tareas', (req, res) => {
   const query = `
     SELECT t.*, te.titulo as tema_titulo, te.bioma as tema_bioma,
@@ -369,14 +378,16 @@ app.get('/api/tareas', (req, res) => {
 });
 
 app.post('/api/tareas', (req, res) => {
-  const { tema_id, titulo, descripcion, fecha_limite } = req.body;
+  const { tema_id, titulo, descripcion, fecha_limite, archivo_adjunto } = req.body;
   if (!tema_id || !titulo?.trim() || !descripcion?.trim()) {
     return res.status(400).json({ error: 'Tema, título y descripción son obligatorios.' });
   }
+  
+  // 💡 NUEVO: Recibimos el archivo (PDF/Word en Base64) en la instrucción INSERT
   const info = db.prepare(`
-    INSERT INTO tareas (tema_id, titulo, descripcion, fecha_limite)
-    VALUES (?, ?, ?, ?)
-  `).run(tema_id, titulo.trim(), descripcion.trim(), fecha_limite || 'Viernes 23:59 hrs');
+    INSERT INTO tareas (tema_id, titulo, descripcion, fecha_limite, archivo_adjunto)
+    VALUES (?, ?, ?, ?, ?)
+  `).run(tema_id, titulo.trim(), descripcion.trim(), fecha_limite || 'Viernes 23:59 hrs', archivo_adjunto || null);
   res.status(201).json({ id: info.lastInsertRowid });
 });
 
