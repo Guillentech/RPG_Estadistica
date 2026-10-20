@@ -13,7 +13,9 @@ export const AuthProvider = ({ children }) => {
   });
 
   const loginProfesor = (profesorData) => {
-    const session = { ...profesorData, rol: 'profesor' };
+    // 💡 Recupera la foto si ya la había guardado antes localmente
+    const avatarGuardado = localStorage.getItem('avatar_lms_profesor');
+    const session = { ...profesorData, rol: 'profesor', avatar: avatarGuardado };
     setUser(session);
     localStorage.setItem('usuario_lms', JSON.stringify(session));
   };
@@ -40,6 +42,19 @@ export const AuthProvider = ({ children }) => {
     }
   }, [user]);
 
+  // 💡 NUEVO: Función para guardar el Avatar (Foto de perfil) en tiempo real
+  const actualizarAvatar = (avatarBase64) => {
+    if (user) {
+      const updatedUser = { ...user, avatar: avatarBase64 };
+      setUser(updatedUser);
+      localStorage.setItem('usuario_lms', JSON.stringify(updatedUser));
+      // Guardarlo de forma permanente para el profesor
+      if (user.rol === 'profesor') {
+        localStorage.setItem('avatar_lms_profesor', avatarBase64);
+      }
+    }
+  };
+
   // Cierre de sesión seguro en cliente y servidor (Req. 19 y 20)
   const logout = async () => {
     try {
@@ -59,7 +74,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loginProfesor, loginEstudiante, refrescarEstudiante, logout }}>
+    // 💡 Asegúrate de incluir actualizarAvatar en el value del Provider
+    <AuthContext.Provider value={{ user, loginProfesor, loginEstudiante, refrescarEstudiante, actualizarAvatar, logout }}>
       {children}
     </AuthContext.Provider>
   );
