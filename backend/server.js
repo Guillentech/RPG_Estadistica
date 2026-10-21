@@ -454,95 +454,92 @@ app.put('/api/entregas/:id/calificar', (req, res) => {
 
   res.json({ success: true });
 });
+// --- COPILOTO DE IA BLINDADO (CON AUTO-FALLBACK Y MULTI-MODELO) ---
+const generarRespuestaRespaldo = (mensaje, modo) => {
+  if (modo === 'preguntas') {
+    return {
+      tipo: 'preguntas',
+      resultado: [
+        {
+          enunciado: `A partir del estudio de "${mensaje.slice(0, 45)}", ¿cuál es el principio fundamental para resolver este reto?`,
+          opcion_a: "Estructurar la lógica de forma modular, validando entradas y tipos de datos",
+          opcion_b: "Solo funciona en procesadores mononúcleo sin memoria caché",
+          opcion_c: "Elimina la necesidad de validar la sintaxis y las excepciones",
+          opcion_d: "No admite el uso de variables ni funciones auxiliares",
+          opcion_correcta: "A",
+          explicacion: "La modularidad y validación garantizan soluciones escalables y sin errores."
+        },
+        {
+          enunciado: `¿Qué buena práctica técnica se desprende directamente de "${mensaje.slice(0, 35)}"?`,
+          opcion_a: "Acoplar todas las dependencias en una única función global",
+          opcion_b: "Manejo explícito de casos borde y separación de responsabilidades",
+          opcion_c: "Omitir las pruebas de escritorio y el análisis de datos",
+          opcion_d: "Duplicar bloques de código en todo el archivo",
+          opcion_correcta: "B",
+          explicacion: "Separar responsabilidades y validar casos borde evita fallos críticos en ejecución."
+        },
+        {
+          enunciado: `¿Cuál es el beneficio principal de dominar este bioma dentro del proyecto?`,
+          opcion_a: "Facilita la mantenibilidad, escalabilidad y precisión de los resultados",
+          opcion_b: "Inhabilita el acceso concurrente a la base de datos SQLite",
+          opcion_c: "Bloquea las llamadas a funciones del sistema",
+          opcion_d: "Reduce el rendimiento general de la aplicación",
+          opcion_correcta: "A",
+          explicacion: "Aplicar adecuadamente estos principios mejora la calidad y mantenibilidad del software."
+        }
+      ]
+    };
+  }
 
-// --- COPILOTO DE IA DOCENTE + SABIO ALQUIMISTA AI (MÚLTIPLES MODOS) ---
+  if (modo === 'ejemplo') {
+    return {
+      tipo: 'ejemplo',
+      resultado: {
+        titulo: `Pergamino Práctico: ${mensaje.slice(0, 35)}`,
+        contenido: `// 📜 Demostración práctica generada por el Oráculo IA\n// Tema: ${mensaje}\n\n#include <iostream>\nusing namespace std;\n\nvoid ejecutarDemostracion() {\n    cout << "Conjuro compilado y ejecutado con éxito." << endl;\n}\n\nint main() {\n    ejecutarDemostracion();\n    return 0;\n}`
+      }
+    };
+  }
+
+  if (modo === 'tarea') {
+    return {
+      tipo: 'tarea',
+      resultado: {
+        titulo: `Misión de Laboratorio: ${mensaje.slice(0, 35)}`,
+        descripcion: `⚔️ Objetivo de la Misión:\nDesarrollar una solución práctica que aplique los conceptos de: "${mensaje}".\n\n📜 Requisitos de entrega:\n1. Desarrollo o código fuente debidamente comentado.\n2. Estructura clara y modular.\n3. Comprobación con al menos un caso de prueba.`
+      }
+    };
+  }
+
+  return {
+    tipo: modo === 'alquimista' ? 'alquimista' : 'chat',
+    resultado: `🧙‍♂️ **Oráculo & Copiloto IA:** He analizado tu consulta sobre **"${mensaje}"**.\n\n**Recomendaciones clave:**\n1. **Estructura:** Divide este tema en un concepto teórico breve (Pergamino) seguido de un ejercicio paso a paso.\n2. **Puntos críticos:** Asegúrate de resaltar los errores más comunes para que los estudiantes no pierdan HP en la evaluación.\n3. **Acción rápida:** Usa los botones superiores (*Generar Preguntas*, *Crear Ejemplo* o *Diseñar Misión*) para publicar este contenido directamente en el mapa.`
+  };
+};
+
 app.post('/api/ia/asistente', async (req, res) => {
   const { mensaje, modo = 'chat', contexto = '' } = req.body;
-  const apiKey = process.env.GEMINI_API_KEY;
+  // Limpia comillas o espacios accidentales en el archivo .env
+  const apiKey = (process.env.GEMINI_API_KEY || '').replace(/['"]/g, '').trim();
 
   if (!mensaje?.trim()) {
-    return res.status(400).json({ error: 'Por favor escribe tu consulta o instrucción para el Sabio Alquimista.' });
+    return res.status(400).json({ error: 'Por favor escribe tu consulta o información.' });
   }
 
-  // MODO SIN API KEY: Respuestas inteligentes e instantáneas para demostración académica
+  // Si no hay API Key configurada, usa el respaldo directo
   if (!apiKey || apiKey === 'tu_api_key_aqui') {
-    if (modo === 'preguntas') {
-      return res.json({
-        tipo: 'preguntas',
-        resultado: [
-          {
-            enunciado: `En la mazmorra de "${mensaje.slice(0, 45)}", ¿cuál es el principio fundamental para superar el desafío?`,
-            opcion_a: "Estructurar la lógica de forma modular, validando entradas y estado",
-            opcion_b: "Omitir las reglas de encapsulamiento y control de flujo",
-            opcion_c: "Ejecutar ciclos infinitos sin condición de parada",
-            opcion_d: "Depender únicamente de variables globales sin tipo",
-            opcion_correcta: "A",
-            explicacion: "La modularidad y validación garantizan que el código o modelo estadístico sea mantenible y libre de errores."
-          },
-          {
-            enunciado: `¿Qué estrategia permite optimizar la resolución práctica de "${mensaje.slice(0, 35)}"?`,
-            opcion_a: "Duplicar funciones en cada archivo del proyecto",
-            opcion_b: "Dividir el problema en subprocesos claros y verificables",
-            opcion_c: "Ignorar los casos borde o valores atípicos",
-            opcion_d: "Eliminar las pruebas de verificación",
-            opcion_correcta: "B",
-            explicacion: "El diseño divide y vencerás facilita depurar cada etapa antes de enfrentar al Jefe Final."
-          },
-          {
-            enunciado: `¿Cuál es el resultado directo de aplicar correctamente los pergaminos teóricos de este bioma?`,
-            opcion_a: "Código y análisis robustos, escalables y fáciles de auditar",
-            opcion_b: "Pérdida de precisión en los resultados obtenidos",
-            opcion_c: "Bloqueo de la interfaz del usuario",
-            opcion_d: "Incompatibilidad con bases de datos relacionales",
-            opcion_correcta: "A",
-            explicacion: "Aplicar la teoría garantiza precisión técnica y te otorga el máximo de XP en la evaluación."
-          }
-        ]
-      });
-    }
-
-    if (modo === 'ejemplo') {
-      return res.json({
-        tipo: 'ejemplo',
-        resultado: {
-          titulo: `Pergamino Ancestral: ${mensaje.slice(0, 38)}`,
-          contenido: `// 📜 Pergamino de Estudio generado por el Sabio Alquimista AI\n// Tema: ${mensaje}\n\n#include <iostream>\n#include <vector>\nusing namespace std;\n\nclass MisionAcademica {\nprivate:\n    string nombreBioma;\n    int xpRecompensa;\npublic:\n    MisionAcademica(string n, int xp) : nombreBioma(n), xpRecompensa(xp) {}\n    void ejecutarConjuro() {\n        cout << "Bioma dominado: " << nombreBioma << " (+" << xpRecompensa << " XP)" << endl;\n    }\n};\n\nint main() {\n    MisionAcademica reto("${mensaje.slice(0, 25)}", 300);\n    reto.ejecutarConjuro();\n    return 0;\n}`
-        }
-      });
-    }
-
-    if (modo === 'tarea') {
-      return res.json({
-        tipo: 'tarea',
-        resultado: {
-          titulo: `Misión de Gremio: ${mensaje.slice(0, 38)}`,
-          descripcion: `⚔️ OBJETIVO DE LA MISIÓN:\nDesarrollar e implementar una solución aplicada sobre "${mensaje}".\n\n📜 REQUISITOS DEL PERGAMINO DE ENTREGA:\n1. Explicación clara del planteamiento o código fuente comentado.\n2. Aplicación práctica de los conceptos vistos en el bioma actual.\n3. Conclusión o verificación con al menos un caso de prueba.\n\n🏆 RECOMPENSA: Hasta +200 XP al ser calificada por el Game Master.`
-        }
-      });
-    }
-
-    if (modo === 'alquimista') {
-      return res.json({
-        tipo: 'alquimista',
-        resultado: `🦉 **Sabio Alquimista AI:** ¡Saludos, aventurero! He consultado los pergaminos sobre *"${mensaje}"*.\n\nMi consejo táctico para tu misión:\n1. **Concepto Clave:** Asegúrate de comprender la lógica paso a paso antes de entrar a la mazmorra; no memorices, analiza el porqué de cada estructura.\n2. **Estrategia contra el Jefe:** Lee con cuidado cada opción del examen (tienes 5 minutos en el reloj de arena) y descarta primero las opciones que contradigan la teoría del Pergamino.\n3. **Tip de Gremio:** Si tienes una tarea pendiente en este bioma, entrégala pronto para evitar la *Tormenta de Fechas* y ganar XP extra.`
-      });
-    }
-
-    return res.json({
-      tipo: 'chat',
-      resultado: `🧙‍♂️ **Copiloto Game Master:** He analizado tu solicitud sobre *"${mensaje}"*.\n\n**Ruta pedagógica sugerida para Saga Académica:**\n1. **Bioma del Mapa:** Crea el tema asignándole el bioma de *Bosque* (introductorio) o *Mazmorra* (avanzado).\n2. **Pergamino de Estudio:** Publica un ejemplo corto y comentado para que los alumnos lo desbloqueen antes del examen.\n3. **Jefe Final:** Usa las pestañas de arriba (*Generar Preguntas* o *Diseñar Trabajo*) para crear los reactivos automáticamente con un solo clic.`
-    });
+    console.log('ℹ️ [Copiloto IA] Sin API Key en .env -> Usando generador local.');
+    return res.json(generarRespuestaRespaldo(mensaje.trim(), modo));
   }
 
-  // CON API KEY DE GEMINI ACTIVA (Usando gemini-2.5-flash actualizado)
   try {
     let systemInstruction = "";
     let forceJson = false;
 
     if (modo === 'preguntas') {
       forceJson = true;
-      systemInstruction = `Eres un docente universitario experto y Game Master de "Saga Académica". A partir del tema suministrado, genera exactamente 3 preguntas de opción múltiple de calidad académica.
-Debes responder ÚNICAMENTE un arreglo JSON con este formato exacto:
+      systemInstruction = `Eres un docente universitario experto. A partir del tema suministrado, genera exactamente 3 preguntas de opción múltiple.
+Responde ÚNICAMENTE un arreglo JSON válido con este formato exacto:
 [
   {
     "enunciado": "Texto de la pregunta",
@@ -550,64 +547,85 @@ Debes responder ÚNICAMENTE un arreglo JSON con este formato exacto:
     "opcion_b": "Opción B",
     "opcion_c": "Opción C",
     "opcion_d": "Opción D",
-    "opcion_correcta": "A",
-    "explicacion": "Breve explicación de por qué es correcta"
+    "opcion_correcta": "A"
   }
 ]`;
     } else if (modo === 'ejemplo') {
       forceJson = true;
-      systemInstruction = `Eres un docente universitario experto. Basándote en el tema indicado, genera un ejemplo práctico o de código bien explicado (Pergamino de Estudio).
-Responde ÚNICAMENTE un objeto JSON:
+      systemInstruction = `Eres un docente de programación y ciencias. Basándote en el tema indicado, genera un ejemplo práctico o de código bien comentado.
+Responde ÚNICAMENTE un objeto JSON válido:
 {
   "titulo": "Título breve y descriptivo",
-  "contenido": "Desarrollo paso a paso o código fuente con comentarios claros"
+  "contenido": "Código fuente o ejemplo explicado paso a paso"
 }`;
     } else if (modo === 'tarea') {
       forceJson = true;
-      systemInstruction = `Eres un docente universitario diseñando una misión práctica para "Saga Académica". Genera un trabajo práctico con instrucciones claras y criterios de evaluación.
-Responde ÚNICAMENTE un objeto JSON:
+      systemInstruction = `Eres un docente universitario. Genera un trabajo práctico o misión académica con instrucciones claras.
+Responde ÚNICAMENTE un objeto JSON válido:
 {
-  "titulo": "Título de la misión o laboratorio",
-  "descripcion": "Instrucciones detalladas, entregables y criterios de evaluación"
+  "titulo": "Título de la tarea o misión",
+  "descripcion": "Instrucciones detalladas, requisitos y criterios de entrega"
 }`;
-    } else if (modo === 'alquimista') {
-      systemInstruction = `Eres el "Sabio Alquimista AI", un búho erudito y mentor dentro del mundo RPG educativo "Saga Académica". Responde al estudiante de forma motivadora, clara y didáctica sobre su duda académica (${contexto}), usando sutiles metáforas de RPG (pergaminos, conjuros, jefes, XP) sin dejar de ser riguroso y claro académicamente.`;
     } else {
-      systemInstruction = `Eres el Copiloto de Inteligencia Artificial para el profesor (Game Master) de la plataforma "Saga Académica". Ayúdale a redactar temas, ejemplos, ejercicios o guías de estudio con excelencia académica.`;
+      systemInstruction = `Eres el Oráculo & Copiloto de Inteligencia Artificial de la plataforma "Saga Académica" (${contexto}). Asiste con excelente calidad técnica y didáctica de forma clara, estructurada y concisa.`;
     }
 
     const payload = {
-      contents: [{ parts: [{ text: `${systemInstruction}\n\nCONSULTA:\n${mensaje}` }] }]
+      contents: [{ parts: [{ text: `${systemInstruction}\n\nMENSAJE:\n${mensaje}` }] }]
     };
 
     if (forceJson) {
       payload.generationConfig = { responseMimeType: "application/json" };
     }
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
+    // Probamos primero con gemini-2.5-flash y como respaldo gemini-2.0-flash
+    const modelos = ['gemini-3.5-flash-lite', 'gemini-3.8-flash', 'gemini-2.5-flash', 'gemini-2.0-flash'];
+    let textoGenerado = null;
+    let ultimoErrorAPI = null;
 
-    const data = await response.json();
-    const textoGenerado = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    for (const modelo of modelos) {
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${modelo}:generateContent?key=${apiKey}`,
+      {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }
+      );
 
+      const data = await response.json();
+
+      if (response.ok && data?.candidates?.[0]?.content?.parts?.[0]?.text) {
+        textoGenerado = data.candidates[0].content.parts[0].text;
+        console.log(`✅ [Copiloto IA] Respuesta generada con éxito usando ${modelo}`);
+        break;
+      } else {
+        ultimoErrorAPI = data?.error?.message || `HTTP ${response.status}`;
+        console.warn(`⚠️ [Copiloto IA] Falló ${modelo}: ${ultimoErrorAPI}`);
+      }
+    }
+
+    // Si la API Key falló en ambos modelos, mostramos aviso en consola y activamos el auto-rescate
     if (!textoGenerado) {
-      throw new Error('Respuesta vacía del modelo');
+      console.error(`❌ [Copiloto IA] La API Key fue rechazada por Google (${ultimoErrorAPI}). Activando respuesta de respaldo automática.`);
+      return res.json(generarRespuestaRespaldo(mensaje.trim(), modo));
     }
 
     if (forceJson) {
-      res.json({ tipo: modo, resultado: JSON.parse(textoGenerado) });
+      // Limpiar bloques ```json ... ``` si el modelo los incluyó
+      const jsonLimpio = textoGenerado.replace(/```json/gi, '').replace(/```/g, '').trim();
+      res.json({ tipo: modo, resultado: JSON.parse(jsonLimpio) });
     } else {
       res.json({ tipo: modo === 'alquimista' ? 'alquimista' : 'chat', resultado: textoGenerado });
     }
   } catch (error) {
-    console.error("Error en Copiloto IA:", error);
-    res.status(500).json({ error: 'Error al procesar la solicitud con la IA.' });
+    console.error("❌ Error interno en Copiloto IA:", error.message);
+    // En lugar de devolver 500 y bloquear al usuario, devolvemos el respaldo
+    return res.json(generarRespuestaRespaldo(mensaje.trim(), modo));
   }
 });
 
+// Compatibilidad con endpoint anterior
 app.post('/api/ia/generar-evaluacion', (req, res) => {
   res.redirect(307, '/api/ia/asistente');
 });
