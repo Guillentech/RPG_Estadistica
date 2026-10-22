@@ -2186,6 +2186,7 @@ svg[shapeRendering='crispEdges'] { shape-rendering: crispEdges; }
 }
 [data-theme="light"] .header-pro { box-shadow: 0 4px 0 0 var(--violet), 0 8px 0 0 var(--edge); }
 [data-theme="light"] .brand-title { text-shadow: 2px 2px 0 var(--student-lo); }
+[data-theme="light"] .brand-subtitle { color: var(--text-main); }
 [data-theme="light"] .stat-bar,
 [data-theme="light"] .rpg-stat-bar { background: var(--panel-lo); box-shadow: 0 0 0 2px var(--edge-soft); }
 [data-theme="light"] .rpg-map-title-banner { color: var(--on-accent); }
@@ -2195,7 +2196,12 @@ svg[shapeRendering='crispEdges'] { shape-rendering: crispEdges; }
 [data-theme="light"] .rpg-map-frame,
 [data-theme="light"] .rpg-map-title-banner { background: var(--panel-lo); }
 [data-theme="light"] .rpg-window__titlebar { color: var(--text-main); }
-[data-theme="light"] .btn-guest-teacher { --c-hi: var(--edge-soft); }
+[data-theme="light"] .btn-guest-teacher {
+  --c: var(--teacher-lo);
+  --c-hi: var(--panel);
+  --c-lo: var(--teacher);
+  color: var(--teacher-hi);
+}
 [data-theme="light"] .card-pro:hover,
 [data-theme="light"] .card:hover { --borde: var(--gold); }
 
@@ -2270,12 +2276,20 @@ svg[shapeRendering='crispEdges'] { shape-rendering: crispEdges; }
 [data-theme="light"] .rpg-turn-btn.is-answered { color: var(--student-hi); }
 [data-theme="light"] .badge--teacher { color: var(--teacher-hi); }
 [data-theme="light"] .quest-file:hover { color: var(--on-accent); }
+[data-theme="light"] .hero-badge {
+  color: var(--gold-ink);
+  background: var(--gold-bg);
+}
+[data-theme="light"] .user-role { color: var(--teacher-hi); }
+[data-theme="light"] .hud-kpi__value { color: var(--text-main); }
+[data-theme="light"] .map-banner { color: var(--student-hi); }
 
 /* Botones dorados: tinta oscura sobre oro en tema oscuro; clara sobre oro profundo en diurno. */
 .pixel-btn.pixel-btn--gold,
 .btn-pro.btn-pro--gold { color: var(--on-accent); }
 [data-theme="dark"] .pixel-btn.pixel-btn--gold,
-[data-theme="dark"] .btn-pro.btn-pro--gold { color: var(--ink); }
+[data-theme="dark"] .btn-pro.btn-pro--gold,
+[data-theme="dark"] .map-hero__alert { color: var(--ink); }
 
 /* Insignia verde: tinta oscura sobre el verde luminoso del tema oscuro. */
 [data-theme="dark"] .badge.badge-success { color: var(--ink); }
