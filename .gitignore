@@ -15,6 +15,7 @@ dist
 dist-ssr
 *.local
 backend/.env
+.archify
 
 # Editor directories and files
 .vscode/*
