@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Home from './pages/Home';
@@ -9,13 +9,20 @@ import PanelEstudiante from './pages/PanelEstudiante';
 import RendirEvaluacion from './pages/RendirEvaluacion';
 // 💡 CORRECCIÓN CRÍTICA: Se añadieron 'User' y 'Compass' a las importaciones
 import { 
-  LogOut, Swords, ArrowLeft, Sparkles, Shield, Crown, Sun, Moon, User, Compass 
+  LogOut, Swords, ArrowLeft, Shield, Sun, Moon, User, Compass
 } from 'lucide-react';
 
 const HeaderGlobal = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme_lms') || 'dark');
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme_lms', theme);
+  }, [theme]);
+  const toggleTheme = () => setTheme(t => (t === 'dark' ? 'light' : 'dark'));
 
   const enInicio = location.pathname === '/';
   const enCombate = location.pathname.startsWith('/evaluacion/');
@@ -54,7 +61,7 @@ const HeaderGlobal = () => {
         )}
 
         <Link to="/" className="brand-logo">
-          <div className="brand-icon"><Swords size={22} color="#090d16" /></div>
+          <div className="brand-icon"><Swords size={22} /></div>
           <div className="brand-text">
             <span className="brand-title">SAGA ACADÉMICA</span>
             <span className="brand-subtitle">LMS RPG 2D • GREMIO UNIVERSITARIO</span>
@@ -63,10 +70,13 @@ const HeaderGlobal = () => {
       </div>
 
       <div className="header-right">
+        <button className="btn-theme-toggle" onClick={toggleTheme} title="Cambiar tema claro/oscuro" aria-label="Cambiar tema">
+          {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+        </button>
         {user ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <div className="header-user">
             {enInicio && (
-              <Link to={user.rol === 'profesor' ? '/panel-profesor' : '/panel-estudiante'} className="btn-guest btn-guest-student" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+              <Link to={user.rol === 'profesor' ? '/panel-profesor' : '/panel-estudiante'} className="btn-guest btn-guest-student">
                 <Compass size={16} /><span>{user.rol === 'profesor' ? 'Ir a Mi Consola' : 'Ir a Mi Mapa 2D'}</span>
               </Link>
             )}
@@ -74,9 +84,9 @@ const HeaderGlobal = () => {
             <div className="user-profile-badge">
               
               {/* 💡 AQUÍ SE MUESTRA LA FOTO DE PERFIL EN TIEMPO REAL */}
-              <div className="avatar-circle" style={{ padding: user.avatar ? 0 : '', overflow: 'hidden' }}>
+              <div className="avatar-circle">
                 {user.avatar ? (
-                  <img src={user.avatar} alt="Perfil" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={user.avatar} alt="Perfil" className="avatar-img" />
                 ) : (
                   user.rol === 'profesor' ? <Shield size={16} /> : <User size={16} />
                 )}

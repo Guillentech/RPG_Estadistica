@@ -3,8 +3,9 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { 
   Map, Backpack, Scroll, Users, Trophy, Swords, CloudLightning, 
-  Send, Eye, X, Sparkles, Zap, Compass, CheckCircle2, Lock
+  Send, X
 } from 'lucide-react';
+import { StatBar } from '../components/rpg';
 
 // ============================================================================
 // 💡 SPRITES PIXEL ART 16-BIT (SVG)
@@ -476,7 +477,6 @@ export default function PanelEstudiante() {
   const xpActual = user?.xp || 150;
   const nivelActual = user?.nivel || 1;
   const xpEnNivel = xpActual % 250; // Progreso hacia el siguiente nivel (cada 250 XP sube de nivel)
-  const porcentajeXP = Math.min(100, Math.max(20, Math.round((xpEnNivel / 250) * 100)));
 
   // Determinar eventos pendientes para la stamina y el clima
   const examenesPendientes = evaluaciones.filter(ev => !calificaciones.some(c => c.evaluacion_id === ev.id));
@@ -488,86 +488,50 @@ export default function PanelEstudiante() {
   const hayTormenta = examenesPendientes.length > 0 || tareasPendientes.length > 0;
 
   return (
-    <div className="container" style={{ maxWidth: '1220px', paddingTop: '0.6rem' }}>
+    <div className="container page-shell" style={{ maxWidth: '1220px' }}>
       
       {/* =====================================================================
           1. TOP HUD 16-BIT (AVATAR IZQ | BARRAS XP Y ENERGÍA CENTRO | CLIMA DER)
          ===================================================================== */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'minmax(240px, 1fr) minmax(320px, 2fr) minmax(210px, 0.85fr)',
-        gap: '0.85rem',
-        background: 'linear-gradient(180deg, #0f1329 0%, #090c1a 100%)',
-        border: '3px solid #a855f7',
-        borderRadius: '14px',
-        padding: '0.7rem 1rem',
-        marginBottom: '0.85rem',
-        boxShadow: '0 0 22px rgba(168, 85, 247, 0.35), inset 0 0 18px rgba(168, 85, 247, 0.15)',
-        alignItems: 'center'
-      }}>
+      <div className="hud-panel">
         {/* IZQUIERDA: Avatar, Nombre, Nivel, Clase y Token */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div style={{
-            width: '52px', height: '52px', borderRadius: '8px', border: '2px solid #c084fc',
-            background: '#1e1b4b', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 0 12px rgba(192, 132, 252, 0.4)', flexShrink: 0, overflow: 'hidden'
-          }}>
+        <div className="hud-hero">
+          <div className="hud-avatar">
             <AvatarHero16Bit clase={user?.clase_rpg || 'Arquera Lógica'} />
           </div>
-          <div>
-            <div className="pixel-font" style={{ fontSize: '0.72rem', color: '#ffffff', lineHeight: 1.35 }}>
+          <div className="hud-identity">
+            <span className="hud-name">
               {user?.nombre || 'Estudiante'}
-            </div>
-            <div style={{ fontSize: '0.78rem', fontWeight: '800', color: '#c084fc', marginTop: '2px' }}>
+            </span>
+            <span className="hud-role">
               Nvl {nivelActual} • {user?.clase_rpg || 'Aventurero'}
-            </div>
-            <span style={{ fontSize: '0.68rem', color: '#38bdf8', fontFamily: 'monospace' }}>
+            </span>
+            <span className="hud-token">
               TOKEN: {user?.codigo_unico || 'N/A'}
             </span>
           </div>
         </div>
 
-        {/* CENTRO: Barras de XP (Verde Neón) y Energía (Cian) */}
-        <div style={{
-          display: 'flex', flexDirection: 'column', gap: '0.5rem',
-          padding: '0.2rem 0.75rem', borderLeft: '1px solid rgba(168, 85, 247, 0.3)', borderRight: '1px solid rgba(168, 85, 247, 0.3)'
-        }}>
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', fontWeight: '800', marginBottom: '3px' }}>
-              <span className="pixel-font" style={{ fontSize: '0.58rem', color: '#4ade80' }}>★ EXPERIENCIA (XP)</span>
-              <span style={{ fontFamily: 'monospace', color: '#86efac' }}>{xpActual} XP ({porcentajeXP}%)</span>
-            </div>
-            <div style={{ width: '100%', height: '12px', background: '#050811', border: '2px solid #059669', borderRadius: '6px', overflow: 'hidden' }}>
-              <div style={{ width: `${porcentajeXP}%`, height: '100%', background: 'linear-gradient(90deg, #10b981 0%, #4ade80 100%)', boxShadow: '0 0 12px #22c55e', transition: 'width 0.4s ease' }} />
-            </div>
-          </div>
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', fontWeight: '800', marginBottom: '3px' }}>
-              <span className="pixel-font" style={{ fontSize: '0.58rem', color: '#38bdf8' }}>⚡ ENERGÍA / STAMINA</span>
-              <span style={{ fontFamily: 'monospace', color: '#7dd3fc' }}>{energiaActual} / 100 EN</span>
-            </div>
-            <div style={{ width: '100%', height: '12px', background: '#050811', border: '2px solid #0284c7', borderRadius: '6px', overflow: 'hidden' }}>
-              <div style={{ width: `${energiaActual}%`, height: '100%', background: 'linear-gradient(90deg, #0284c7 0%, #38bdf8 100%)', boxShadow: '0 0 12px #38bdf8', transition: 'width 0.4s ease' }} />
-            </div>
-          </div>
+        {/* CENTRO: Barras de XP (Oro) y Energía/Stamina (Cian) - estilo RPG pergamino */}
+        <div className="hud-stats">
+          <StatBar label="★ EXPERIENCIA (XP)" value={xpEnNivel} max={250} color="xp" suffix=" XP" showPercent />
+          <StatBar label="⚡ ENERGÍA / STAMINA" value={energiaActual} max={100} color="stamina" suffix=" EN" showPercent />
+          <StatBar label="❤ HP DEL JUGADOR" value={Math.min(100, 60 + nivelActual * 5)} max={100} color="hp" suffix=" HP" showPercent />
         </div>
 
         {/* DERECHA: Widget del Clima */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', justifyContent: 'flex-end' }}>
-          <div style={{
-            width: '42px', height: '42px', borderRadius: '8px', background: 'rgba(168, 85, 247, 0.16)',
-            border: '2px solid #c084fc', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fde047', flexShrink: 0
-          }}>
+        <div className="hud-weather">
+          <div className="hud-weather__icon">
             <CloudLightning size={22} />
           </div>
           <div>
-            <div className="pixel-font" style={{ fontSize: '0.55rem', color: '#c084fc' }}>CLIMA: 24H</div>
-            <div style={{ fontSize: '0.78rem', fontWeight: '800', color: '#ffffff', marginTop: '2px' }}>
+            <span className="hud-weather__label">CLIMA: 24H</span>
+            <span className={`hud-weather__state ${hayTormenta ? 'is-storm' : ''}`}>
               {hayTormenta ? 'TORMENTA DE FECHAS' : 'CIELO DESPEJADO'}
-            </div>
-            <div style={{ fontSize: '0.68rem', color: '#94a3b8' }}>
+            </span>
+            <span className="hud-weather__meta">
               {examenesPendientes.length} Jefes activos
-            </div>
+            </span>
           </div>
         </div>
       </div>
@@ -576,35 +540,37 @@ export default function PanelEstudiante() {
           2. VIEWPORT 16:9 DEL MAPA OVERWORLD 2D PIXEL ART
          ===================================================================== */}
       {vistaHotbar === 'mapa' && (
-        <div style={{
-          position: 'relative', width: '100%', aspectRatio: '16 / 9', minHeight: '480px', maxHeight: '620px',
-          border: '3px solid #a855f7', borderRadius: '16px', overflow: 'hidden',
-          boxShadow: '0 0 35px rgba(168, 85, 247, 0.35), inset 0 0 40px rgba(0,0,0,0.8)',
-          backgroundColor: '#082f49', userSelect: 'none'
-        }}>
+        <div className="map-viewport">
           {/* El Canvas de HTML5 donde corre el Game Loop */}
-          <canvas ref={canvasRef} width={480} height={270} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', imageRendering: 'pixelated', zIndex: 1 }} />
+          <canvas ref={canvasRef} width={480} height={270} className="pixel-canvas" />
 
-          <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', zIndex: 20, background: 'linear-gradient(180deg, #2e1065 0%, #13092b 100%)', border: '2px solid #c084fc', borderTop: 'none', padding: '0.4rem 1.6rem', borderRadius: '0 0 12px 12px', boxShadow: '0 6px 16px rgba(0,0,0,0.75)' }}>
-            <span className="pixel-font" style={{ fontSize: '0.7rem', color: '#ffffff' }}>MAPA DEL SEMESTRE</span>
+          <div className="map-banner">
+            <span>MAPA DEL SEMESTRE</span>
           </div>
 
-          <div style={{ position: 'absolute', top: '12px', left: '14px', zIndex: 15, background: 'rgba(9, 13, 28, 0.85)', border: '1px solid #4ade80', padding: '4px 10px', borderRadius: '6px' }}>
-            <span className="pixel-font" style={{ fontSize: '0.55rem', color: '#4ade80' }}>REGIÓN OESTE: PRADERA DE CÁLCULO</span>
+          <div className="map-region map-region--west">
+            <span>REGIÓN OESTE: PRADERA DE CÁLCULO</span>
           </div>
 
-          <div style={{ position: 'absolute', top: '12px', right: '14px', zIndex: 15, background: 'rgba(9, 13, 28, 0.85)', border: '1px solid #38bdf8', padding: '4px 10px', borderRadius: '6px' }}>
-            <span className="pixel-font" style={{ fontSize: '0.55rem', color: '#38bdf8' }}>REGIÓN ESTE: BOSQUE DE ALGORITMOS</span>
+          <div className="map-region map-region--east">
+            <span>REGIÓN ESTE: BOSQUE DE ALGORITMOS</span>
           </div>
 
           {/* Hitos del camino (Diamantes Verdes) */}
           {hitosCamino.map((hito, i) => {
             const desbloqueado = nivelActual >= hito.nivelReq;
             return (
-              <div key={i} onClick={() => setHeroPos({ x: hito.x, y: hito.y })} title={`${hito.nombre} (Nivel ${hito.nivelReq})`} style={{ position: 'absolute', left: `${hito.x}%`, top: `${hito.y}%`, transform: 'translate(-50%, -50%)', zIndex: 12, cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <div style={{ width: '18px', height: '18px', background: desbloqueado ? '#10b981' : '#334155', border: `2px solid ${desbloqueado ? '#fde047' : '#94a3b8'}`, transform: 'rotate(45deg)', boxShadow: desbloqueado ? '0 0 10px #10b981' : 'none' }} />
-                <span style={{ marginTop: '4px', fontSize: '0.6rem', fontWeight: '800', color: '#fde047', background: 'rgba(0,0,0,0.75)', padding: '1px 5px', borderRadius: '4px' }}>{hito.nombre}</span>
-              </div>
+              <button
+                type="button"
+                key={i}
+                onClick={() => setHeroPos({ x: hito.x, y: hito.y })}
+                title={`${hito.nombre} (Nivel ${hito.nivelReq})`}
+                className={`map-hito ${desbloqueado ? '' : 'is-locked'}`}
+                style={{ left: `${hito.x}%`, top: `${hito.y}%` }}
+              >
+                <span className="map-hito__gem" />
+                <span className="map-hito__label">{hito.nombre}</span>
+              </button>
             );
           })}
 
@@ -617,95 +583,106 @@ export default function PanelEstudiante() {
             const yaDerrotado = jefeActivo && calificaciones.some(c => c.evaluacion_id === jefeActivo.id);
 
             return (
-              <div key={tema.id} onClick={() => caminarHaciaBioma(tema, nodo)} style={{ position: 'absolute', left: `${nodo.x}%`, top: `${nodo.y}%`, transform: 'translate(-50%, -50%)', zIndex: 16, textAlign: 'center', cursor: 'pointer' }}>
+              <button
+                type="button"
+                key={tema.id}
+                onClick={() => caminarHaciaBioma(tema, nodo)}
+                className="map-node"
+                style={{ left: `${nodo.x}%`, top: `${nodo.y}%` }}
+              >
                 {jefeActivo && (
-                  <div className="rpg-boss-tag" style={{ marginBottom: '-4px', fontFamily: "'Press Start 2P', monospace", fontSize: '0.52rem', padding: '4px 8px', background: yaDerrotado ? 'linear-gradient(90deg, #065f46 0%, #10b981 100%)' : 'linear-gradient(90deg, #7f1d1d 0%, #dc2626 100%)' }}>
+                  <span className={`rpg-boss-tag ${yaDerrotado ? 'is-defeated' : ''}`}>
                     {yaDerrotado ? `✓ ${jefeActivo.titulo}` : `⚔️ ${jefeActivo.titulo}`}
-                  </div>
+                  </span>
                 )}
-                <div style={{ filter: 'drop-shadow(0 6px 8px rgba(0,0,0,0.85))' }}>
+                <span className="map-node__art">
                   {tipoBioma === 'mazmorra' ? <CastleDungeonSprite derrotado={yaDerrotado} /> : <BiomeStructureSprite tipo={tipoBioma} />}
-                </div>
-                <div style={{ marginTop: '-2px', background: '#0f1329', border: '2px solid #a855f7', color: '#ffffff', padding: '3px 9px', borderRadius: '6px', fontFamily: "'Press Start 2P', monospace", fontSize: '0.55rem', whiteSpace: 'nowrap', boxShadow: '0 4px 12px rgba(0,0,0,0.9), 0 0 10px rgba(168,85,247,0.4)' }}>
+                </span>
+                <span className="map-nameplate">
                   {tema.titulo}
-                </div>
-              </div>
+                </span>
+              </button>
             );
           })}
 
           {/* PERSONAJE JUGABLE MOVIÉNDOSE EN EL MAPA */}
-          <div style={{ position: 'absolute', left: `${heroPos.x}%`, top: `${heroPos.y}%`, transform: 'translate(-50%, -50%)', zIndex: 22, transition: 'left 0.2s linear, top 0.2s linear', pointerEvents: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <div className="pixel-font" style={{ background: '#ffffff', color: '#0f172a', border: '2px solid #0f172a', borderRadius: '4px', padding: '2px 5px', fontSize: '0.55rem', marginBottom: '2px' }}>!</div>
-            <div style={{ border: '2px solid #fde047', borderRadius: '6px', overflow: 'hidden', boxShadow: '0 6px 14px rgba(0,0,0,0.85)', transform: caminando ? 'translateY(-4px)' : 'none' }}>
+          <div
+            className={`map-hero ${caminando ? 'is-walking' : ''}`}
+            style={{ left: `${heroPos.x}%`, top: `${heroPos.y}%` }}
+          >
+            <span className="map-hero__alert">!</span>
+            <span className="map-hero__frame">
               <AvatarHero16Bit clase={user?.clase_rpg || 'Arquera Lógica'} />
-            </div>
+            </span>
           </div>
 
           {/* Sabio Alquimista AI (Esquina Inferior Derecha) */}
-          <div onClick={() => setDialogoAlquimistaAbierto(true)} style={{ position: 'absolute', right: '14px', bottom: '14px', zIndex: 25, display: 'flex', alignItems: 'center', gap: '0.65rem', background: 'linear-gradient(180deg, rgba(15, 19, 41, 0.96) 0%, rgba(9, 12, 26, 0.98) 100%)', border: '3px solid #a855f7', borderRadius: '12px', padding: '0.55rem 0.85rem', maxWidth: '370px', cursor: 'pointer', boxShadow: '0 0 24px rgba(168, 85, 247, 0.45)' }}>
-            <div style={{ background: '#ffffff', color: '#0f172a', border: '2px solid #1e1b4b', borderRadius: '8px', padding: '0.5rem 0.7rem', fontSize: '0.74rem', fontWeight: '800', lineHeight: 1.35 }}>
-              <div className="pixel-font" style={{ fontSize: '0.5rem', color: '#7e22ce', marginBottom: '3px' }}>SABIO ALQUIMISTA AI</div>
+          <button type="button" onClick={() => setDialogoAlquimistaAbierto(true)} className="alchemist-bubble">
+            <span className="alchemist-bubble__text">
+              <span className="alchemist-bubble__name">SABIO ALQUIMISTA AI</span>
               {examenesPendientes.length > 0 ? `¡Atención! El Jefe de "${examenesPendientes[0].titulo}" aguarda en el castillo. ¿Repasamos los pergaminos?` : `¡Buen trabajo en el camino! Haz clic aquí para consultar cualquier duda del temario.`}
-            </div>
-            <div style={{ flexShrink: 0, textAlign: 'center' }}><AlchemistWizard16Bit /></div>
-          </div>
+            </span>
+            <span className="alchemist-bubble__sprite"><AlchemistWizard16Bit /></span>
+          </button>
 
           {/* D-Pad Legend */}
-          <div style={{ position: 'absolute', left: '14px', bottom: '14px', zIndex: 25, background: 'rgba(9, 12, 26, 0.9)', border: '2px solid #a855f7', borderRadius: '10px', padding: '6px 10px', fontSize: '0.7rem', color: '#cbd5e1' }}>
-            <span className="pixel-font" style={{ fontSize: '0.52rem', color: '#c084fc' }}>MOVIMIENTO: WASD / CLIC EN BIOMA</span>
+          <div className="map-legend">
+            MOVIMIENTO: WASD / CLIC EN BIOMA
           </div>
 
           {/* 💡 MODAL DE BIOMA (Pergaminos y Jefes al entrar) */}
           {zonaActivaModal && (
-            <div style={{ position: 'absolute', inset: '16px', zIndex: 40, background: 'rgba(9, 12, 26, 0.97)', border: '3px solid #a855f7', borderRadius: '14px', padding: '1.25rem 1.5rem', overflowY: 'auto', boxShadow: '0 0 35px rgba(168, 85, 247, 0.5)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '0.75rem', marginBottom: '1rem' }}>
+            <div className="rpg-modal" role="dialog" aria-modal="true" aria-label={zonaActivaModal.titulo}>
+              <div className="rpg-modal__head">
                 <div>
-                  <span className="pixel-font" style={{ fontSize: '0.55rem', color: '#4ade80' }}>BIOMA ACADÉMICO DESBLOQUEADO</span>
-                  <h3 className="pixel-font" style={{ fontSize: '0.95rem', color: '#ffffff', marginTop: '4px' }}>{zonaActivaModal.titulo}</h3>
+                  <span className="hud-eyebrow hud-eyebrow--xp">BIOMA ACADÉMICO DESBLOQUEADO</span>
+                  <h3 className="rpg-modal__title">{zonaActivaModal.titulo}</h3>
                 </div>
-                <button onClick={() => setZonaActivaModal(null)} className="btn-danger" style={{ padding: '0.4rem 0.8rem', borderRadius: '8px', fontWeight: '800' }}>
+                <button onClick={() => setZonaActivaModal(null)} className="btn-danger btn-sm">
                   <X size={16} /> Cerrar
                 </button>
               </div>
-              <p style={{ color: '#cbd5e1', fontSize: '0.88rem', marginBottom: '1rem' }}>{zonaActivaModal.descripcion}</p>
+              <div className="rpg-modal__body">
+                <p className="section-sub">{zonaActivaModal.descripcion}</p>
 
-              <div className="grid-2">
-                {/* Lado de Pergaminos */}
-                <div style={{ background: 'var(--bg-input)', padding: '1rem', borderRadius: '10px', border: '1px solid #a855f7' }}>
-                  <h4 className="pixel-font" style={{ fontSize: '0.68rem', color: '#fde047', marginBottom: '0.75rem' }}>📜 PERGAMINOS DE ESTUDIO</h4>
-                  {zonaActivaModal.ejemplos?.length > 0 ? (
-                    zonaActivaModal.ejemplos.map(ej => (
-                      <div key={ej.id} style={{ background: '#050811', padding: '0.75rem', borderRadius: '8px', marginBottom: '0.6rem', border: '1px solid var(--border)' }}>
-                        <strong style={{ color: '#38bdf8', fontSize: '0.84rem' }}>{ej.titulo}</strong>
-                        <pre style={{ marginTop: '0.4rem', fontSize: '0.78rem', color: '#a5f3fc', overflowX: 'auto', whiteSpace: 'pre-wrap' }}>{ej.contenido}</pre>
-                      </div>
-                    ))
-                  ) : (
-                    <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>Sin pergaminos publicados en esta zona.</p>
-                  )}
-                </div>
-
-                {/* Lado de Evaluaciones (Jefes) */}
-                <div style={{ background: 'var(--bg-input)', padding: '1rem', borderRadius: '10px', border: '1px solid #a855f7' }}>
-                  <h4 className="pixel-font" style={{ fontSize: '0.68rem', color: '#f87171', marginBottom: '0.75rem' }}>⚔️ JEFE DE MAZMORRA</h4>
-                  {evaluaciones.filter(ev => ev.tema_id === zonaActivaModal.id).map(ev => {
-                    const intento = calificaciones.find(c => c.evaluacion_id === ev.id);
-                    return (
-                      <div key={ev.id} style={{ background: '#050811', padding: '0.85rem', borderRadius: '8px', marginBottom: '0.65rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div>
-                          <strong style={{ color: '#fff', fontSize: '0.88rem' }}>{ev.titulo}</strong>
-                          <div style={{ fontSize: '0.74rem', color: '#4ade80' }}>+{ev.xp_recompensa || 300} XP • {ev.total_preguntas} preguntas</div>
+                <div className="grid-2">
+                  {/* Lado de Pergaminos */}
+                  <div className="zone-column">
+                    <h4 className="zone-column__title">📜 PERGAMINOS DE ESTUDIO</h4>
+                    {zonaActivaModal.ejemplos?.length > 0 ? (
+                      zonaActivaModal.ejemplos.map(ej => (
+                        <div key={ej.id} className="pergamino-card">
+                          <strong className="pergamino-card__title">{ej.titulo}</strong>
+                          <pre className="rpg-code rpg-code--tight">{ej.contenido}</pre>
                         </div>
-                        {intento ? (
-                          <span className="badge badge-success">Completado ({intento.puntaje}%)</span>
-                        ) : (
-                          <button onClick={() => navigate(`/evaluacion/${ev.id}`)} className="btn-pro btn-pro-ai" style={{ padding: '0.45rem 0.85rem', fontSize: '0.78rem' }}>
-                            <Swords size={15} /> Iniciar Combate
-                          </button>
-                        )}
-                      </div>
-                    );
-                  })}
+                      ))
+                    ) : (
+                      <p className="rpg-empty">Sin pergaminos publicados en esta zona.</p>
+                    )}
+                  </div>
+
+                  {/* Lado de Evaluaciones (Jefes) */}
+                  <div className="zone-column zone-column--boss">
+                    <h4 className="zone-column__title">⚔️ JEFE DE MAZMORRA</h4>
+                    {evaluaciones.filter(ev => ev.tema_id === zonaActivaModal.id).map(ev => {
+                      const intento = calificaciones.find(c => c.evaluacion_id === ev.id);
+                      return (
+                        <div key={ev.id} className="boss-row">
+                          <div>
+                            <strong className="boss-row__title">{ev.titulo}</strong>
+                            <span className="boss-row__meta">+{ev.xp_recompensa || 300} XP • {ev.total_preguntas} preguntas</span>
+                          </div>
+                          {intento ? (
+                            <span className="badge badge-success">Completado ({intento.puntaje}%)</span>
+                          ) : (
+                            <button onClick={() => navigate(`/evaluacion/${ev.id}`)} className="btn-pro btn-pro-ai btn-sm">
+                              <Swords size={15} /> Iniciar Combate
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             </div>
@@ -713,28 +690,30 @@ export default function PanelEstudiante() {
 
           {/* 💡 MODAL DEL MENTOR AI (Chat con el Sabio Alquimista) */}
           {dialogoAlquimistaAbierto && (
-            <div style={{ position: 'absolute', inset: '20px', zIndex: 45, background: 'rgba(9, 12, 26, 0.98)', border: '3px solid #a855f7', borderRadius: '14px', padding: '1.25rem 1.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <AlchemistWizard16Bit />
+            <div className="rpg-modal" role="dialog" aria-modal="true" aria-label="Sabio Alquimista AI">
+              <div className="rpg-modal__head">
+                <div className="role-card__id">
+                  <span className="alchemist-bubble__sprite"><AlchemistWizard16Bit /></span>
                   <div>
-                    <span className="pixel-font" style={{ fontSize: '0.6rem', color: '#fde047' }}>MENTOR ARCANO IA</span>
-                    <h3 className="pixel-font" style={{ fontSize: '0.9rem', color: '#fff', marginTop: '4px' }}>Sabio Alquimista AI</h3>
+                    <span className="hud-eyebrow hud-eyebrow--gold">MENTOR ARCANO IA</span>
+                    <h3 className="rpg-modal__title">Sabio Alquimista AI</h3>
                   </div>
                 </div>
-                <button onClick={() => setDialogoAlquimistaAbierto(false)} className="btn-danger" style={{ padding: '0.4rem 0.8rem', borderRadius: '8px' }}>✕ Cerrar</button>
+                <button onClick={() => setDialogoAlquimistaAbierto(false)} className="btn-danger btn-sm">✕ Cerrar</button>
               </div>
 
-              <div style={{ background: '#ffffff', color: '#0f172a', padding: '1rem', borderRadius: '10px', border: '2px solid #a855f7', fontWeight: '700', fontSize: '0.88rem', lineHeight: 1.5, margin: '1rem 0', flex: 1, overflowY: 'auto' }}>
-                {respuestaAlquimista || `🧙‍♂️ "¡Saludos, ${user?.nombre || 'Aventurero'}! Escribe cualquier duda sobre Cálculo, Programación o Estadística y te guiaré antes de que cruces la puerta de la mazmorra."`}
-              </div>
+              <div className="rpg-modal__body rpg-modal__body--column">
+                <div className="ai-dialogue">
+                  {respuestaAlquimista || `🧙‍♂️ "¡Saludos, ${user?.nombre || 'Aventurero'}! Escribe cualquier duda sobre Cálculo, Programación o Estadística y te guiaré antes de que cruces la puerta de la mazmorra."`}
+                </div>
 
-              <form onSubmit={consultarSabioAlquimista} style={{ display: 'flex', gap: '0.6rem' }}>
-                <input type="text" className="input-pro" placeholder="Pregúntale al Sabio Alquimista..." value={preguntaAlquimista} onChange={(e) => setPreguntaAlquimista(e.target.value)} />
-                <button type="submit" disabled={cargandoAlquimista} className="btn-pro btn-pro-ai">
-                  <Send size={16} /> {cargandoAlquimista ? 'Consultando...' : 'Consultar'}
-                </button>
-              </form>
+                <form onSubmit={consultarSabioAlquimista} className="ai-ask">
+                  <input type="text" className="input-pro" placeholder="Pregúntale al Sabio Alquimista..." value={preguntaAlquimista} onChange={(e) => setPreguntaAlquimista(e.target.value)} />
+                  <button type="submit" disabled={cargandoAlquimista} className="btn-pro btn-pro-ai">
+                    <Send size={16} /> {cargandoAlquimista ? 'Consultando...' : 'Consultar'}
+                  </button>
+                </form>
+              </div>
             </div>
           )}
         </div>
@@ -746,47 +725,32 @@ export default function PanelEstudiante() {
       
       {/* 💡 INVENTARIO (Aquí entregas las misiones y descargas PDFs/Word) */}
       {vistaHotbar === 'inventario' && (
-        <div className="card-pro" style={{ border: '2px solid #a855f7' }}>
-          <h3 className="pixel-font" style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>🎒 INVENTARIO Y MISIONES ({tareas.length})</h3>
+        <div className="card-pro">
+          <h3 className="pixel-font section-title section-title--gold">🎒 INVENTARIO Y MISIONES ({tareas.length})</h3>
+          {tareas.length === 0 && (
+            <p className="rpg-empty">Aún no hay misiones publicadas. El Game Master las dejará caer en tu inventario.</p>
+          )}
           {tareas.map(tar => {
             const entrega = misEntregas.find(e => e.tarea_id === tar.id);
             return (
-              <div key={tar.id} style={{ background: 'var(--bg-input)', padding: '1rem', borderRadius: '10px', marginBottom: '1rem', border: '1px solid var(--border)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <h4>⚔️ {tar.titulo} ({tar.tema_titulo})</h4>
+              <div key={tar.id} className="quest-card">
+                <div className="quest-card__head">
+                  <h4 className="quest-card__title">⚔️ {tar.titulo} <span className="text-muted">({tar.tema_titulo})</span></h4>
                   <span className={`badge ${entrega ? 'badge-success' : 'badge-danger'}`}>
                     {entrega ? 'Entregada' : 'Pendiente'}
                   </span>
                 </div>
-                <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)', margin: '0.5rem 0' }}>{tar.descripcion}</p>
+                <p className="quest-card__desc">{tar.descripcion}</p>
 
                 {/* 💡 NUEVO: Botón de descarga de archivo adjunto (PDF/Word Base64) */}
                 {tar.archivo_adjunto && (
-                  <div style={{ marginTop: '0.85rem', marginBottom: '1rem' }}>
-                    <a 
-                      href={tar.archivo_adjunto} 
-                      download={`Guia_Mision_${tar.titulo.replace(/\s+/g, '_')}`}
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-                        background: 'rgba(56, 189, 248, 0.15)',
-                        color: '#38bdf8',
-                        padding: '0.55rem 0.9rem',
-                        borderRadius: '8px',
-                        border: '1px solid rgba(56, 189, 248, 0.3)',
-                        textDecoration: 'none',
-                        fontSize: '0.85rem',
-                        fontWeight: '700',
-                        transition: 'all 0.2s ease',
-                        cursor: 'pointer'
-                      }}
-                      onMouseOver={(e) => e.currentTarget.style.background = 'rgba(56, 189, 248, 0.25)'}
-                      onMouseOut={(e) => e.currentTarget.style.background = 'rgba(56, 189, 248, 0.15)'}
-                    >
-                      📄 Descargar Documento Adjunto
-                    </a>
-                  </div>
+                  <a
+                    href={tar.archivo_adjunto}
+                    download={`Guia_Mision_${tar.titulo.replace(/\s+/g, '_')}`}
+                    className="quest-file"
+                  >
+                    📄 Descargar Documento Adjunto
+                  </a>
                 )}
 
                 <textarea
@@ -796,7 +760,7 @@ export default function PanelEstudiante() {
                   value={entregaTexto[tar.id] || ''}
                   onChange={(e) => setEntregaTexto({ ...entregaTexto, [tar.id]: e.target.value })}
                 />
-                <button onClick={() => enviarTrabajo(tar.id)} disabled={enviandoTarea} className="btn-pro btn-pro-primary" style={{ marginTop: '0.5rem', width: '100%' }}>
+                <button onClick={() => enviarTrabajo(tar.id)} disabled={enviandoTarea} className="btn-pro btn-pro-primary btn-block" style={{ marginTop: '0.5rem' }}>
                   <Send size={15} /> {entrega ? 'Actualizar Misión' : 'Enviar Misión'}
                 </button>
               </div>
@@ -807,14 +771,17 @@ export default function PanelEstudiante() {
 
       {/* 💡 PERGAMINOS (Librería de teoría generada por el profe) */}
       {vistaHotbar === 'pergaminos' && (
-        <div className="card-pro" style={{ border: '2px solid #a855f7' }}>
-          <h3 className="pixel-font" style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>📜 PERGAMINOS DE TEORÍA</h3>
+        <div className="card-pro">
+          <h3 className="pixel-font section-title section-title--xp">📜 PERGAMINOS DE TEORÍA</h3>
+          {temas.length === 0 && (
+            <p className="rpg-empty">La biblioteca aún está vacía. Consulta al Sabio Alquimista AI mientras tanto.</p>
+          )}
           {temas.map(t => (
-            <div key={t.id} style={{ marginBottom: '1.25rem', paddingBottom: '1rem', borderBottom: '1px solid var(--border)' }}>
-              <h4 style={{ color: '#4ade80' }}>{t.titulo}</h4>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>{t.descripcion}</p>
+            <div key={t.id} className="scroll-entry">
+              <h4 className="scroll-entry__title">{t.titulo}</h4>
+              <p className="scroll-entry__desc">{t.descripcion}</p>
               {t.ejemplos?.map(ej => (
-                <pre key={ej.id} style={{ background: '#050811', padding: '0.85rem', borderRadius: '8px', color: '#a5f3fc', fontSize: '0.82rem', overflowX: 'auto', marginTop: '0.4rem' }}>
+                <pre key={ej.id} className="rpg-code">
                   <strong>// {ej.titulo}</strong>{'\n'}{ej.contenido}
                 </pre>
               ))}
@@ -825,38 +792,44 @@ export default function PanelEstudiante() {
 
       {/* 💡 GREMIO (Leaderboard / Ranking de XP) */}
       {vistaHotbar === 'gremio' && (
-        <div className="card-pro" style={{ border: '2px solid #a855f7' }}>
-          <h3 className="pixel-font" style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>🛡️ TABLA DEL GREMIO</h3>
-          <table>
-            <thead>
-              <tr><th>#</th><th>Aventurero</th><th>Clase</th><th>Nivel</th><th>XP</th></tr>
-            </thead>
-            <tbody>
-              {gremio.map((m, i) => (
-                <tr key={m.id}>
-                  <td>#{i + 1}</td>
-                  <td style={{ fontWeight: '800' }}>{m.nombre}</td>
-                  <td style={{ color: '#c084fc' }}>{m.clase_rpg}</td>
-                  <td>Nvl {m.nivel || 1}</td>
-                  <td style={{ color: '#4ade80', fontWeight: '700' }}>{m.xp || 150} XP</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="card-pro">
+          <h3 className="pixel-font section-title section-title--teacher">🛡️ TABLA DEL GREMIO</h3>
+          <div className="rpg-table-wrap">
+            <table>
+              <thead>
+                <tr><th>#</th><th>Aventurero</th><th>Clase</th><th>Nivel</th><th>XP</th></tr>
+              </thead>
+              <tbody>
+                {gremio.map((m, i) => (
+                  <tr key={m.id}>
+                    <td>{i + 1}</td>
+                    <td className="text-strong">{m.nombre}</td>
+                    <td className="text-student">{m.clase_rpg}</td>
+                    <td>Nvl {m.nivel || 1}</td>
+                    <td className="text-xp">{m.xp || 150} XP</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {gremio.length === 0 && <p className="rpg-empty">El gremio aún no tiene aventureros registrados.</p>}
         </div>
       )}
 
       {/* 💡 LOGROS (Historial de batallas y notas) */}
       {vistaHotbar === 'logros' && (
-        <div className="card-pro" style={{ border: '2px solid #a855f7' }}>
-          <h3 className="pixel-font" style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>🏆 LOGROS Y RESULTADOS</h3>
+        <div className="card-pro">
+          <h3 className="pixel-font section-title section-title--gold">🏆 LOGROS Y RESULTADOS</h3>
+          {calificaciones.length === 0 && (
+            <p className="rpg-empty">Todavía no has librado ningún combate. ¡Entra a un bioma y desafía a su Jefe!</p>
+          )}
           {calificaciones.map(cal => (
-            <div key={cal.id} style={{ padding: '0.75rem 0', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between' }}>
+            <div key={cal.id} className="achievement-row">
               <div>
-                <strong>{cal.evaluacion_titulo}</strong>
-                <div style={{ fontSize: '0.78rem', color: '#4ade80' }}>+{cal.xp_ganada || 150} XP • {cal.aciertos}/{cal.total_preguntas} aciertos</div>
+                <strong className="achievement-row__title">{cal.evaluacion_titulo}</strong>
+                <span className="achievement-row__meta">+{cal.xp_ganada || 150} XP • {cal.aciertos}/{cal.total_preguntas} aciertos</span>
               </div>
-              <strong style={{ fontSize: '1.15rem', color: cal.puntaje >= 60 ? '#4ade80' : '#f87171' }}>{cal.puntaje}%</strong>
+              <span className={`achievement-score ${cal.puntaje >= 60 ? 'is-pass' : 'is-fail'}`}>{cal.puntaje}%</span>
             </div>
           ))}
         </div>
@@ -865,26 +838,26 @@ export default function PanelEstudiante() {
       {/* =====================================================================
           4. BOTTOM HUD (BARRA DE NAVEGACIÓN INFERIOR CON 5 ICONOS)
          ===================================================================== */}
-      <div className="rpg-hotbar" style={{ marginTop: '0.85rem', border: '3px solid #a855f7' }}>
-        <button className={`rpg-hotbar-slot ${vistaHotbar === 'mapa' ? 'active' : ''}`} onClick={() => setVistaHotbar('mapa')}>
-          <Map size={20} color="#4ade80" />
-          <span className="pixel-font" style={{ fontSize: '0.55rem' }}>Mapa</span>
+      <div className="rpg-hotbar" style={{ marginTop: '0.85rem' }}>
+        <button className={`rpg-hotbar-slot rpg-hotbar-slot--map ${vistaHotbar === 'mapa' ? 'active' : ''}`} onClick={() => setVistaHotbar('mapa')}>
+          <Map size={20} />
+          <span className="pixel-font">Mapa</span>
         </button>
-        <button className={`rpg-hotbar-slot ${vistaHotbar === 'inventario' ? 'active' : ''}`} onClick={() => setVistaHotbar('inventario')}>
-          <Backpack size={20} color="#fb923c" />
-          <span className="pixel-font" style={{ fontSize: '0.55rem' }}>Inventario</span>
+        <button className={`rpg-hotbar-slot rpg-hotbar-slot--bag ${vistaHotbar === 'inventario' ? 'active' : ''}`} onClick={() => setVistaHotbar('inventario')}>
+          <Backpack size={20} />
+          <span className="pixel-font">Inventario</span>
         </button>
-        <button className={`rpg-hotbar-slot ${vistaHotbar === 'pergaminos' ? 'active' : ''}`} onClick={() => setVistaHotbar('pergaminos')}>
-          <Scroll size={20} color="#fde047" />
-          <span className="pixel-font" style={{ fontSize: '0.55rem' }}>Pergaminos</span>
+        <button className={`rpg-hotbar-slot rpg-hotbar-slot--scroll ${vistaHotbar === 'pergaminos' ? 'active' : ''}`} onClick={() => setVistaHotbar('pergaminos')}>
+          <Scroll size={20} />
+          <span className="pixel-font">Pergaminos</span>
         </button>
-        <button className={`rpg-hotbar-slot ${vistaHotbar === 'gremio' ? 'active' : ''}`} onClick={() => setVistaHotbar('gremio')}>
-          <Users size={20} color="#38bdf8" />
-          <span className="pixel-font" style={{ fontSize: '0.55rem' }}>Gremio</span>
+        <button className={`rpg-hotbar-slot rpg-hotbar-slot--guild ${vistaHotbar === 'gremio' ? 'active' : ''}`} onClick={() => setVistaHotbar('gremio')}>
+          <Users size={20} />
+          <span className="pixel-font">Gremio</span>
         </button>
-        <button className={`rpg-hotbar-slot ${vistaHotbar === 'logros' ? 'active' : ''}`} onClick={() => setVistaHotbar('logros')}>
-          <Trophy size={20} color="#fbbf24" />
-          <span className="pixel-font" style={{ fontSize: '0.55rem' }}>Logros</span>
+        <button className={`rpg-hotbar-slot rpg-hotbar-slot--trophy ${vistaHotbar === 'logros' ? 'active' : ''}`} onClick={() => setVistaHotbar('logros')}>
+          <Trophy size={20} />
+          <span className="pixel-font">Logros</span>
         </button>
       </div>
     </div>

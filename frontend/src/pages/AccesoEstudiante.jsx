@@ -51,74 +51,44 @@ export default function AccesoEstudiante() {
   };
 
   return (
-    <div className="container" style={{ maxWidth: '450px', marginTop: '3rem' }}>
-      <div className="card-pro" style={{ padding: '2.25rem', border: '2px solid #9333ea' }}>
-        <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-          <div style={{
-            width: '58px',
-            height: '58px',
-            borderRadius: '14px',
-            background: 'rgba(168, 85, 247, 0.18)',
-            border: '2px solid #c084fc',
-            color: '#e9d5ff',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            margin: '0 auto 1rem auto',
-            boxShadow: '0 0 18px rgba(168, 85, 247, 0.35)'
-          }}>
+    <div className="auth-shell">
+      <div className="auth-panel auth-panel--student">
+        <div className="auth-head">
+          <div className="auth-sprite auth-sprite--student">
             <KeyRound size={28} />
           </div>
-          <h2 className="pixel-font" style={{ fontSize: '1.05rem', color: '#fff' }}>PORTAL DEL GREMIO</h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.86rem', marginTop: '0.45rem' }}>
+          <h2 className="pixel-font auth-title">PORTAL DEL GREMIO</h2>
+          <p className="auth-subtitle">
             Ingresa tu Token Único asignado por el Game Master para desplegar el Mapa del Semestre
           </p>
         </div>
 
         {error && (
-          <div style={{
-            background: 'rgba(239, 68, 68, 0.14)',
-            border: '1px solid rgba(239, 68, 68, 0.4)',
-            color: '#fca5a5',
-            padding: '0.8rem',
-            borderRadius: '10px',
-            marginBottom: '1.2rem',
-            fontSize: '0.86rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem'
-          }}>
+          <div className="rpg-alert rpg-alert--error" role="alert">
             <AlertCircle size={18} />
             <span>{error}</span>
           </div>
         )}
 
         <form onSubmit={handleSubmit} noValidate>
-          <div style={{ marginBottom: '1.35rem' }}>
+          <div className="input-group">
             <label className="input-label" style={{ textAlign: 'center' }}>Token / Código Único de Gremio:</label>
             <input
               type="text"
-              className="input-pro"
-              style={{ 
-                textAlign: 'center', 
-                letterSpacing: '3px', 
-                fontWeight: '800', 
-                fontSize: '1.15rem',
-                fontFamily: 'JetBrains Mono, monospace',
-                color: '#38bdf8'
-              }}
+              className="input-pro token-input"
               value={codigo}
               onChange={(e) => setCodigo(e.target.value.toUpperCase())}
               placeholder="EST-XXXX"
+              autoComplete="off"
+              spellCheck="false"
               required
             />
           </div>
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={cargando}
-            className="btn-pro btn-pro-ai" 
-            style={{ width: '100%', padding: '0.9rem' }}
+            className="btn-pro btn-pro-ai btn-block"
           >
             <Swords size={18} />
             <span>{cargando ? 'Invocando Héroe...' : 'Entrar al Mapa del Semestre'}</span>
@@ -126,27 +96,19 @@ export default function AccesoEstudiante() {
         </form>
 
         {/* Accesos rápidos de prueba para demostración */}
-        <div style={{ marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px solid var(--border)', textAlign: 'center' }}>
-          <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)', display: 'block', marginBottom: '0.5rem' }}>
+        <hr className="hud-divider" />
+        <div>
+          <span className="token-hint">
             <Sparkles size={12} style={{ display: 'inline', marginRight: '4px' }} />
             Tokens rápidos de prueba:
           </span>
-          <div style={{ display: 'flex', gap: '0.45rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <div className="token-list">
             {['EST-F8AO', 'EST-LEO1', 'EST-SOF2', 'EST-ANA3'].map(tok => (
               <button
                 key={tok}
                 type="button"
                 onClick={() => setCodigo(tok)}
-                style={{
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid var(--border-light)',
-                  color: '#c4b5fd',
-                  padding: '0.3rem 0.6rem',
-                  borderRadius: '6px',
-                  fontSize: '0.75rem',
-                  fontFamily: 'monospace',
-                  cursor: 'pointer'
-                }}
+                className="token-chip"
               >
                 {tok}
               </button>

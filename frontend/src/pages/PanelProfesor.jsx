@@ -6,11 +6,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 // Importamos los íconos vectoriales de apoyo para los botones y acciones
 import { 
-  Users, BookOpen, FileCheck, Award, Sparkles, 
-  Download, CheckCircle, BrainCircuit, Trash2, 
+  Users, Award, Sparkles,
+  Download, CheckCircle, BrainCircuit, Trash2,
   ClipboardList, Eye, Copy, PlusCircle,
   Swords, Map, UserCog, Save, UploadCloud, FileText, ImagePlus
 } from 'lucide-react';
+import { StatBar } from '../components/rpg';
 
 // ============================================================================
 // 🎨 SPRITES PIXEL ART 16-BIT (SVG CON CRISP-EDGES)
@@ -522,152 +523,82 @@ export default function PanelProfesor() {
   };
 
   // ==========================================================================
-  // 🎨 ESTILOS TEMÁTICA RPG 16-BIT
-  // ==========================================================================
-  const rpgCardStyle = {
-    background: 'linear-gradient(180deg, #11162d 0%, #090c1a 100%)',
-    border: '2px solid #a855f7',
-    borderRadius: '14px',
-    padding: '1.35rem',
-    boxShadow: '0 0 20px rgba(168, 85, 247, 0.2), inset 0 0 15px rgba(168, 85, 247, 0.08)'
-  };
-
-  const getRpgTabStyle = (nombreTab) => {
-    const activa = pestana === nombreTab;
-    return {
-      background: activa 
-        ? 'linear-gradient(180deg, #581c87 0%, #3b0764 100%)' 
-        : 'rgba(15, 19, 41, 0.9)',
-      color: activa ? '#fde047' : '#cbd5e1',
-      border: activa ? '2px solid #fde047' : '2px solid #6b21a8',
-      boxShadow: activa ? '0 0 14px rgba(253, 224, 71, 0.35)' : 'none',
-      cursor: 'pointer',
-      padding: '0.6rem 1rem',
-      borderRadius: '10px',
-      fontWeight: '800',
-      fontSize: '0.8rem',
-      display: 'inline-flex',
-      alignItems: 'center',
-      gap: '0.5rem',
-      transition: 'all 0.2s ease'
-    };
-  };
-
-  // ==========================================================================
   // 🖥️ RENDERIZADO DE LA INTERFAZ DEL GAME MASTER
   // ==========================================================================
   return (
-    <div className="container" style={{ maxWidth: '1220px', paddingTop: '0.6rem' }}>
+    <div className="container page-shell" style={{ maxWidth: '1220px' }}>
       
       {/* 1. TOP HUD DEL GAME MASTER */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'minmax(250px, 1.1fr) minmax(300px, 1.8fr) minmax(240px, 1fr)',
-        gap: '1rem',
-        background: 'linear-gradient(180deg, #13092b 0%, #090c1a 100%)',
-        border: '3px solid #a855f7',
-        borderRadius: '14px',
-        padding: '0.8rem 1.1rem',
-        marginBottom: '1rem',
-        boxShadow: '0 0 25px rgba(168, 85, 247, 0.35), inset 0 0 18px rgba(168, 85, 247, 0.15)',
-        alignItems: 'center'
-      }}>
+      <div className="hud-panel hud-panel--teacher">
         {/* Izquierda: Avatar en Tiempo Real */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-          <div 
+        <div className="hud-hero">
+          <button
+            type="button"
             onClick={() => setPestana('perfil')}
             title="Haz clic para cambiar tu foto de Game Master"
-            style={{
-              width: '58px', height: '58px', borderRadius: '10px', border: '2px solid #fde047',
-              background: '#1e1b4b', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 0 14px rgba(253, 224, 71, 0.45)', flexShrink: 0, overflow: 'hidden', cursor: 'pointer'
-            }}
+            className="hud-avatar hud-avatar--gold"
           >
             {perfilDocente.avatar ? (
-              <img src={perfilDocente.avatar} alt="Game Master" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src={perfilDocente.avatar} alt="Game Master" className="avatar-img" />
             ) : (
               <GameMasterSprite16Bit />
             )}
-          </div>
-          <div>
-            <span className="pixel-font" style={{ fontSize: '0.55rem', color: '#fde047' }}>
+          </button>
+          <div className="hud-identity">
+            <span className="hud-eyebrow hud-eyebrow--gold">
               👑 CONSOLA GAME MASTER
             </span>
-            <div className="pixel-font" style={{ fontSize: '0.75rem', color: '#ffffff', marginTop: '4px' }}>
+            <span className="hud-name">
               {perfilDocente.nombre}
-            </div>
-            <div style={{ fontSize: '0.78rem', fontWeight: '800', color: '#c084fc', marginTop: '2px' }}>
+            </span>
+            <span className="hud-role">
               {perfilDocente.titulo}
-            </div>
+            </span>
           </div>
         </div>
 
         {/* Centro: Barras de Estado del Mundo */}
-        <div style={{
-          display: 'flex', flexDirection: 'column', gap: '0.55rem',
-          padding: '0.2rem 0.85rem', borderLeft: '1px solid rgba(168, 85, 247, 0.35)', borderRight: '1px solid rgba(168, 85, 247, 0.35)'
-        }}>
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', fontWeight: '800', marginBottom: '3px' }}>
-              <span className="pixel-font" style={{ fontSize: '0.55rem', color: '#4ade80' }}>★ DOMINIO DEL GREMIO (PROMEDIO)</span>
-              <span style={{ fontFamily: 'monospace', color: '#86efac' }}>{promedioNotas}% VICTORIA</span>
-            </div>
-            <div style={{ width: '100%', height: '12px', background: '#050811', border: '2px solid #059669', borderRadius: '6px', overflow: 'hidden' }}>
-              <div style={{ width: `${Math.max(15, promedioNotas)}%`, height: '100%', background: 'linear-gradient(90deg, #10b981 0%, #4ade80 100%)', boxShadow: '0 0 12px #22c55e', transition: 'width 0.4s ease' }} />
-            </div>
-          </div>
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', fontWeight: '800', marginBottom: '3px' }}>
-              <span className="pixel-font" style={{ fontSize: '0.55rem', color: '#f87171' }}>⚔️ AMENAZA DE JEFES FINALES</span>
-              <span style={{ fontFamily: 'monospace', color: '#fca5a5' }}>{evaluaciones.length} JEFES • {tareas.length} MISIONES</span>
-            </div>
-            <div style={{ width: '100%', height: '12px', background: '#050811', border: '2px solid #dc2626', borderRadius: '6px', overflow: 'hidden' }}>
-              <div style={{ width: `${Math.min(100, Math.max(25, evaluaciones.length * 25))}%`, height: '100%', background: 'linear-gradient(90deg, #dc2626 0%, #f87171 100%)', boxShadow: '0 0 12px #ef4444', transition: 'width 0.4s ease' }} />
-            </div>
-          </div>
+        <div className="hud-stats">
+          <StatBar label="★ DOMINIO DEL GREMIO" value={Math.max(15, promedioNotas)} max={100} color="xp" suffix="%" showPercent={false} />
+          <StatBar label="⚔ AMENAZA DE JEFES" value={Math.min(100, Math.max(25, evaluaciones.length * 25))} max={100} color="hp" suffix="%" showPercent={false} />
         </div>
 
         {/* Derecha: Resumen Rápido */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', textAlign: 'center' }}>
-          <div style={{ background: 'rgba(168, 85, 247, 0.15)', border: '1px solid #c084fc', borderRadius: '8px', padding: '0.4rem' }}>
-            <div className="pixel-font" style={{ fontSize: '0.85rem', color: '#fde047' }}>{estudiantes.length}</div>
-            <div style={{ fontSize: '0.68rem', color: '#cbd5e1', fontWeight: '700' }}>Héroes</div>
+        <div className="hud-kpi-grid">
+          <div className="hud-kpi hud-kpi--gold">
+            <span className="hud-kpi__value">{estudiantes.length}</span>
+            <span className="hud-kpi__label">Héroes</span>
           </div>
-          <div style={{ background: 'rgba(56, 189, 248, 0.15)', border: '1px solid #38bdf8', borderRadius: '8px', padding: '0.4rem' }}>
-            <div className="pixel-font" style={{ fontSize: '0.85rem', color: '#38bdf8' }}>{temas.length}</div>
-            <div style={{ fontSize: '0.68rem', color: '#cbd5e1', fontWeight: '700' }}>Biomas</div>
+          <div className="hud-kpi hud-kpi--teacher">
+            <span className="hud-kpi__value">{temas.length}</span>
+            <span className="hud-kpi__label">Biomas</span>
           </div>
         </div>
       </div>
 
       {/* 2. HOTBAR DE PESTAÑAS DEL GAME MASTER (7 SECCIONES) */}
-      <div style={{
-        display: 'flex', gap: '0.5rem', background: 'linear-gradient(180deg, #0f1329 0%, #090c1a 100%)',
-        padding: '0.6rem', borderRadius: '14px', border: '2px solid #a855f7', marginBottom: '1.25rem',
-        flexWrap: 'wrap', justifyContent: 'center', boxShadow: '0 0 18px rgba(168, 85, 247, 0.25)'
-      }}>
-        <button style={getRpgTabStyle('estudiantes')} onClick={() => setPestana('estudiantes')}>
-          <Users size={16} color="#4ade80" /> <span>1. Gremio ({estudiantes.length})</span>
+      <div className="rpg-tabbar">
+        <button className={`rpg-tab rpg-tab--guild ${pestana === 'estudiantes' ? 'is-active' : ''}`} onClick={() => setPestana('estudiantes')}>
+          <Users size={16} /> <span>1. Gremio ({estudiantes.length})</span>
         </button>
-        <button style={getRpgTabStyle('ia-evaluador')} onClick={() => setPestana('ia-evaluador')}>
-          <Sparkles size={16} color="#c084fc" /> <span>2. Oráculo IA</span>
+        <button className={`rpg-tab rpg-tab--oracle ${pestana === 'ia-evaluador' ? 'is-active' : ''}`} onClick={() => setPestana('ia-evaluador')}>
+          <Sparkles size={16} /> <span>2. Oráculo IA</span>
         </button>
-        <button style={getRpgTabStyle('temas')} onClick={() => setPestana('temas')}>
-
-<Map size={16} color="#38bdf8" />
-<span>3. Biomas ({temas.length})</span>
+        <button className={`rpg-tab rpg-tab--map ${pestana === 'temas' ? 'is-active' : ''}`} onClick={() => setPestana('temas')}>
+          <Map size={16} />
+          <span>3. Biomas ({temas.length})</span>
         </button>
-        <button style={getRpgTabStyle('evaluaciones')} onClick={() => setPestana('evaluaciones')}>
-          <Swords size={16} color="#f87171" /> <span>4. Jefes ({evaluaciones.length})</span>
+        <button className={`rpg-tab rpg-tab--boss ${pestana === 'evaluaciones' ? 'is-active' : ''}`} onClick={() => setPestana('evaluaciones')}>
+          <Swords size={16} /> <span>4. Jefes ({evaluaciones.length})</span>
         </button>
-        <button style={getRpgTabStyle('tareas')} onClick={() => setPestana('tareas')}>
-          <ClipboardList size={16} color="#fb923c" /> <span>5. Misiones ({tareas.length})</span>
+        <button className={`rpg-tab rpg-tab--quest ${pestana === 'tareas' ? 'is-active' : ''}`} onClick={() => setPestana('tareas')}>
+          <ClipboardList size={16} /> <span>5. Misiones ({tareas.length})</span>
         </button>
-        <button style={getRpgTabStyle('calificaciones')} onClick={() => setPestana('calificaciones')}>
-          <Award size={16} color="#fde047" /> <span>6. Crónicas CSV</span>
+        <button className={`rpg-tab rpg-tab--log ${pestana === 'calificaciones' ? 'is-active' : ''}`} onClick={() => setPestana('calificaciones')}>
+          <Award size={16} /> <span>6. Crónicas CSV</span>
         </button>
-        <button style={getRpgTabStyle('perfil')} onClick={() => setPestana('perfil')}>
-          <UserCog size={16} color="#f472b6" /> <span>7. Mi Avatar</span>
+        <button className={`rpg-tab rpg-tab--profile ${pestana === 'perfil' ? 'is-active' : ''}`} onClick={() => setPestana('perfil')}>
+          <UserCog size={16} /> <span>7. Mi Avatar</span>
         </button>
       </div>
 
@@ -676,8 +607,8 @@ export default function PanelProfesor() {
          ===================================================================== */}
       {pestana === 'estudiantes' && (
         <div className="grid-2">
-          <div style={rpgCardStyle}>
-            <h3 className="pixel-font" style={{ fontSize: '0.8rem', color: '#4ade80', marginBottom: '1rem' }}>
+          <div className="card-pro">
+            <h3 className="pixel-font section-title section-title--xp">
               🛡️ RECLUTAR NUEVO AVENTURERO
             </h3>
             <form onSubmit={registrarEstudiante}>
@@ -701,46 +632,44 @@ export default function PanelProfesor() {
                   <option value="Alquimista SQL">⚗️ Alquimista SQL (Bases de Datos)</option>
                 </select>
               </div>
-              <button type="submit" className="btn-pro btn-pro-primary" style={{ width: '100%' }}>
+              <button type="submit" className="btn-pro btn-pro-primary btn-block">
                 ⚡ Generar Token de Gremio y Matricular
               </button>
             </form>
           </div>
 
-          <div style={rpgCardStyle}>
-            <h3 className="pixel-font" style={{ fontSize: '0.8rem', color: '#fde047', marginBottom: '1rem' }}>
+          <div className="card-pro">
+            <h3 className="pixel-font section-title section-title--gold">
               📜 MIEMBROS DEL GREMIO ({estudiantes.length})
             </h3>
-            <div style={{ maxHeight: '420px', overflowY: 'auto' }}>
+            <div className="rpg-scroll">
               {estudiantes.map(est => (
-                <div key={est.id} style={{
-                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                  padding: '0.75rem', marginBottom: '0.6rem', background: '#050811',
-                  border: '1px solid rgba(168, 85, 247, 0.35)', borderRadius: '10px'
-                }}>
-                  <div>
-                    <div style={{ fontWeight: '800', color: '#ffffff' }}>
-                      {est.nombre} <span style={{ color: '#4ade80', fontSize: '0.78rem' }}>(Nvl {est.nivel || 1} • {est.xp || 150} XP)</span>
-                    </div>
-                    <div style={{ fontSize: '0.78rem', color: '#c084fc' }}>{est.clase_rpg || 'Mago de Código'}</div>
-                    <span style={{ color: '#fde047', fontSize: '0.82rem', fontFamily: 'monospace', fontWeight: 'bold' }}>
+                <div key={est.id} className="roster-item roster-item--student">
+                  <div className="roster-item__id">
+                    <span className="roster-name">
+                      {est.nombre} <span className="text-xp">(Nvl {est.nivel || 1} • {est.xp || 150} XP)</span>
+                    </span>
+                    <span className="roster-meta">{est.clase_rpg || 'Mago de Código'}</span>
+                    <span className="roster-token">
                       TOKEN: {est.codigo_unico}
                     </span>
                   </div>
-                  <div style={{ display: 'flex', gap: '0.45rem' }}>
+                  <div className="roster-actions">
                     <button 
                       onClick={() => { navigator.clipboard.writeText(est.codigo_unico); alert(`Token ${est.codigo_unico} copiado.`); }} 
-                      className="btn-pro" 
-                      style={{ padding: '0.4rem 0.7rem', fontSize: '0.75rem', background: '#1e1b4b', color: '#fde047', border: '1px solid #fde047' }}
+                      className="btn-pro btn-pro--outline btn-sm"
                     >
                       <Copy size={13} /> Copiar
                     </button>
-                    <button onClick={() => eliminarEstudiante(est.id, est.nombre)} className="btn-danger" style={{ padding: '0.4rem 0.6rem', borderRadius: '8px' }}>
+                    <button onClick={() => eliminarEstudiante(est.id, est.nombre)} className="btn-danger btn-sm" aria-label={`Expulsar a ${est.nombre}`}>
                       <Trash2 size={15} />
                     </button>
                   </div>
                 </div>
               ))}
+              {estudiantes.length === 0 && (
+                <p className="rpg-empty">El gremio está vacío. Matricula al primer aventurero con el formulario.</p>
+              )}
             </div>
           </div>
         </div>
@@ -750,14 +679,16 @@ export default function PanelProfesor() {
           PESTAÑA 2: ORÁCULO & COPILOTO IA
          ===================================================================== */}
       {pestana === 'ia-evaluador' && (
-        <div style={rpgCardStyle}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '1rem' }}>
-            <div style={{ padding: '0.75rem', borderRadius: '12px', background: 'rgba(168, 85, 247, 0.25)', border: '2px solid #c084fc', color: '#fde047' }}>
+        <div className="card-pro">
+          <div className="profile-head">
+            <div className="role-icon role-icon--student">
               <BrainCircuit size={30} />
             </div>
             <div>
-              <h3 className="pixel-font" style={{ fontSize: '0.85rem', color: '#fde047' }}>ORÁCULO ARCANO IA (GEMINI 2.5)</h3>
-              <p style={{ color: '#cbd5e1', fontSize: '0.85rem', marginTop: '4px' }}>
+              <h3 className="pixel-font section-title section-title--gold" style={{ borderBottom: 0, marginBottom: 0, paddingBottom: 0 }}>
+                ORÁCULO ARCANO IA (GEMINI 2.5)
+              </h3>
+              <p className="section-sub" style={{ marginTop: '4px', marginBottom: 0 }}>
                 Forja preguntas de combate, pergaminos de código o misiones automáticamente con un clic.
               </p>
             </div>
@@ -770,15 +701,10 @@ export default function PanelProfesor() {
               { id: 'ejemplo', label: '📜 Forjar Pergamino de Teoría' },
               { id: 'tarea', label: '🛡️ Diseñar Misión Práctica' }
             ].map(m => (
-              <button 
-                key={m.id} 
-                onClick={() => setModoIA(m.id)} 
-                style={{
-                  padding: '0.55rem 0.95rem', borderRadius: '8px', fontSize: '0.82rem', fontWeight: '800', cursor: 'pointer',
-                  border: modoIA === m.id ? '2px solid #fde047' : '1px solid #6b21a8',
-                  background: modoIA === m.id ? '#581c87' : '#050811',
-                  color: modoIA === m.id ? '#fde047' : '#cbd5e1'
-                }}
+              <button
+                key={m.id}
+                onClick={() => setModoIA(m.id)}
+                className={`rpg-chip ${modoIA === m.id ? 'is-active' : ''}`}
               >
                 {m.label}
               </button>
@@ -792,27 +718,28 @@ export default function PanelProfesor() {
             value={promptIA} 
             onChange={(e) => setPromptIA(e.target.value)} 
           />
-          <button onClick={consultarCopiloto} disabled={cargandoIA} className="btn-pro btn-pro-ai" style={{ width: '100%', marginTop: '0.85rem' }}>
+          <button onClick={consultarCopiloto} disabled={cargandoIA} className="btn-pro btn-pro-ai btn-block" style={{ marginTop: '0.85rem' }}>
             <Sparkles size={18} /> {cargandoIA ? 'Invocando sabiduría del Oráculo...' : 'Invocar al Oráculo IA'}
           </button>
 
           {respuestaIA && (
-            <div style={{ marginTop: '1.5rem', borderTop: '2px solid #6b21a8', paddingTop: '1.25rem' }}>
+            <div style={{ marginTop: '1.5rem' }}>
+              <hr className="hud-divider" />
               {respuestaIA.tipo === 'chat' && (
-                <div style={{ background: '#050811', padding: '1.25rem', borderRadius: '10px', border: '1px solid #a855f7' }}>
-                  <pre style={{ whiteSpace: 'pre-wrap', fontFamily: 'inherit', color: '#f8fafc' }}>{respuestaIA.resultado}</pre>
+                <div className="ai-output">
+                  <pre className="rpg-code">{respuestaIA.resultado}</pre>
                 </div>
               )}
 
               {respuestaIA.tipo === 'preguntas' && respuestaIA.resultado.map((preg, idx) => (
-                <div key={idx} style={{ background: '#050811', padding: '1rem', borderRadius: '10px', marginBottom: '0.85rem', border: '1px solid #a855f7' }}>
-                  <p style={{ fontWeight: '800', color: '#fde047', marginBottom: '0.5rem' }}>{idx + 1}. {preg.enunciado}</p>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.4rem', fontSize: '0.84rem', color: '#cbd5e1', marginBottom: '0.75rem' }}>
+                <div key={idx} className="ai-output" style={{ marginBottom: '0.85rem' }}>
+                  <p className="ai-question">{idx + 1}. {preg.enunciado}</p>
+                  <div className="ai-options">
                     <div>A) {preg.opcion_a}</div><div>B) {preg.opcion_b}</div><div>C) {preg.opcion_c}</div><div>D) {preg.opcion_d}</div>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
                     <span className="badge badge-success">Clave Correcta: {preg.opcion_correcta}</span>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                       <select id={`eval-ia-${idx}`} className="input-pro" style={{ padding: '0.4rem', fontSize: '0.82rem', width: 'auto' }}>
                         <option value="">Asignar a Jefe...</option>
                         {evaluaciones.map(e => <option key={e.id} value={e.id}>{e.titulo}</option>)}
@@ -826,11 +753,11 @@ export default function PanelProfesor() {
               ))}
 
               {respuestaIA.tipo === 'ejemplo' && (
-                <div style={{ background: '#050811', padding: '1.25rem', borderRadius: '10px', border: '1px solid #a855f7' }}>
-                  <h4 style={{ color: '#fde047', marginBottom: '0.5rem' }}>📜 {respuestaIA.resultado.titulo}</h4>
-                  <pre style={{ background: '#090d16', padding: '0.85rem', borderRadius: '8px', color: '#a5f3fc', fontSize: '0.84rem', overflowX: 'auto' }}>{respuestaIA.resultado.contenido}</pre>
-                  <div style={{ marginTop: '1rem', display: 'flex', gap: '0.6rem' }}>
-                    <select id="tema-ejemplo-ia" className="input-pro" style={{ flex: 1 }}>
+                <div className="ai-output">
+                  <h4 className="ai-result-title">📜 {respuestaIA.resultado.titulo}</h4>
+                  <pre className="rpg-code">{respuestaIA.resultado.contenido}</pre>
+                  <div style={{ marginTop: '1rem', display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
+                    <select id="tema-ejemplo-ia" className="input-pro" style={{ flex: '1 1 200px' }}>
                       <option value="">Seleccionar Bioma...</option>
                       {temas.map(t => <option key={t.id} value={t.id}>{t.titulo}</option>)}
                     </select>
@@ -842,10 +769,10 @@ export default function PanelProfesor() {
               )}
 
               {respuestaIA.tipo === 'tarea' && (
-                <div style={{ background: '#050811', padding: '1.25rem', borderRadius: '10px', border: '1px solid #a855f7' }}>
-                  <h4 style={{ color: '#fde047', marginBottom: '0.5rem' }}>🛡️ {respuestaIA.resultado.titulo}</h4>
-                  <p style={{ whiteSpace: 'pre-wrap', fontSize: '0.88rem', color: '#e2e8f0' }}>{respuestaIA.resultado.descripcion}</p>
-                  <button onClick={() => guardarTareaDesdeIA()} className="btn-pro btn-pro-primary" style={{ marginTop: '1rem', width: '100%' }}>
+                <div className="ai-output">
+                  <h4 className="ai-result-title">🛡️ {respuestaIA.resultado.titulo}</h4>
+                  <p style={{ whiteSpace: 'pre-wrap', fontSize: '20px', color: 'var(--text-main)' }}>{respuestaIA.resultado.descripcion}</p>
+                  <button onClick={() => guardarTareaDesdeIA()} className="btn-pro btn-pro-primary btn-block" style={{ marginTop: '1rem' }}>
                     <PlusCircle size={16} /> Publicar Misión en el Gremio
                   </button>
                 </div>
@@ -861,8 +788,8 @@ export default function PanelProfesor() {
       {pestana === 'temas' && (
         <div className="grid-2">
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-            <div style={rpgCardStyle}>
-              <h3 className="pixel-font" style={{ fontSize: '0.8rem', color: '#38bdf8', marginBottom: '1rem' }}>
+            <div className="card-pro">
+              <h3 className="pixel-font section-title section-title--teacher">
                 🏰 CONSTRUIR BIOMA EN EL MAPA 2D
               </h3>
               <form onSubmit={crearTema}>
@@ -882,12 +809,12 @@ export default function PanelProfesor() {
                 <div className="input-group">
                   <textarea className="input-pro" placeholder="Descripción teórica..." value={temaDesc} onChange={(e) => setTemaDesc(e.target.value)} rows="2" required />
                 </div>
-                <button type="submit" className="btn-pro btn-pro-primary" style={{ width: '100%' }}>Guardar Bioma en el Mapa</button>
+                <button type="submit" className="btn-pro btn-pro-primary btn-block">Guardar Bioma en el Mapa</button>
               </form>
             </div>
 
-            <div style={rpgCardStyle}>
-              <h3 className="pixel-font" style={{ fontSize: '0.8rem', color: '#fbbf24', marginBottom: '1rem' }}>
+            <div className="card-pro">
+              <h3 className="pixel-font section-title section-title--gold">
                 📜 ESCRIBIR PERGAMINO DE SABIDURÍA
               </h3>
               <form onSubmit={crearEjemplo}>
@@ -903,32 +830,35 @@ export default function PanelProfesor() {
                 <div className="input-group">
                   <textarea className="input-pro" placeholder="Fórmula o código fuente..." value={ejContenido} onChange={(e) => setEjContenido(e.target.value)} rows="3" required />
                 </div>
-                <button type="submit" className="btn-pro btn-pro-primary" style={{ width: '100%' }}>Publicar Pergamino</button>
+                <button type="submit" className="btn-pro btn-pro-primary btn-block">Publicar Pergamino</button>
               </form>
             </div>
           </div>
 
-          <div style={rpgCardStyle}>
-            <h3 className="pixel-font" style={{ fontSize: '0.8rem', color: '#4ade80', marginBottom: '1rem' }}>
+          <div className="card-pro">
+            <h3 className="pixel-font section-title section-title--xp">
               🗺️ REGIONES ACTIVAS EN EL MAPA ({temas.length})
             </h3>
-            <div style={{ maxHeight: '560px', overflowY: 'auto' }}>
+            <div className="rpg-scroll" style={{ maxHeight: '560px' }}>
               {temas.map(t => (
-                <div key={t.id} style={{ background: '#050811', padding: '1rem', borderRadius: '10px', marginBottom: '0.85rem', border: '1px solid rgba(56, 189, 248, 0.4)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div>
-                      <strong style={{ color: '#38bdf8', fontSize: '0.95rem' }}>🏰 {t.titulo}</strong>
-                      <span style={{ marginLeft: '8px', fontSize: '0.72rem', background: '#1e1b4b', color: '#c084fc', padding: '2px 7px', borderRadius: '4px', textTransform: 'uppercase' }}>
+                <div key={t.id} className="roster-item roster-item--teacher">
+                  <div className="roster-item__id">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                      <strong className="text-teacher" style={{ fontSize: '20px' }}>🏰 {t.titulo}</strong>
+                      <span className="tag-bioma">
                         {t.bioma || 'bosque'}
                       </span>
                     </div>
-                    <button onClick={() => eliminarTema(t.id, t.titulo)} className="btn-danger" style={{ padding: '0.3rem 0.5rem', borderRadius: '6px' }}>
-                      <Trash2 size={14} />
-                    </button>
+                    <p className="roster-meta" style={{ marginTop: '0.3rem' }}>{t.descripcion}</p>
                   </div>
-                  <p style={{ fontSize: '0.82rem', color: '#94a3b8', margin: '0.4rem 0' }}>{t.descripcion}</p>
+                  <button onClick={() => eliminarTema(t.id, t.titulo)} className="btn-danger btn-sm" aria-label={`Destruir bioma ${t.titulo}`}>
+                    <Trash2 size={14} />
+                  </button>
                 </div>
               ))}
+              {temas.length === 0 && (
+                <p className="rpg-empty">El mapa no tiene biomas. Construye el primero con el formulario.</p>
+              )}
             </div>
           </div>
         </div>
@@ -940,8 +870,8 @@ export default function PanelProfesor() {
       {pestana === 'evaluaciones' && (
         <div className="grid-2">
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-            <div style={rpgCardStyle}>
-              <h3 className="pixel-font" style={{ fontSize: '0.8rem', color: '#f87171', marginBottom: '1rem' }}>
+            <div className="card-pro">
+              <h3 className="pixel-font section-title section-title--danger">
                 🐉 PASO 1: INVOCAR JEFE DE MAZMORRA
               </h3>
               <form onSubmit={crearEvaluacion}>
@@ -960,17 +890,17 @@ export default function PanelProfesor() {
                   <label className="input-label">Recompensa de XP:</label>
                   <input type="number" className="input-pro" value={evalXp} onChange={(e) => setEvalXp(e.target.value)} min="100" max="1000" step="50" required />
                 </div>
-                <button type="submit" className="btn-pro btn-pro-primary" style={{ width: '100%' }}>
+                <button type="submit" className="btn-pro btn-pro-primary btn-block">
                   ⚔️ Invocar Jefe Final
                 </button>
               </form>
             </div>
 
-            <div style={{ ...rpgCardStyle, border: '2px solid #fde047' }}>
-              <h3 className="pixel-font" style={{ fontSize: '0.8rem', color: '#fde047', marginBottom: '0.5rem' }}>
+            <div className="card-pro card-pro--gold">
+              <h3 className="pixel-font section-title section-title--gold" style={{ marginBottom: '0.5rem' }}>
                 ⚡ PASO 2: CARGAR ATAQUES (PREGUNTAS)
               </h3>
-              <p style={{ fontSize: '0.8rem', color: '#cbd5e1', marginBottom: '0.85rem' }}>
+              <p className="section-sub" style={{ marginBottom: '0.85rem' }}>
                 Elige un Jefe y agrégale preguntas seguidas sin recargar.
               </p>
               <form onSubmit={crearPreguntaManual}>
@@ -983,13 +913,13 @@ export default function PanelProfesor() {
                 <div className="input-group">
                   <textarea className="input-pro" placeholder="Enunciado de la pregunta..." value={enunciado} onChange={(e) => setEnunciado(e.target.value)} rows="2" required />
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                <div className="form-grid-2">
                   <input type="text" className="input-pro" placeholder="Opción A" value={opA} onChange={(e) => setOpA(e.target.value)} required />
                   <input type="text" className="input-pro" placeholder="Opción B" value={opB} onChange={(e) => setOpB(e.target.value)} required />
                   <input type="text" className="input-pro" placeholder="Opción C" value={opC} onChange={(e) => setOpC(e.target.value)} required />
                   <input type="text" className="input-pro" placeholder="Opción D" value={opD} onChange={(e) => setOpD(e.target.value)} required />
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                <div className="form-grid-2 form-grid-2--wide">
                   <select className="input-pro" value={opCorrecta} onChange={(e) => setOpCorrecta(e.target.value)}>
                     <option value="A">Clave: A</option>
                     <option value="B">Clave: B</option>
@@ -998,51 +928,51 @@ export default function PanelProfesor() {
                   </select>
                   <input type="text" className="input-pro" placeholder="Explicación (Opcional)" value={explicacionPreg} onChange={(e) => setExplicacionPreg(e.target.value)} />
                 </div>
-                <button type="submit" className="btn-pro btn-pro-primary" style={{ width: '100%' }}>
+                <button type="submit" className="btn-pro btn-pro-primary btn-block">
                   <PlusCircle size={16} /> Añadir Pregunta a este Jefe
                 </button>
               </form>
             </div>
           </div>
 
-          <div style={rpgCardStyle}>
-            <h3 className="pixel-font" style={{ fontSize: '0.8rem', color: '#f87171', marginBottom: '1rem' }}>
+          <div className="card-pro">
+            <h3 className="pixel-font section-title section-title--danger">
               🏰 JEFES FINALES EN EL MAPA ({evaluaciones.length})
             </h3>
             {evaluaciones.map(ev => (
-              <div key={ev.id} style={{ background: '#050811', padding: '1rem', borderRadius: '10px', marginBottom: '0.85rem', border: '1px solid #ef4444' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+              <div key={ev.id} className="roster-item roster-item--boss" style={{ display: 'block' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+                  <div className="role-card__id">
                     <BossDragonSprite16Bit />
                     <div>
-                      <h4 style={{ color: '#ffffff' }}>{ev.titulo}</h4>
-                      <span style={{ fontSize: '0.78rem', color: '#4ade80', fontWeight: 'bold' }}>
+                      <h4 className="roster-name">{ev.titulo}</h4>
+                      <span className="roster-meta text-xp">
                         +{ev.xp_recompensa || 300} XP • {ev.total_preguntas} preguntas cargadas
                       </span>
                     </div>
                   </div>
-                  <div style={{ display: 'flex', gap: '0.4rem' }}>
-                    <button onClick={() => toggleVerPreguntas(ev)} className="btn-pro btn-pro-primary" style={{ padding: '0.35rem 0.7rem', fontSize: '0.78rem' }}>
+                  <div className="roster-actions">
+                    <button onClick={() => toggleVerPreguntas(ev)} className="btn-pro btn-pro-primary btn-sm">
                       <Eye size={14} /> {evaluacionVerPreguntas?.id === ev.id ? 'Ocultar' : 'Ver Preguntas'}
                     </button>
-                    <button onClick={() => eliminarEvaluacion(ev.id, ev.titulo)} className="btn-danger" style={{ padding: '0.35rem 0.5rem', borderRadius: '6px' }}>
+                    <button onClick={() => eliminarEvaluacion(ev.id, ev.titulo)} className="btn-danger btn-sm" aria-label={`Eliminar jefe ${ev.titulo}`}>
                       <Trash2 size={14} />
                     </button>
                   </div>
                 </div>
 
                 {evaluacionVerPreguntas?.id === ev.id && (
-                  <div style={{ marginTop: '0.85rem', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '0.75rem' }}>
+                  <div style={{ marginTop: '0.85rem', borderTop: '2px dashed var(--panel-hi)', paddingTop: '0.75rem' }}>
                     {preguntasDeEvaluacion.length === 0 ? (
-                      <p style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Aún no hay preguntas para este Jefe.</p>
+                      <p className="rpg-empty">Aún no hay preguntas para este Jefe.</p>
                     ) : (
                       preguntasDeEvaluacion.map((p, idx) => (
-                        <div key={p.id} style={{ background: '#0f172a', padding: '0.6rem', borderRadius: '6px', marginBottom: '0.45rem', fontSize: '0.82rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div key={p.id} className="pergamino-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.6rem' }}>
                           <div>
-                            <strong style={{ color: '#fde047' }}>{idx + 1}. {p.enunciado}</strong>
-                            <div style={{ color: '#4ade80', fontSize: '0.75rem' }}>Clave: {p.opcion_correcta}</div>
+                            <strong className="ai-question" style={{ display: 'block', marginBottom: 0 }}>{idx + 1}. {p.enunciado}</strong>
+                            <span className="roster-meta text-xp">Clave: {p.opcion_correcta}</span>
                           </div>
-                          <button onClick={() => eliminarPreguntaIndividual(p.id)} style={{ background: 'none', border: 'none', color: '#f87171', cursor: 'pointer' }}>
+                          <button onClick={() => eliminarPreguntaIndividual(p.id)} className="btn-icon btn-icon--ghost" aria-label="Eliminar pregunta">
                             <Trash2 size={14} />
                           </button>
                         </div>
@@ -1052,6 +982,9 @@ export default function PanelProfesor() {
                 )}
               </div>
             ))}
+            {evaluaciones.length === 0 && (
+              <p className="rpg-empty">No hay Jefes Finales invocados. Crea el primero en el Paso 1.</p>
+            )}
           </div>
         </div>
       )}
@@ -1062,8 +995,8 @@ export default function PanelProfesor() {
       {pestana === 'tareas' && (
         <div>
           <div className="grid-2">
-            <div style={rpgCardStyle}>
-              <h3 className="pixel-font" style={{ fontSize: '0.8rem', color: '#fb923c', marginBottom: '1rem' }}>
+            <div className="card-pro card-pro--teacher">
+              <h3 className="section-title section-title--teacher">
                 🎒 PUBLICAR MISIÓN CON GUÍA (WORD / PDF)
               </h3>
               <form onSubmit={crearTareaIndependiente}>
@@ -1080,17 +1013,17 @@ export default function PanelProfesor() {
                   <textarea className="input-pro" placeholder="Describe qué debe entregar el alumno..." value={tareaDesc} onChange={(e) => setTareaDesc(e.target.value)} rows="3" required />
                 </div>
 
-                <div className="input-group" style={{ background: '#050811', padding: '0.9rem', borderRadius: '10px', border: '1px dashed #a855f7' }}>
-                  <label className="input-label" style={{ color: '#c084fc', marginBottom: '0.5rem' }}>
+                <div className="file-drop">
+                  <label className="input-label file-drop__label">
                     📄 Adjuntar Documento (PDF / Word):
                   </label>
                   <input type="file" accept=".pdf,.doc,.docx" ref={fileInputTarea} style={{ display: 'none' }} onChange={handleArchivoTarea} />
-                  <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
-                    <button type="button" onClick={() => fileInputTarea.current.click()} className="btn-pro" style={{ background: '#1e1b4b', color: '#38bdf8', border: '1px solid #38bdf8', fontSize: '0.8rem' }}>
+                  <div className="file-drop__row">
+                    <button type="button" onClick={() => fileInputTarea.current.click()} className="btn-pro btn-pro--outline btn-sm">
                       <UploadCloud size={16} /> Subir Archivo
                     </button>
                     {tareaArchivoNombre && (
-                      <span style={{ fontSize: '0.8rem', color: '#4ade80', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                      <span className="file-drop__name">
                         <FileText size={14} /> {tareaArchivoNombre}
                       </span>
                     )}
@@ -1103,26 +1036,29 @@ export default function PanelProfesor() {
               </form>
             </div>
 
-            <div style={rpgCardStyle}>
-              <h3 className="pixel-font" style={{ fontSize: '0.8rem', color: '#fde047', marginBottom: '1rem' }}>
+            <div className="card-pro">
+              <h3 className="section-title section-title--gold">
                 📋 MISIONES ACTIVAS ({tareas.length})
               </h3>
+              {tareas.length === 0 && (
+                <p className="rpg-empty">Sin misiones publicadas. Crea la primera con el formulario.</p>
+              )}
               {tareas.map(tar => (
-                <div key={tar.id} style={{ background: '#050811', padding: '0.9rem', borderRadius: '10px', marginBottom: '0.75rem', border: '1px solid rgba(251, 146, 60, 0.4)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <h4 style={{ color: '#ffffff' }}>⚔️ {tar.titulo}</h4>
-                    <button onClick={() => eliminarTarea(tar.id, tar.titulo)} className="btn-danger" style={{ padding: '0.3rem 0.5rem', borderRadius: '6px' }}>
+                <div key={tar.id} className="quest-card">
+                  <div className="quest-card__head">
+                    <h4 className="quest-card__title">⚔️ {tar.titulo}</h4>
+                    <button onClick={() => eliminarTarea(tar.id, tar.titulo)} className="btn-icon btn-icon--ghost" aria-label={`Eliminar misión ${tar.titulo}`}>
                       <Trash2 size={14} />
                     </button>
                   </div>
                   {tar.archivo_adjunto && (
-                    <div style={{ fontSize: '0.76rem', color: '#38bdf8', marginTop: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                    <div className="quest-card__desc quest-card__file">
                       <FileText size={13} /> Contiene documento PDF/Word descargable
                     </div>
                   )}
-                  <div style={{ marginTop: '0.65rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: '0.78rem', color: '#4ade80' }}>{tar.total_entregas || 0} entregas</span>
-                    <button onClick={() => verEntregasDeTarea(tar)} className="btn-pro btn-pro-primary" style={{ padding: '0.35rem 0.75rem', fontSize: '0.78rem' }}>
+                  <div className="quest-card__footer">
+                    <span className="text-xp">{tar.total_entregas || 0} entregas</span>
+                    <button onClick={() => verEntregasDeTarea(tar)} className="btn-pro btn-pro-primary btn-sm">
                       Revisar Entregas
                     </button>
                   </div>
@@ -1132,26 +1068,29 @@ export default function PanelProfesor() {
           </div>
 
           {tareaSeleccionada && (
-            <div style={{ ...rpgCardStyle, marginTop: '1.25rem', border: '2px solid #38bdf8' }}>
-              <h3 className="pixel-font" style={{ fontSize: '0.8rem', color: '#38bdf8' }}>
+            <div className="card-pro card-pro--teacher" style={{ marginTop: '1.25rem' }}>
+              <h3 className="section-title section-title--student">
                 🔍 ENTREGAS DE: {tareaSeleccionada.titulo}
               </h3>
               {entregasTarea.length === 0 ? (
-                <p style={{ color: '#94a3b8', marginTop: '0.75rem' }}>Ningún aventurero ha enviado esta misión.</p>
+                <p className="rpg-empty">Ningún aventurero ha enviado esta misión.</p>
               ) : (
                 entregasTarea.map(entrega => (
-                  <div key={entrega.id} style={{ background: '#050811', padding: '1rem', borderRadius: '10px', marginTop: '0.85rem', border: '1px solid #334155' }}>
-                    <strong style={{ color: '#fde047' }}>{entrega.estudiante_nombre}</strong> <span style={{ color: '#38bdf8', fontFamily: 'monospace' }}>({entrega.codigo_unico})</span>
-                    <pre style={{ margin: '0.5rem 0', padding: '0.65rem', background: '#090d16', borderRadius: '6px', fontSize: '0.84rem', color: '#a5f3fc', whiteSpace: 'pre-wrap' }}>
+                  <div key={entrega.id} className="delivery-item">
+                    <div className="delivery-item__meta">
+                      <strong className="text-gold">{entrega.estudiante_nombre}</strong>{' '}
+                      <span className="mono text-teacher">({entrega.codigo_unico})</span>
+                    </div>
+                    <pre className="rpg-code rpg-code--tight">
                       {entrega.contenido}
                     </pre>
-                    <div style={{ display: 'flex', gap: '0.65rem', alignItems: 'center', flexWrap: 'wrap' }}>
-                      <input type="number" className="input-pro" style={{ width: '110px' }} placeholder="Nota (0-100)" value={notaInput[entrega.id] !== undefined ? notaInput[entrega.id] : (entrega.calificacion ?? '')} onChange={(e) => setNotaInput({ ...notaInput, [entrega.id]: e.target.value })} />
-                      <input type="text" className="input-pro" style={{ flex: 1 }} placeholder="Retroalimentación..." value={feedbackInput[entrega.id] !== undefined ? feedbackInput[entrega.id] : (entrega.retroalimentacion ?? '')} onChange={(e) => setFeedbackInput({ ...feedbackInput, [entrega.id]: e.target.value })} />
-                      <button onClick={() => guardarCalificacionEntrega(entrega.id)} className="btn-pro btn-pro-primary">
-                        <CheckCircle size={15} /> Calificar y Dar XP
-                      </button>
+                    <div className="form-grid-2 form-grid-2--wide">
+                      <input type="number" className="input-pro" placeholder="Nota (0-100)" value={notaInput[entrega.id] !== undefined ? notaInput[entrega.id] : (entrega.calificacion ?? '')} onChange={(e) => setNotaInput({ ...notaInput, [entrega.id]: e.target.value })} />
+                      <input type="text" className="input-pro" placeholder="Retroalimentación..." value={feedbackInput[entrega.id] !== undefined ? feedbackInput[entrega.id] : (entrega.retroalimentacion ?? '')} onChange={(e) => setFeedbackInput({ ...feedbackInput, [entrega.id]: e.target.value })} />
                     </div>
+                    <button onClick={() => guardarCalificacionEntrega(entrega.id)} className="btn-pro btn-pro-primary btn-sm">
+                      <CheckCircle size={15} /> Calificar y Dar XP
+                    </button>
                   </div>
                 ))
               )}
@@ -1164,16 +1103,16 @@ export default function PanelProfesor() {
           PESTAÑA 6: CRÓNICAS (CALIFICACIONES CSV)
          ===================================================================== */}
       {pestana === 'calificaciones' && (
-        <div style={rpgCardStyle}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '1rem' }}>
-            <h3 className="pixel-font" style={{ fontSize: '0.85rem', color: '#fde047' }}>
+        <div className="card-pro">
+          <div className="card-head-row">
+            <h3 className="section-title section-title--gold">
               🏆 CRÓNICAS DE COMBATE Y AUDITORÍA DE XP
             </h3>
             <button onClick={exportarCalificacionesCSV} className="btn-pro btn-pro-primary">
               <Download size={16} /> Descargar Reporte Excel (CSV)
             </button>
           </div>
-          <div style={{ overflowX: 'auto' }}>
+          <div className="rpg-table-wrap">
             <table>
               <thead>
                 <tr>
@@ -1189,12 +1128,12 @@ export default function PanelProfesor() {
               <tbody>
                 {calificaciones.map(c => (
                   <tr key={c.id}>
-                    <td style={{ fontWeight: '800' }}>{c.estudiante_nombre}</td>
-                    <td style={{ fontFamily: 'monospace', color: '#fde047' }}>{c.codigo_unico}</td>
+                    <td className="text-strong is-strong">{c.estudiante_nombre}</td>
+                    <td className="cell-token">{c.codigo_unico}</td>
                     <td>{c.evaluacion_titulo}</td>
                     <td>{c.aciertos}/{c.total_preguntas}</td>
-                    <td style={{ fontWeight: 'bold' }}>{c.puntaje}%</td>
-                    <td style={{ color: '#4ade80', fontWeight: 'bold' }}>+{c.xp_ganada || c.puntaje * 3} XP</td>
+                    <td className="is-strong">{c.puntaje}%</td>
+                    <td className="text-xp is-strong">+{c.xp_ganada || c.puntaje * 3} XP</td>
                     <td>
                       <span className={`badge ${c.puntaje >= 60 ? 'badge-success' : 'badge-danger'}`}>
                         {c.puntaje >= 60 ? 'Jefe Derrotado' : 'Derrotado'}
@@ -1212,38 +1151,29 @@ export default function PanelProfesor() {
           PESTAÑA 7: PERFIL DEL GAME MASTER
          ===================================================================== */}
       {pestana === 'perfil' && (
-        <div style={{ ...rpgCardStyle, maxWidth: '640px', margin: '0 auto' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', marginBottom: '1.5rem' }}>
-            <div style={{ position: 'relative' }}>
-              <div style={{
-                width: '88px', height: '88px', borderRadius: '14px', background: '#1e1b4b',
-                border: '3px solid #fde047', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                overflow: 'hidden', boxShadow: '0 0 20px rgba(253, 224, 71, 0.4)'
-              }}>
-                {perfilDocente.avatar ? (
-                  <img src={perfilDocente.avatar} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                ) : (
-                  <GameMasterSprite16Bit />
-                )}
-              </div>
+        <div className="card-pro card-pro--narrow">
+          <div className="profile-head">
+            <div className="profile-avatar">
+              {perfilDocente.avatar ? (
+                <img src={perfilDocente.avatar} alt="Avatar" />
+              ) : (
+                <GameMasterSprite16Bit />
+              )}
               <input type="file" accept="image/*" ref={fileInputAvatar} style={{ display: 'none' }} onChange={handleAvatarChange} />
-              <button 
+              <button
                 type="button"
-                onClick={() => fileInputAvatar.current.click()} 
-                style={{
-                  position: 'absolute', bottom: '-6px', right: '-6px', background: '#a855f7',
-                  border: '2px solid #fde047', color: '#fff', width: '32px', height: '32px',
-                  borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
-                }}
+                onClick={() => fileInputAvatar.current.click()}
+                className="profile-avatar__upload"
                 title="Subir nueva foto"
+                aria-label="Subir nueva foto de perfil"
               >
                 <ImagePlus size={15} />
               </button>
             </div>
 
-            <div>
-              <h3 className="pixel-font" style={{ fontSize: '0.85rem', color: '#fde047' }}>AVATAR DEL GAME MASTER</h3>
-              <p style={{ color: '#cbd5e1', fontSize: '0.84rem', marginTop: '4px' }}>
+            <div className="profile-head__info">
+              <h3 className="section-title section-title--gold profile-head__title">AVATAR DEL GAME MASTER</h3>
+              <p className="profile-head__copy">
                 Al elegir una imagen de tu PC, se actualizará en tiempo real en este panel y en la barra superior.
               </p>
             </div>
