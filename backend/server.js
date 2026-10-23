@@ -516,7 +516,38 @@ const generarRespuestaRespaldo = (mensaje, modo) => {
     resultado: `🧙‍♂️ **Oráculo & Copiloto IA:** He analizado tu consulta sobre **"${mensaje}"**.\n\n**Recomendaciones clave:**\n1. **Estructura:** Divide este tema en un concepto teórico breve (Pergamino) seguido de un ejercicio paso a paso.\n2. **Puntos críticos:** Asegúrate de resaltar los errores más comunes para que los estudiantes no pierdan HP en la evaluación.\n3. **Acción rápida:** Usa los botones superiores (*Generar Preguntas*, *Crear Ejemplo* o *Diseñar Misión*) para publicar este contenido directamente en el mapa.`
   };
 };
-
+const limpiarTextoPlano = (texto = '') => {
+  if (typeof texto !== 'string') return texto;
+  return texto
+    // 1. Bloques de código y código en línea
+    .replace(/```[\s\S]*?```/g, (match) => match.replace(/```[a-zA-Z]*\n?/g, '').replace(/```/g, ''))
+    .replace(/`([^`]+)`/g, '$1')
+    
+    // 2. Elementos multimedia y enlaces (extrae solo el texto visible)
+    .replace(/!\[([^\]]*?)\]\([^)]*?\)/g, '$1') // Imágenes ![alt](url) -> alt
+    .replace(/\[([^\]]+?)\]\([^)]*?\)/g, '$1')   // Enlaces [texto](url) -> texto
+    
+    // 3. Estructura (Títulos y Citas)
+    .replace(/^#{1,6}\s+/gm, '')                 // Elimina # de los títulos
+    .replace(/^\s*>\s?/gm, '')                   // Elimina el símbolo de citas >
+    
+    // 4. Formato de texto (Tachado, Negritas y Cursivas)
+    .replace(/~~(.*?)~~/g, '$1')                 // Tachado ~~texto~~
+    .replace(/\*\*([^*]+?)\*\*/g, '$1')          // Negritas **texto**
+    .replace(/\*([^*]+?)\*/g, '$1')              // Cursivas *texto*
+    .replace(/__([^_]+?)__/g, '$1')              // Negritas __texto__
+    .replace(/_([^_]+?)_/g, '$1')                // Cursivas _texto_
+    
+    // 5. Listas y separadores
+    .replace(/^\s*[-*+]\s+/gm, '• ')             // Viñetas estandarizadas
+    .replace(/^\s*\d+\.\s+/gm, '')               // Listas numeradas (opcional)
+    .replace(/^([-*_]){3,}\s*$/gm, '')           // Líneas divisorias (---, ***, ___)
+    
+    // 6. Limpieza de espacios y saltos de línea excesivos
+    .replace(/[ \t]+\n/g, '\n')                  // Espacios sobrantes al final de las líneas
+    .replace(/\n{3,}/g, '\n\n')                  // Reduce múltiples saltos de línea a un máximo de dos
+    .trim();
+};
 app.post('/api/ia/asistente', async (req, res) => {
   const { mensaje, modo = 'chat', contexto = '' } = req.body;
   // Limpia comillas o espacios accidentales en el archivo .env
@@ -552,11 +583,11 @@ Responde ÚNICAMENTE un arreglo JSON válido con este formato exacto:
 ]`;
     } else if (modo === 'ejemplo') {
       forceJson = true;
-      systemInstruction = `Eres un docente de programación y ciencias. Basándote en el tema indicado, genera un ejemplo práctico o de código bien comentado.
+      systemInstruction = `Eres un docente universitario experto. Basándote en el tema indicado, genera un ejemplo práctico bien comentado.
 Responde ÚNICAMENTE un objeto JSON válido:
 {
   "titulo": "Título breve y descriptivo",
-  "contenido": "Código fuente o ejemplo explicado paso a paso"
+  "contenido": "Ejemplo explicado paso a paso para que los estudiantes comprendan la aplicación del tema"
 }`;
     } else if (modo === 'tarea') {
       forceJson = true;
