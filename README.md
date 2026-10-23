@@ -41,6 +41,7 @@ Plataforma web gamificada con temática RPG para la gestión y evaluación acad�
 
 ```text
 proyecto_Estadistica/
+├── package.json                 # Scripts de arranque unificado (npm run dev)
 ├── backend/                     # API REST (Express + better-sqlite3)
 │   ├── server.js                # Endpoints, motor de corrección RPG y Copiloto IA
 │   ├── db.js                    # Esquema SQLite, migraciones y semillas
@@ -61,25 +62,35 @@ proyecto_Estadistica/
 
 ## 🚀 Instalación y ejecución
 
-**1. Backend — API en el puerto 4000:**
+Todo se ejecuta desde la raíz del proyecto, en **una sola terminal**.
+
+**1. Instala las dependencias (solo la primera vez):**
 
 ```bash
-cd backend
-npm install
-npm run dev        # desarrollo con nodemon
-# ó
-npm start          # producción
+npm install        # dependencias de la raíz (concurrently)
+npm run setup      # dependencias de backend y frontend
 ```
 
-**2. Frontend — SPA en el puerto 5173:**
+**2. Arranca backend y frontend juntos:**
 
 ```bash
-cd frontend
-npm install
 npm run dev
 ```
 
+Ambos servicios comparten la terminal y cada línea de log lleva su etiqueta:
+
+```text
+[backend]  🚀 Servidor Saga Académica corriendo en http://localhost:4000
+[frontend] VITE v8.3.4  ready in 337 ms
+[frontend] ➜  Local:   http://localhost:5173/
+```
+
+Un solo `Ctrl+C` detiene los dos procesos y libera los puertos `4000` y `5173`.
+
 **3. Abre http://localhost:5173** — el frontend ya apunta a `http://localhost:4000` por defecto.
+
+> [!TIP]
+> Para depurar solo una de las mitades: `npm run dev:backend` (API en `:4000`) o `npm run dev:frontend` (SPA en `:5173`). Para el backend sin nodemon: `npm start`.
 
 > [!NOTE]
 > La base de datos, sus tablas y los datos semilla se crean automáticamente en el primer arranque. No hace falta configurar nada más para probar el proyecto.
