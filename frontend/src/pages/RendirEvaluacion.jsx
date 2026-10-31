@@ -9,6 +9,7 @@ export default function RendirEvaluacion() {
   const navigate = useNavigate();
 
   const [preguntas, setPreguntas] = useState([]);
+  const [evaluacion, setEvaluacion] = useState(null); // 📚 Datos de la evaluación (puntos en la materia)
   const [turnoActual, setTurnoActual] = useState(0);
   const [respuestas, setRespuestas] = useState({});
   const [animacionAtaque, setAnimacionAtaque] = useState(false);
@@ -26,6 +27,12 @@ export default function RendirEvaluacion() {
       .then(r => r.json())
       .then(data => setPreguntas(data))
       .catch(() => alert('Error al invocar al Jefe Final.'));
+
+    // 📚 Trae los puntos que vale esta evaluación en la materia (escala 0-100)
+    fetch('http://localhost:4000/api/evaluaciones')
+      .then(r => r.json())
+      .then(lista => setEvaluacion(lista.find(ev => String(ev.id) === String(id)) || null))
+      .catch(() => setEvaluacion(null));
   }, [id]);
 
   useEffect(() => {
@@ -107,6 +114,16 @@ export default function RendirEvaluacion() {
             </span>
           </div>
 
+          {/* 📚 Puntos académicos ganados en la materia (escala 0-100) */}
+          <div className="result-score-box">
+            <span className="result-score is-pass">
+              {resultado.puntos_ganados} / {resultado.puntos_max} pts
+            </span>
+            <span className="badge badge--gold result-xp">
+              📚 Nota de la materia: {resultado.nota_materia} / 100
+            </span>
+          </div>
+
           {resultado.desglose && (
             <div className="result-breakdown rpg-scroll">
               {resultado.desglose.map((d, i) => (
@@ -139,6 +156,10 @@ export default function RendirEvaluacion() {
           <div className="rpg-combat-top">
             <span className="rpg-combat-turn">
               TURNO {turnoActual + 1} DE {preguntas.length || 1}
+            </span>
+            {/* 📚 Puntos académicos en juego (la materia vale 100) */}
+            <span className="rpg-combat-turn" style={{ color: 'var(--gold, #fbbf24)' }}>
+              📚 {evaluacion?.puntos_max ?? '—'} DE 100 PTS EN JUEGO
             </span>
             <div className="rpg-combat-timer">
               <Clock size={15} />

@@ -129,6 +129,7 @@ export default function PanelProfesor() {
   const [evalTemaId, setEvalTemaId] = useState('');
   const [evalTitulo, setEvalTitulo] = useState('');
   const [evalXp, setEvalXp] = useState(350);
+  const [evalPuntos, setEvalPuntos] = useState(30); // 📚 Puntos de la materia que vale este examen
 
   const [tareaCategoriaLibre, setTareaCategoriaLibre] = useState('');
   const [tareaTitulo, setTareaTitulo] = useState('');
@@ -136,6 +137,7 @@ export default function PanelProfesor() {
   const [tareaFecha, setTareaFecha] = useState('');
   const [tareaArchivoNombre, setTareaArchivoNombre] = useState('');
   const [tareaArchivoBase64, setTareaArchivoBase64] = useState(null);
+  const [tareaPuntos, setTareaPuntos] = useState(10); // 📚 Puntos de la materia que vale esta misión
 
   const [pregEvalId, setPregEvalId] = useState('');
   const [enunciado, setEnunciado] = useState('');
@@ -259,10 +261,15 @@ export default function PanelProfesor() {
         tema_id: idSeguro,
         titulo: respuestaIA.resultado.titulo,
         descripcion: respuestaIA.resultado.descripcion,
-        fecha_limite: 'Viernes 23:59 hrs'
+        fecha_limite: 'Viernes 23:59 hrs',
+        puntos_max: tareaPuntos
       })
     });
     if (res.ok) { alert("¡Misión publicada en el Inventario de los Aventureros!"); cargarDatos(); }
+    else {
+      const err = await res.json().catch(() => ({}));
+      alert(err.error || 'Error al publicar la misión.');
+    }
   };
 
   // ==========================================================================
@@ -329,7 +336,8 @@ export default function PanelProfesor() {
         tema_id: evalTemaId,
         titulo: evalTitulo.trim(),
         nombre_jefe: evalTitulo.trim(),
-        xp_recompensa: evalXp
+        xp_recompensa: evalXp,
+        puntos_max: evalPuntos
       })
     });
     if (res.ok) {
@@ -338,6 +346,9 @@ export default function PanelProfesor() {
       setPregEvalId(String(nuevoJefe.id));
       cargarDatos();
       alert('¡Jefe Final invocado! Ahora puedes agregarle todas las preguntas que quieras abajo.');
+    } else {
+      const err = await res.json().catch(() => ({}));
+      alert(err.error || 'Error al invocar el Jefe Final.');
     }
   };
 
@@ -402,7 +413,8 @@ export default function PanelProfesor() {
         titulo: `${prefijo}${tareaTitulo.trim()}`,
         descripcion: tareaDesc.trim(),
         fecha_limite: tareaFecha.trim() || 'Viernes 23:59 hrs',
-        archivo_adjunto: tareaArchivoBase64
+        archivo_adjunto: tareaArchivoBase64,
+        puntos_max: tareaPuntos
       })
     });
 
@@ -416,7 +428,8 @@ export default function PanelProfesor() {
       cargarDatos();
       alert('¡Misión publicada en el Inventario de los Aventureros!');
     } else {
-      alert('Error al publicar la misión.');
+      const err = await res.json().catch(() => ({}));
+      alert(err.error || 'Error al publicar la misión.');
     }
   };
 
@@ -461,15 +474,24 @@ export default function PanelProfesor() {
     const feedback = feedbackInput[entregaId] || '';
     if (nota === undefined || nota === '') return alert('Ingresa una calificación de 0 a 100.');
 
+    // 📚 Validación local del rango académico antes de viajar al servidor
+    const notaNum = parseFloat(nota);
+    if (!Number.isFinite(notaNum) || notaNum < 0 || notaNum > 100) {
+      return alert('La calificación debe ser un número entre 0 y 100.');
+    }
+
     const res = await fetch(`http://localhost:4000/api/entregas/${entregaId}/calificar`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ calificacion: parseFloat(nota), retroalimentacion: feedback })
+      body: JSON.stringify({ calificacion: notaNum, retroalimentacion: feedback })
     });
     if (res.ok) {
       alert('¡Calificación guardada! El estudiante ha recibido su XP.');
       verEntregasDeTarea(tareaSeleccionada);
       cargarDatos();
+    } else {
+      const err = await res.json().catch(() => ({}));
+      alert(err.error || 'Error al guardar la calificación.');
     }
   };
 
@@ -508,11 +530,18 @@ export default function PanelProfesor() {
     ? Math.round(calificaciones.reduce((acc, c) => acc + c.puntaje, 0) / calificaciones.length)
     : 0;
 
+  // 📚 Puntos académicos ya asignados en la materia (100 en total) y los que quedan
+  const NOTA_MAX = 100;
+  const puntosAsignados =
+    evaluaciones.reduce((acc, ev) => acc + (Number(ev.puntos_max) || 0), 0) +
+    tareas.reduce((acc, t) => acc + (Number(t.puntos_max) || 0), 0);
+  const puntosRestantes = Math.max(0, NOTA_MAX - puntosAsignados);
+
   const exportarCalificacionesCSV = () => {
     if (calificaciones.length === 0) return alert("No hay combates registrados para exportar.");
-    const encabezados = "Estudiante,Token,Jefe_Final,Aciertos,Puntaje,XP_Ganada,Estado,Fecha\n";
+    const encabezados = "Estudiante,Token,Jefe_Final,Aciertos,Puntaje,Puntos_Ganados,XP_Ganada,Estado,Fecha\n";
     const filas = calificaciones.map(c => 
-      `"${c.estudiante_nombre}","${c.codigo_unico}","${c.evaluacion_titulo}",${c.aciertos}/${c.total_preguntas},${c.puntaje}%,+${c.xp_ganada || c.puntaje * 3} XP,${c.puntaje >= 60 ? 'Jefe Derrotado' : 'Caido en Combate'},"${c.fecha}"`
+      `"${c.estudiante_nombre}","${c.codigo_unico}","${c.evaluacion_titulo}",${c.aciertos}/${c.total_preguntas},${c.puntaje}%,${c.puntos_ganados ?? 0}/${c.puntos_max ?? '-'} pts,+${c.xp_ganada || c.puntaje * 3} XP,${c.puntaje >= 60 ? 'Jefe Derrotado' : 'Caido en Combate'},"${c.fecha}"`
     ).join("\n");
     const blob = new Blob([encabezados + filas], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -890,6 +919,21 @@ export default function PanelProfesor() {
                   <label className="input-label">Recompensa de XP:</label>
                   <input type="number" className="input-pro" value={evalXp} onChange={(e) => setEvalXp(e.target.value)} min="100" max="1000" step="50" required />
                 </div>
+                <div className="input-group">
+                  <label className="input-label">📚 Puntos en la materia (de {NOTA_MAX} en total):</label>
+                  <input
+                    type="number"
+                    className="input-pro"
+                    value={evalPuntos}
+                    onChange={(e) => setEvalPuntos(e.target.value)}
+                    min="1"
+                    max={puntosRestantes || 1}
+                    required
+                  />
+                  <span className="section-sub">
+                    Quedan <strong>{puntosRestantes}</strong> de {NOTA_MAX} puntos por asignar en la materia.
+                  </span>
+                </div>
                 <button type="submit" className="btn-pro btn-pro-primary btn-block">
                   ⚔️ Invocar Jefe Final
                 </button>
@@ -947,7 +991,7 @@ export default function PanelProfesor() {
                     <div>
                       <h4 className="roster-name">{ev.titulo}</h4>
                       <span className="roster-meta text-xp">
-                        +{ev.xp_recompensa || 300} XP • {ev.total_preguntas} preguntas cargadas
+                        +{ev.xp_recompensa || 300} XP • {ev.total_preguntas} preguntas cargadas • 📚 {ev.puntos_max ?? 30} pts de la materia
                       </span>
                     </div>
                   </div>
@@ -1013,6 +1057,22 @@ export default function PanelProfesor() {
                   <textarea className="input-pro" placeholder="Describe qué debe entregar el alumno..." value={tareaDesc} onChange={(e) => setTareaDesc(e.target.value)} rows="3" required />
                 </div>
 
+                <div className="input-group">
+                  <label className="input-label">📚 Puntos en la materia (de {NOTA_MAX} en total):</label>
+                  <input
+                    type="number"
+                    className="input-pro"
+                    value={tareaPuntos}
+                    onChange={(e) => setTareaPuntos(e.target.value)}
+                    min="1"
+                    max={puntosRestantes || 1}
+                    required
+                  />
+                  <span className="section-sub">
+                    Quedan <strong>{puntosRestantes}</strong> de {NOTA_MAX} puntos por asignar en la materia.
+                  </span>
+                </div>
+
                 <div className="file-drop">
                   <label className="input-label file-drop__label">
                     📄 Adjuntar Documento (PDF / Word):
@@ -1071,6 +1131,7 @@ export default function PanelProfesor() {
             <div className="card-pro card-pro--teacher" style={{ marginTop: '1.25rem' }}>
               <h3 className="section-title section-title--student">
                 🔍 ENTREGAS DE: {tareaSeleccionada.titulo}
+                <span className="text-xp"> — 📚 {tareaSeleccionada.puntos_max ?? 10} pts de la materia</span>
               </h3>
               {entregasTarea.length === 0 ? (
                 <p className="rpg-empty">Ningún aventurero ha enviado esta misión.</p>
@@ -1085,7 +1146,7 @@ export default function PanelProfesor() {
                       {entrega.contenido}
                     </pre>
                     <div className="form-grid-2 form-grid-2--wide">
-                      <input type="number" className="input-pro" placeholder="Nota (0-100)" value={notaInput[entrega.id] !== undefined ? notaInput[entrega.id] : (entrega.calificacion ?? '')} onChange={(e) => setNotaInput({ ...notaInput, [entrega.id]: e.target.value })} />
+                      <input type="number" className="input-pro" min="0" max="100" placeholder="Nota (0-100)" value={notaInput[entrega.id] !== undefined ? notaInput[entrega.id] : (entrega.calificacion ?? '')} onChange={(e) => setNotaInput({ ...notaInput, [entrega.id]: e.target.value })} />
                       <input type="text" className="input-pro" placeholder="Retroalimentación..." value={feedbackInput[entrega.id] !== undefined ? feedbackInput[entrega.id] : (entrega.retroalimentacion ?? '')} onChange={(e) => setFeedbackInput({ ...feedbackInput, [entrega.id]: e.target.value })} />
                     </div>
                     <button onClick={() => guardarCalificacionEntrega(entrega.id)} className="btn-pro btn-pro-primary btn-sm">
@@ -1121,6 +1182,7 @@ export default function PanelProfesor() {
                   <th>Jefe Enfrentado</th>
                   <th>Aciertos</th>
                   <th>Puntaje</th>
+                  <th>Puntos</th>
                   <th>XP Ganada</th>
                   <th>Estado</th>
                 </tr>
@@ -1133,6 +1195,7 @@ export default function PanelProfesor() {
                     <td>{c.evaluacion_titulo}</td>
                     <td>{c.aciertos}/{c.total_preguntas}</td>
                     <td className="is-strong">{c.puntaje}%</td>
+                    <td className="text-xp is-strong">{c.puntos_ganados ?? 0}/{c.puntos_max ?? '—'} pts</td>
                     <td className="text-xp is-strong">+{c.xp_ganada || c.puntaje * 3} XP</td>
                     <td>
                       <span className={`badge ${c.puntaje >= 60 ? 'badge-success' : 'badge-danger'}`}>

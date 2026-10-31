@@ -1782,6 +1782,7 @@ p, li, td, th, label { overflow-wrap: break-word; }
 .quest-card__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.6rem; flex-wrap: wrap; }
 .quest-card__title { font-size: 20px; color: var(--text-main); }
 .quest-card__desc { margin: 0.4rem 0 0.6rem; font-size: 19px; color: var(--text-muted); }
+.quest-card__meta { display: block; margin: 0 0 0.6rem; font-size: 17px; color: var(--text-muted); }
 
 .quest-file {
   display: inline-flex;
@@ -2150,6 +2151,7 @@ svg[shapeRendering='crispEdges'] { shape-rendering: crispEdges; }
 .rpg-hotbar-slot--bag { --slot: var(--orange); }
 .rpg-hotbar-slot--scroll { --slot: var(--gold); }
 .rpg-hotbar-slot--guild { --slot: var(--teacher); }
+.rpg-hotbar-slot--boleta { --slot: var(--gold); }
 .rpg-hotbar-slot--trophy { --slot: var(--gold); }
 .rpg-hotbar-slot.active,
 .rpg-hotbar-slot:hover { color: var(--on-accent); }
@@ -2303,4 +2305,774 @@ svg[shapeRendering='crispEdges'] { shape-rendering: crispEdges; }
   .form-grid-2,
   .form-grid-2--wide { grid-template-columns: 1fr; }
   .delivery-item { padding: 0.7rem; }
+}
+
+/* =====================================================================
+   REPRODUCTOR DE MÚSICA DE FONDO (BGM)
+   ===================================================================== */
+.bgm-player {
+  position: fixed; right: 16px; bottom: 16px; z-index: 60;
+  display: flex; flex-direction: column; align-items: flex-end; gap: 10px;
+  font-family: var(--font-body); color: var(--bone);
+}
+.bgm-fab {
+  width: 44px; height: 44px; padding: 0; border: 0; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--bone); background: var(--panel);
+  box-shadow:
+    0 -3px 0 0 var(--ink), 0 3px 0 0 var(--ink),
+    -3px 0 0 0 var(--ink), 3px 0 0 0 var(--ink),
+    inset 3px 3px 0 0 var(--panel-hi), inset -3px -3px 0 0 var(--panel-lo);
+}
+.bgm-fab:hover { transform: translateY(-2px); }
+.bgm-fab.is-playing { color: var(--gold); }
+
+.bgm-player__panel {
+  width: 232px; padding: 10px;
+  background: var(--panel);
+  box-shadow:
+    0 -3px 0 0 var(--violet), 0 3px 0 0 var(--violet),
+    -3px 0 0 0 var(--violet), 3px 0 0 0 var(--violet),
+    inset 3px 3px 0 0 var(--panel-hi), inset -3px -3px 0 0 var(--panel-lo);
+}
+.bgm-player__head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 8px;
+}
+.bgm-player__title {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-px); font-size: 8px; letter-spacing: 1px; color: var(--gold);
+}
+.bgm-player__now { display: flex; flex-direction: column; gap: 2px; margin-bottom: 8px; }
+.bgm-player__track { font-size: 18px; line-height: 1.1; color: var(--bone); }
+.bgm-player__mood { font-family: var(--font-px); font-size: 8px; color: var(--mute); }
+
+.bgm-player__tracks { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 8px; }
+.bgm-chip {
+  padding: 6px 4px; border: 0; cursor: pointer;
+  font-family: var(--font-px); font-size: 8px;
+  color: var(--bone); background: var(--panel-lo);
+  box-shadow: inset 2px 2px 0 0 var(--ink), inset -2px -2px 0 0 var(--panel-hi);
+}
+.bgm-chip:hover { color: var(--gold); }
+.bgm-chip.is-active {
+  color: var(--ink); background: var(--gold);
+  box-shadow: inset 2px 2px 0 0 #ffe08a, inset -2px -2px 0 0 var(--orange);
+}
+
+.bgm-player__row { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
+.bgm-icon-btn {
+  width: 28px; height: 28px; padding: 0; border: 0; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--bone); background: var(--panel-hi);
+  box-shadow: inset 2px 2px 0 0 var(--violet), inset -2px -2px 0 0 var(--panel-lo);
+}
+.bgm-icon-btn:hover { transform: translateY(-1px); color: var(--gold); }
+.bgm-icon-btn--gold { color: var(--ink); background: var(--gold); box-shadow: inset 2px 2px 0 0 #ffe08a, inset -2px -2px 0 0 var(--orange); }
+.bgm-icon-btn--ghost { background: transparent; box-shadow: none; }
+.bgm-icon-btn--ghost:hover { color: var(--red-hi); }
+
+.bgm-player__volume {
+  display: flex; align-items: center; gap: 8px; margin-top: 10px;
+  font-family: var(--font-px); font-size: 8px; color: var(--mute);
+}
+.bgm-player__volume input[type="range"] {
+  -webkit-appearance: none; appearance: none;
+  flex: 1; height: 10px; margin: 0; cursor: pointer;
+  background: var(--ink);
+  box-shadow: inset 0 0 0 2px var(--violet-lo), inset 2px 2px 0 0 var(--panel-lo);
+}
+.bgm-player__volume input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 12px; height: 16px; border: 0; background: var(--gold);
+  box-shadow: inset 2px 2px 0 0 #ffe08a, inset -2px -2px 0 0 var(--orange);
+}
+.bgm-player__volume input[type="range"]::-moz-range-thumb {
+  width: 12px; height: 16px; border: 0; background: var(--gold);
+  box-shadow: inset 2px 2px 0 0 #ffe08a, inset -2px -2px 0 0 var(--orange);
+}
+.bgm-player__error {
+  margin: 8px 0 0; font-size: 14px; line-height: 1.2; color: var(--red-hi);
+}
+
+@media (max-width: 640px) {
+  .bgm-player { right: 10px; bottom: 10px; }
+  .bgm-player__panel { width: min(232px, calc(100vw - 20px)); }
+}
+
+/* =====================================================================
+   PORTADA NEÓN — Saga Académica (escena pixel-art + HUD + portales)
+   ---------------------------------------------------------------------
+   · Sólo aplica dentro de .home-neon: el resto del LMS no cambia.
+   · Los marcos siguen siendo box-shadow de 0 blur y sin radius.
+   · Las animaciones usan steps() y se desactivan con reduced-motion.
+   ===================================================================== */
+
+:root {
+  --magenta: #ff4fd8;
+  --magenta-lo: #7c1a63;
+
+  /* Escena */
+  --scene-sky-1: #0b0722;
+  --scene-sky-2: #23134f;
+  --scene-horizon: #3a1f6e;
+  --scene-star: #e9e2ff;
+  --scene-aurora-cyan: #38f2d0;
+  --scene-aurora-magenta: #ff4fd8;
+  --scene-ruin: #241a52;
+  --scene-ruin-hi: #4a2f8f;
+  --scene-tree: #123a4a;
+  --scene-tree-hi: #1d6b6a;
+  --scene-crystal: #6ff7ff;
+  --scene-ground: #0d0a24;
+  --scene-ground-hi: #1c1550;
+  --home-panel: rgba(18, 12, 43, 0.74);
+}
+
+[data-theme="light"] {
+  --magenta: #c2189b;
+  --magenta-lo: #f2bde8;
+
+  --scene-sky-1: #f7f1ff;
+  --scene-sky-2: #ded2f8;
+  --scene-horizon: #c8b7f0;
+  --scene-star: #6b4bb8;
+  --scene-aurora-cyan: #4fc3ae;
+  --scene-aurora-magenta: #ef86d6;
+  --scene-ruin: #b9a8e4;
+  --scene-ruin-hi: #8d76c9;
+  --scene-tree: #8fbfae;
+  --scene-tree-hi: #4f9484;
+  --scene-crystal: #1f96ad;
+  --scene-ground: #c9bce8;
+  --scene-ground-hi: #a996d6;
+  --home-panel: rgba(251, 247, 255, 0.82);
+}
+
+/* Header translúcido sólo en la portada (clase puesta por Home.jsx) */
+body.home-active { background: var(--scene-sky-1); }
+
+body.home-active .header-pro {
+  background: rgba(23, 15, 61, 0.82);
+}
+
+[data-theme="light"] body.home-active .header-pro {
+  background: rgba(184, 168, 216, 0.9);
+}
+
+/* ---------------------------------------------------------------------
+   Lienzo de la portada
+   --------------------------------------------------------------------- */
+.home-neon {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  min-height: calc(100vh - 84px);
+  padding-bottom: 1rem;
+}
+
+.home-neon__content {
+  position: relative;
+  z-index: 5;
+  padding-top: 2rem;
+  padding-bottom: 1rem;
+}
+
+/* ---------------------------------------------------------------------
+   Escena: cielo, auroras, estrellas, planeta, ruinas, árboles y cristales
+   --------------------------------------------------------------------- */
+.neon-scene {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+
+.neon-scene__sky {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    var(--scene-sky-1) 0 34%,
+    var(--scene-sky-2) 34% 70%,
+    var(--scene-horizon) 70% 100%
+  );
+}
+
+.neon-scene__sky::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.05) 0 2px,
+    transparent 2px 4px
+  );
+  opacity: 0.35;
+}
+
+.neon-scene__aurora {
+  --c: var(--scene-aurora-cyan);
+  --skew: -8deg;
+  position: absolute;
+  left: -14%;
+  right: -14%;
+  top: -6%;
+  height: 62vh;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0 12px,
+    var(--c) 12px 18px,
+    transparent 18px 30px,
+    var(--c) 30px 34px,
+    transparent 34px 56px
+  );
+  -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.9) 0, rgba(0, 0, 0, 0.7) 38%, transparent 88%);
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.9) 0, rgba(0, 0, 0, 0.7) 38%, transparent 88%);
+  opacity: 0.22;
+  transform: skewX(var(--skew));
+  animation: neon-aurora 16s steps(16) infinite alternate;
+}
+
+.neon-scene__aurora--magenta {
+  --c: var(--scene-aurora-magenta);
+  --skew: 7deg;
+  top: 2%;
+  height: 52vh;
+  opacity: 0.16;
+  animation-duration: 21s;
+  animation-direction: alternate-reverse;
+}
+
+@keyframes neon-aurora {
+  from { transform: translate3d(-3%, 0, 0) skewX(var(--skew)); }
+  to { transform: translate3d(3%, 0, 0) skewX(calc(var(--skew) * 0.5)); }
+}
+
+.neon-scene__stars {
+  position: absolute;
+  inset: 0;
+}
+
+.neon-star {
+  position: absolute;
+  display: block;
+  background: var(--scene-star);
+  opacity: 0.65;
+  animation: neon-twinkle 4.2s steps(2) infinite;
+}
+
+.neon-star--big {
+  box-shadow: 0 0 0 2px rgba(233, 226, 255, 0.12);
+}
+
+@keyframes neon-twinkle {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 1; }
+}
+
+.neon-scene__planet {
+  position: absolute;
+  top: 10%;
+  right: 7%;
+  width: clamp(64px, 9vw, 128px);
+  aspect-ratio: 1;
+  background: radial-gradient(
+    circle at 32% 28%,
+    var(--scene-crystal) 0 22%,
+    var(--magenta) 22% 66%,
+    var(--magenta-lo) 66% 100%
+  );
+  clip-path: polygon(
+    30% 0, 70% 0, 70% 6%, 85% 6%, 85% 15%, 94% 15%, 94% 30%, 100% 30%,
+    100% 70%, 94% 70%, 94% 85%, 85% 85%, 85% 94%, 70% 94%, 70% 100%,
+    30% 100%, 30% 94%, 15% 94%, 15% 85%, 6% 85%, 6% 70%, 0 70%, 0 30%,
+    6% 30%, 6% 15%, 15% 15%, 15% 6%, 30% 6%
+  );
+  box-shadow: 0 0 0 4px var(--scene-sky-1), 0 0 0 8px var(--scene-ruin-hi);
+  opacity: 0.85;
+  z-index: 1;
+}
+
+.neon-scene__planet--small {
+  top: 24%;
+  right: auto;
+  left: 8%;
+  width: clamp(28px, 4vw, 54px);
+  background: radial-gradient(
+    circle at 34% 30%,
+    var(--scene-star) 0 24%,
+    var(--scene-crystal) 24% 70%,
+    var(--scene-tree-hi) 70% 100%
+  );
+  box-shadow: 0 0 0 3px var(--scene-sky-1), 0 0 0 6px var(--scene-ruin-hi);
+  opacity: 0.55;
+}
+
+.neon-scene__ruins,
+.neon-scene__trees,
+.neon-scene__crystals {
+  position: absolute;
+  display: block;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+
+.neon-scene__ruins {
+  left: 0;
+  bottom: 11vh;
+  width: min(46vw, 520px);
+  height: auto;
+  opacity: 0.8;
+  z-index: 1;
+}
+
+.neon-scene__trees {
+  right: 0;
+  bottom: 10vh;
+  width: min(54vw, 640px);
+  height: auto;
+  opacity: 0.9;
+  z-index: 2;
+}
+
+.neon-scene__crystals {
+  left: 6%;
+  bottom: 11vh;
+  width: min(44vw, 400px);
+  height: auto;
+  z-index: 3;
+}
+
+.neon-scene__ground {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 13vh;
+  z-index: 4;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 46px, rgba(0, 0, 0, 0.22) 46px 50px),
+    linear-gradient(180deg, var(--scene-ground-hi) 0 8px, var(--scene-ground) 8px 100%);
+  box-shadow: 0 -4px 0 0 var(--scene-ground-hi);
+}
+
+/* ---------------------------------------------------------------------
+   HUD decorativo de campaña
+   --------------------------------------------------------------------- */
+.home-hud {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  max-width: 860px;
+  margin: 0 auto 2.25rem;
+  padding: 0.75rem 1rem;
+  background: var(--home-panel);
+  box-shadow:
+    0 0 0 2px var(--magenta-lo),
+    0 0 0 4px var(--edge),
+    6px 6px 0 0 var(--edge),
+    inset 2px 2px 0 0 rgba(255, 255, 255, 0.1),
+    inset -2px -2px 0 0 rgba(0, 0, 0, 0.45);
+}
+
+.home-hud__avatar {
+  flex: 0 0 56px;
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  color: var(--scene-crystal);
+  background: var(--panel-lo);
+  box-shadow:
+    0 0 0 2px var(--gold),
+    inset 2px 2px 0 0 var(--panel-hi),
+    inset -2px -2px 0 0 var(--edge);
+}
+
+.home-hud__body { flex: 1; min-width: 0; }
+
+.home-hud__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 8px;
+}
+
+.home-hud__name {
+  font-family: var(--font-px);
+  font-size: 8px;
+  line-height: 1.6;
+  color: var(--gold-hi);
+  text-shadow: 2px 2px 0 var(--edge);
+}
+
+.home-hud__level {
+  flex: 0 0 auto;
+  padding: 3px 6px;
+  font-family: var(--font-px);
+  font-size: 8px;
+  line-height: 1.4;
+  color: var(--ink);
+  background: var(--gold);
+  box-shadow: 0 0 0 2px var(--edge), inset 2px 2px 0 0 var(--gold-hi);
+}
+
+.home-hud__bars {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.home-hud__bars .stat-bar { height: 12px; }
+
+.home-hud__bars .stat-bar__label {
+  font-size: 8px;
+  margin-bottom: 3px;
+}
+
+.home-hud__bars .stat-bar__value { font-size: 17px; }
+
+/* ---------------------------------------------------------------------
+   Héroe
+   --------------------------------------------------------------------- */
+.home-hero {
+  position: relative;
+  padding: 0 0 2.25rem;
+  text-align: center;
+}
+
+.home-neon .hero-badge {
+  margin-bottom: 1.5rem;
+  color: var(--gold-hi);
+  background: var(--home-panel);
+  box-shadow:
+    0 0 0 2px var(--gold),
+    4px 4px 0 0 var(--edge),
+    inset 2px 2px 0 0 rgba(255, 255, 255, 0.12);
+}
+
+.home-neon .hero-badge__icon { color: var(--magenta); }
+
+.home-neon .hero-title {
+  margin-bottom: 1.25rem;
+  padding: 0 0 0.15em;
+  font-size: clamp(22px, 5.2vw, 52px);
+  line-height: 1.25;
+  letter-spacing: 0.03em;
+  color: var(--bone);
+  text-shadow:
+    3px 0 0 var(--magenta-lo),
+    -3px 0 0 var(--scene-aurora-cyan),
+    0 4px 0 var(--magenta-lo),
+    5px 5px 0 var(--edge);
+  overflow-wrap: anywhere;
+}
+
+.home-neon .hero-lead {
+  max-width: 700px;
+  margin-bottom: 0;
+  font-size: 22px;
+  line-height: 1.35;
+  color: var(--text-muted);
+  text-shadow: 0 2px 0 var(--edge);
+}
+
+.home-neon .hero-lead strong { text-shadow: 0 2px 0 var(--edge); }
+
+/* ---------------------------------------------------------------------
+   Portales: marco, runas, chispas y selección dorada
+   --------------------------------------------------------------------- */
+.portal-grid {
+  align-items: stretch;
+  align-content: stretch;
+}
+
+.portal-shell {
+  position: relative;
+  display: flex;
+  min-width: 0;
+}
+
+.portal-shell > .rpg-window {
+  width: 100%;
+  flex: 1;
+  position: relative;
+  z-index: 2;
+}
+
+.portal-shell__runes {
+  position: absolute;
+  inset: -12px;
+  width: calc(100% + 24px);
+  height: calc(100% + 24px);
+  z-index: 1;
+  color: var(--magenta);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.portal-shell__sparks {
+  position: absolute;
+  inset: -18px;
+  z-index: 3;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.portal-spark {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--gold);
+  box-shadow: 0 0 0 1px var(--edge);
+  animation: portal-spark 2.6s steps(10) infinite;
+  animation-delay: calc(var(--i) * -0.33s);
+}
+
+.portal-spark:nth-child(1) { top: 2%; left: 8%; }
+.portal-spark:nth-child(2) { top: 26%; right: 0; }
+.portal-spark:nth-child(3) { top: 54%; left: 0; }
+.portal-spark:nth-child(4) { bottom: 6%; right: 12%; }
+.portal-spark:nth-child(5) { top: 0; left: 46%; }
+.portal-spark:nth-child(6) { bottom: 0; right: 38%; }
+.portal-spark:nth-child(7) { top: 34%; left: 2%; }
+.portal-spark:nth-child(8) { top: 18%; right: 2%; }
+
+@keyframes portal-spark {
+  0% { transform: translate3d(0, 8px, 0); opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { transform: translate3d(0, -12px, 0); opacity: 0; }
+}
+
+.portal-shell--student:hover .portal-shell__runes,
+.portal-shell--student:focus-within .portal-shell__runes {
+  opacity: 1;
+  color: var(--gold);
+  animation: portal-runes 2.8s steps(6) infinite;
+}
+
+@keyframes portal-runes {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.portal-shell--student:hover .portal-shell__sparks,
+.portal-shell--student:focus-within .portal-shell__sparks {
+  opacity: 1;
+}
+
+/* Selección: marco dorado y título invertido */
+.portal-shell--student:hover > .rpg-window,
+.portal-shell--student:focus-within > .rpg-window {
+  --borde: var(--gold);
+  box-shadow:
+    0 -4px 0 0 var(--gold), 0 4px 0 0 var(--gold),
+    -4px 0 0 0 var(--gold), 4px 0 0 0 var(--gold),
+    inset 4px 4px 0 0 var(--gold-hi), inset -4px -4px 0 0 var(--gold-lo),
+    0 0 0 8px rgba(255, 210, 63, 0.14);
+}
+
+.portal-shell--student:hover > .rpg-window .rpg-window__titlebar,
+.portal-shell--student:focus-within > .rpg-window .rpg-window__titlebar {
+  background: var(--gold);
+  color: var(--ink);
+}
+
+.portal-shell--student:hover .role-icon--student,
+.portal-shell--student:focus-within .role-icon--student {
+  --tone: var(--gold);
+  box-shadow:
+    0 0 0 2px var(--gold),
+    inset 2px 2px 0 0 var(--gold-hi),
+    inset -2px -2px 0 0 var(--gold-lo);
+}
+
+.portal-shell--student:hover .role-eyebrow,
+.portal-shell--student:focus-within .role-eyebrow {
+  color: var(--gold-hi);
+}
+
+/* La tarjeta hermana queda en azul apagado cuando el Portal está activo */
+.portal-grid:has(.portal-shell--student:hover) .portal-shell--teacher > .rpg-window,
+.portal-grid:has(.portal-shell--student:focus-within) .portal-shell--teacher > .rpg-window {
+  --borde: var(--blue-lo);
+  background: var(--panel-lo);
+  filter: saturate(0.35) brightness(0.88);
+}
+
+.portal-grid:has(.portal-shell--student:hover) .portal-shell--teacher .role-eyebrow,
+.portal-grid:has(.portal-shell--student:focus-within) .portal-shell--teacher .role-eyebrow {
+  color: var(--blue-hi);
+}
+
+/* Cursor de espada: sólo punteros finos (nunca en táctil) */
+@media (hover: hover) and (pointer: fine) {
+  .portal-shell--student,
+  .portal-shell--student .role-cta,
+  .portal-shell--student .pixel-btn {
+    cursor: url('/cursors/espada-neon.png') 27 3,
+      url('/cursors/espada-neon.svg') 27 3,
+      pointer;
+  }
+
+  .portal-shell--student .role-copy,
+  .portal-shell--student .role-title {
+    cursor: auto;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   Tarjetas de características con sprites
+   --------------------------------------------------------------------- */
+.feature-card {
+  --tone: var(--green);
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-card--map { --tone: var(--green); --icon-accent: var(--green-lo); }
+.feature-card--scroll { --tone: var(--student); --icon-accent: var(--magenta); }
+.feature-card--xp { --tone: var(--gold); --icon-accent: var(--orange); }
+
+.feature-card:hover { --borde: var(--tone); }
+
+.feature-sprite {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 104px;
+  margin-bottom: 0.9rem;
+  padding: 0.5rem;
+  color: var(--tone);
+  background:
+    repeating-conic-gradient(
+      rgba(255, 255, 255, 0.035) 0% 25%,
+      transparent 0% 50%
+    ) 0 0 / 16px 16px,
+    var(--panel-lo);
+  box-shadow: inset 0 0 0 2px var(--panel-hi);
+}
+
+.feature-sprite svg { display: block; filter: drop-shadow(3px 3px 0 var(--edge)); }
+
+.feature-card--map .feature-sprite { --icon-accent: var(--green-lo); }
+.feature-card--scroll .feature-sprite { --icon-accent: var(--magenta); }
+.feature-card--xp .feature-sprite { --icon-accent: var(--orange); }
+
+.feature-title {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-family: var(--font-px);
+  font-size: 10px;
+  line-height: 1.6;
+  color: var(--text-main);
+}
+
+.feature-copy { margin-top: 0.25rem; }
+
+/* ---------------------------------------------------------------------
+   Tema claro
+   --------------------------------------------------------------------- */
+[data-theme="light"] .home-neon .hero-title {
+  color: var(--text-main);
+  text-shadow:
+    3px 0 0 var(--scene-aurora-magenta),
+    -3px 0 0 var(--scene-crystal),
+    0 4px 0 var(--scene-ground-hi),
+    5px 5px 0 var(--violet-lo);
+}
+
+[data-theme="light"] .home-neon .hero-lead,
+[data-theme="light"] .home-neon .hero-lead strong {
+  text-shadow: none;
+}
+
+[data-theme="light"] .home-hud__name {
+  color: var(--gold-ink);
+  text-shadow: none;
+}
+
+[data-theme="light"] .home-hud {
+  box-shadow:
+    0 0 0 2px var(--magenta-lo),
+    0 0 0 4px var(--violet-lo),
+    6px 6px 0 0 var(--violet-lo),
+    inset 2px 2px 0 0 rgba(255, 255, 255, 0.85),
+    inset -2px -2px 0 0 rgba(90, 60, 140, 0.25);
+}
+
+[data-theme="light"] .neon-scene__sky::after { opacity: 0.2; }
+
+[data-theme="light"] .home-neon .hero-badge {
+  color: var(--gold-ink);
+  background: var(--home-panel);
+  box-shadow:
+    0 0 0 2px var(--gold),
+    4px 4px 0 0 var(--violet-lo),
+    inset 2px 2px 0 0 rgba(255, 255, 255, 0.9);
+}
+
+[data-theme="light"] .neon-scene__ground {
+  background:
+    repeating-linear-gradient(90deg, transparent 0 46px, rgba(90, 60, 140, 0.18) 46px 50px),
+    linear-gradient(180deg, var(--scene-ground-hi) 0 8px, var(--scene-ground) 8px 100%);
+}
+
+[data-theme="light"] .feature-sprite svg { filter: drop-shadow(3px 3px 0 rgba(63, 42, 99, 0.35)); }
+
+[data-theme="light"] .portal-grid:has(.portal-shell--student:hover) .portal-shell--teacher > .rpg-window,
+[data-theme="light"] .portal-grid:has(.portal-shell--student:focus-within) .portal-shell--teacher > .rpg-window {
+  background: var(--panel);
+  filter: saturate(0.4) brightness(0.9);
+}
+
+/* ---------------------------------------------------------------------
+   Responsive
+   --------------------------------------------------------------------- */
+@media (max-width: 1100px) {
+  /* En pantallas medianas el planeta quedaría detrás del HUD: fuera. */
+  .neon-scene__planet { display: none; }
+}
+
+@media (max-width: 900px) {
+  .home-hud { gap: 0.75rem; }
+}
+
+@media (max-width: 640px) {
+  .home-neon { min-height: calc(100vh - 120px); }
+  .home-neon__content { padding-top: 1.25rem; }
+  .home-hud { flex-wrap: wrap; padding: 0.65rem 0.75rem; }
+  .home-hud__avatar { flex: 0 0 44px; width: 44px; height: 44px; }
+  .home-hud__bars { grid-template-columns: 1fr; gap: 0.5rem; }
+  .home-neon .hero-title { font-size: clamp(20px, 8.4vw, 32px); letter-spacing: 0.01em; }
+  .home-neon .hero-lead { font-size: 20px; }
+  .neon-scene__planet { display: none; }
+  .neon-scene__ruins { width: 78vw; opacity: 0.5; }
+  .neon-scene__trees { width: 96vw; opacity: 0.5; }
+  .neon-scene__crystals { left: 2%; width: 74vw; opacity: 0.7; }
+  .neon-scene__ground { height: 10vh; }
+  .feature-sprite { height: 88px; }
+}
+
+/* ---------------------------------------------------------------------
+   Movimiento reducido
+   --------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .neon-scene__aurora,
+  .neon-star,
+  .portal-spark,
+  .portal-shell--student:hover .portal-shell__runes,
+  .portal-shell--student:focus-within .portal-shell__runes {
+    animation: none !important;
+  }
+
+  .portal-shell__sparks { display: none; }
+  .neon-star { opacity: 0.6; }
 }

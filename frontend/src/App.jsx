@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { AudioProvider } from './context/AudioContext';
+import { AudioControls } from './components/rpg';
 import Home from './pages/Home';
 import LoginProfesor from './pages/LoginProfesor';
 import AccesoEstudiante from './pages/AccesoEstudiante';
@@ -125,34 +127,37 @@ const RutaProtegida = ({ children, rolRequerido }) => {
 export default function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <div className="app-wrapper">
-          <HeaderGlobal />
-          <main className="app-main-content">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/profesor" element={<LoginProfesor />} />
-              <Route path="/estudiante" element={<AccesoEstudiante />} />
-              <Route path="/panel-profesor" element={
-                <RutaProtegida rolRequerido="profesor">
-                  <PanelProfesor />
-                </RutaProtegida>
-              } />
-              <Route path="/panel-estudiante" element={
-                <RutaProtegida rolRequerido="estudiante">
-                  <PanelEstudiante />
-                </RutaProtegida>
-              } />
-              <Route path="/evaluacion/:id" element={
-                <RutaProtegida rolRequerido="estudiante">
-                  <RendirEvaluacion />
-                </RutaProtegida>
-              } />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </main>
-        </div>
-      </BrowserRouter>
+      <AudioProvider>
+        <BrowserRouter>
+          <div className="app-wrapper">
+            <HeaderGlobal />
+            <main className="app-main-content">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/profesor" element={<LoginProfesor />} />
+                <Route path="/estudiante" element={<AccesoEstudiante />} />
+                <Route path="/panel-profesor" element={
+                  <RutaProtegida rolRequerido="profesor">
+                    <PanelProfesor />
+                  </RutaProtegida>
+                } />
+                <Route path="/panel-estudiante" element={
+                  <RutaProtegida rolRequerido="estudiante">
+                    <PanelEstudiante />
+                  </RutaProtegida>
+                } />
+                <Route path="/evaluacion/:id" element={
+                  <RutaProtegida rolRequerido="estudiante">
+                    <RendirEvaluacion />
+                  </RutaProtegida>
+                } />
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </main>
+            <AudioControls />
+          </div>
+        </BrowserRouter>
+      </AudioProvider>
     </AuthProvider>
   );
 }

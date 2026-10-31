@@ -1,3 +1,7 @@
 export { default as RpgWindow } from './RpgWindow';
 export { default as StatBar } from './StatBar';
 export { default as PixelButton } from './PixelButton';
+export { default as AudioControls } from './AudioControls';
+export { default as PixelIcon } from './PixelIcon';
+export { default as PortalRunes } from './PortalRunes';
+export { default as NeonScene } from './NeonScene';

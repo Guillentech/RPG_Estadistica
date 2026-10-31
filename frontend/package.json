@@ -7,10 +7,12 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "audio:generate": "node scripts/generate-chiptune.mjs"
   },
   "dependencies": {
     "lucide-react": "^1.54.0",
+    "proyecto-estadistica": "file:..",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-router-dom": "^7.18.4"

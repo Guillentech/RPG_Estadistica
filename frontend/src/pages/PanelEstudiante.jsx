@@ -3,9 +3,12 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { 
   Map, Backpack, Scroll, Users, Trophy, Swords, CloudLightning, 
-  Send, X
+  Send, X, GraduationCap
 } from 'lucide-react';
 import { StatBar } from '../components/rpg';
+
+// 📚 Constante de la escala académica (la materia vale 100 puntos)
+const NOTA_MAX = 100;
 
 // ============================================================================
 // 💡 SPRITES PIXEL ART 16-BIT (SVG)
@@ -157,6 +160,7 @@ export default function PanelEstudiante() {
   const [tareas, setTareas] = useState([]);
   const [misEntregas, setMisEntregas] = useState([]);
   const [gremio, setGremio] = useState([]);
+  const [boleta, setBoleta] = useState(null); // 📚 Boleta académica (nota 0-100 puntos)
 
   // 💡 Estados del Motor de Mapa 2D
   // 'heroPos' guarda las coordenadas X e Y en porcentaje (0% a 100%)
@@ -204,6 +208,12 @@ export default function PanelEstudiante() {
       fetch(`http://localhost:4000/api/calificaciones/estudiante/${user.id}`)
         .then(r => r.json())
         .then(setCalificaciones);
+
+      // 📚 Boleta académica: nota 0-100, desglose por actividad y puntos pendientes
+      fetch(`http://localhost:4000/api/estudiantes/${user.id}/boleta`)
+        .then(r => r.json())
+        .then(setBoleta)
+        .catch(() => setBoleta(null));
 
       fetch(`http://localhost:4000/api/entregas/estudiante/${user.id}`)
         .then(r => r.json())
@@ -670,10 +680,10 @@ export default function PanelEstudiante() {
                         <div key={ev.id} className="boss-row">
                           <div>
                             <strong className="boss-row__title">{ev.titulo}</strong>
-                            <span className="boss-row__meta">+{ev.xp_recompensa || 300} XP • {ev.total_preguntas} preguntas</span>
+                            <span className="boss-row__meta">📚 {ev.puntos_max ?? 30} de 100 pts • +{ev.xp_recompensa || 300} XP • {ev.total_preguntas} preguntas</span>
                           </div>
                           {intento ? (
-                            <span className="badge badge-success">Completado ({intento.puntaje}%)</span>
+                            <span className="badge badge-success">Completado ({intento.puntaje}% = {intento.puntos_ganados ?? '—'} pts)</span>
                           ) : (
                             <button onClick={() => navigate(`/evaluacion/${ev.id}`)} className="btn-pro btn-pro-ai btn-sm">
                               <Swords size={15} /> Iniciar Combate
@@ -741,6 +751,15 @@ export default function PanelEstudiante() {
                   </span>
                 </div>
                 <p className="quest-card__desc">{tar.descripcion}</p>
+
+                {/* 📚 Contexto académico: puntos de la materia que vale y nota obtenida */}
+                <span className="quest-card__meta text-xp">
+                  📚 Vale {tar.puntos_max ?? 10} de 100 pts de la materia
+                  {entrega?.calificacion != null && (
+                    <> • Tu nota: {entrega.calificacion}% = <strong>{entrega.puntos_ganados ?? '—'} pts</strong></>
+                  )}
+                  {entrega && entrega.calificacion == null && <> • Esperando calificación del Game Master</>}
+                </span>
 
                 {/* 💡 NUEVO: Botón de descarga de archivo adjunto (PDF/Word Base64) */}
                 {tar.archivo_adjunto && (
@@ -816,10 +835,106 @@ export default function PanelEstudiante() {
         </div>
       )}
 
+      {/* 💡 BOLETA ACADÉMICA (Contexto claro: nota de la materia sobre 100 puntos) */}
+      {vistaHotbar === 'boleta' && (
+        <div className="card-pro">
+          <h3 className="pixel-font section-title section-title--gold">🎓 BOLETA DE LA MATERIA</h3>
+
+          {!boleta ? (
+            <p className="rpg-empty">Cargando boleta académica...</p>
+          ) : (
+            <>
+              {/* Encabezado: nota actual con escala visible */}
+              <div className="achievement-row" style={{ alignItems: 'flex-start' }}>
+                <div>
+                  <strong className="achievement-row__title">NOTA ACTUAL</strong>
+                  <span className="achievement-row__meta">
+                    Escala de la materia: 0 a {boleta.nota_max} puntos • {boleta.puntos_ganados} ganados • {boleta.puntos_restantes_materia} por ganar
+                  </span>
+                </div>
+                <span className={`achievement-score ${boleta.nota_materia >= 60 ? 'is-pass' : 'is-fail'}`}>
+                  {boleta.nota_materia} / {boleta.nota_max}
+                </span>
+              </div>
+
+              <StatBar
+                label={`★ NOTA DE LA MATERIA (${boleta.puntos_ganados} / ${boleta.nota_max} PTS)`}
+                value={boleta.nota_materia}
+                max={boleta.nota_max}
+                color="xp"
+                suffix=" pts"
+                showPercent={false}
+              />
+
+              <p className="section-sub">
+                📖 Cada actividad vale unos puntos de la materia. Tu nota es la suma de los puntos que has ganado
+                (nunca supera {boleta.nota_max}). La XP y el nivel son progresión de tu héroe y <strong>no afectan la nota</strong>.
+              </p>
+
+              {/* Desglose por actividad con su tema de origen */}
+              <h4 className="zone-column__title">📜 ACTIVIDADES CALIFICADAS ({boleta.rendimiento.length})</h4>
+              {boleta.rendimiento.length === 0 && (
+                <p className="rpg-empty">Aún no has ganado puntos. ¡Rinde un examen o entrega una misión!</p>
+              )}
+              {boleta.rendimiento.length > 0 && (
+                <div className="rpg-table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Actividad</th>
+                        <th>Tipo</th>
+                        <th>Tema</th>
+                        <th>Puntos</th>
+                        <th>Desempeño</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {boleta.rendimiento.map((r) => (
+                        <tr key={`${r.tipo}-${r.registro_id}`}>
+                          <td className="text-strong">{r.actividad}</td>
+                          <td>{r.tipo === 'examen' ? '⚔️ Examen' : '🎒 Misión'}</td>
+                          <td className="text-student">{r.tema_titulo}</td>
+                          <td className="text-xp is-strong">{r.puntos_ganados} / {r.puntos_max} pts</td>
+                          <td className={r.porcentaje >= 60 ? 'badge badge-success' : 'badge badge-danger'}>
+                            {r.porcentaje}%
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              {/* Puntos que aún se pueden ganar */}
+              <h4 className="zone-column__title" style={{ marginTop: '1rem' }}>⏳ PUNTOS PENDIENTES ({boleta.pendientes.length})</h4>
+              {boleta.pendientes.length === 0 ? (
+                <p className="rpg-empty">¡Completaste todas las actividades de la materia!</p>
+              ) : (
+                boleta.pendientes.map((p) => (
+                  <div key={`${p.tipo}-${p.actividad_id}`} className="achievement-row">
+                    <div>
+                      <strong className="achievement-row__title">{p.actividad}</strong>
+                      <span className="achievement-row__meta">
+                        {p.tipo === 'examen' ? '⚔️ Examen' : '🎒 Misión'} • Tema: {p.tema_titulo}
+                      </span>
+                    </div>
+                    <span className="achievement-score is-fail">{p.puntos_max} pts en juego</span>
+                  </div>
+                ))
+              )}
+            </>
+          )}
+        </div>
+      )}
+
       {/* 💡 LOGROS (Historial de batallas y notas) */}
       {vistaHotbar === 'logros' && (
         <div className="card-pro">
           <h3 className="pixel-font section-title section-title--gold">🏆 LOGROS Y RESULTADOS</h3>
+          <p className="section-sub">
+            📚 Escala de la materia: 0 a {NOTA_MAX} puntos. Tu nota actual es <strong>{boleta?.nota_materia ?? 0} / {NOTA_MAX} pts</strong>.
+            La XP y el nivel no afectan la nota.
+          </p>
           {calificaciones.length === 0 && (
             <p className="rpg-empty">Todavía no has librado ningún combate. ¡Entra a un bioma y desafía a su Jefe!</p>
           )}
@@ -827,7 +942,9 @@ export default function PanelEstudiante() {
             <div key={cal.id} className="achievement-row">
               <div>
                 <strong className="achievement-row__title">{cal.evaluacion_titulo}</strong>
-                <span className="achievement-row__meta">+{cal.xp_ganada || 150} XP • {cal.aciertos}/{cal.total_preguntas} aciertos</span>
+                <span className="achievement-row__meta">
+                  Tema: {cal.tema_titulo || '—'} • +{cal.xp_ganada || 150} XP • {cal.aciertos}/{cal.total_preguntas} aciertos • 📚 {cal.puntos_ganados ?? '—'}/{cal.puntos_max ?? '—'} pts
+                </span>
               </div>
               <span className={`achievement-score ${cal.puntaje >= 60 ? 'is-pass' : 'is-fail'}`}>{cal.puntaje}%</span>
             </div>
@@ -854,6 +971,10 @@ export default function PanelEstudiante() {
         <button className={`rpg-hotbar-slot rpg-hotbar-slot--guild ${vistaHotbar === 'gremio' ? 'active' : ''}`} onClick={() => setVistaHotbar('gremio')}>
           <Users size={20} />
           <span className="pixel-font">Gremio</span>
+        </button>
+        <button className={`rpg-hotbar-slot rpg-hotbar-slot--boleta ${vistaHotbar === 'boleta' ? 'active' : ''}`} onClick={() => setVistaHotbar('boleta')}>
+          <GraduationCap size={20} />
+          <span className="pixel-font">Boleta</span>
         </button>
         <button className={`rpg-hotbar-slot rpg-hotbar-slot--trophy ${vistaHotbar === 'logros' ? 'active' : ''}`} onClick={() => setVistaHotbar('logros')}>
           <Trophy size={20} />
