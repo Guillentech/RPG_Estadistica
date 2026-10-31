@@ -67,9 +67,10 @@ Todo se ejecuta desde la raíz del proyecto, en **una sola terminal**.
 **1. Instala las dependencias (solo la primera vez):**
 
 ```bash
-npm install        # dependencias de la raíz (concurrently)
-npm run setup      # dependencias de backend y frontend
+npm run setup
 ```
+
+Esto instala la raíz, el backend y el frontend en un solo paso. 
 
 **2. Arranca backend y frontend juntos:**
 

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" shape-rendering="crispEdges">
+  <!-- Contornos -->
+  <g fill="#0b0722">
+    <path d="M25 1 L31 7 L19 19 L13 13 Z" />
+    <path d="M8 14 L10 12 L20 22 L18 24 Z" />
+    <path d="M9 17 L15 23 L10 28 L4 22 Z" />
+    <rect x="3" y="24" width="6" height="6" />
+  </g>
+
+  <!-- Hoja -->
+  <path d="M26 3 L29 6 L18 17 L15 14 Z" fill="#6ff7ff" />
+  <path d="M27 4 L28 5 L18 15 L17 14 Z" fill="#e8ffff" />
+  <rect x="25" y="7" width="2" height="2" fill="#ffffff" />
+
+  <!-- Guarda -->
+  <path d="M9 15 L11 13 L19 21 L17 23 Z" fill="#ffd23f" />
+  <path d="M11 15 L12 14 L18 20 L17 21 Z" fill="#ffe08a" />
+
+  <!-- Empuñadura -->
+  <path d="M10 19 L14 23 L10 27 L6 23 Z" fill="#ff4fd8" />
+  <path d="M10 21 L12 23 L10 25 L8 23 Z" fill="#ffa6ec" />
+
+  <!-- Pomo -->
+  <rect x="4" y="25" width="4" height="4" fill="#ffd23f" />
+  <rect x="4" y="25" width="2" height="2" fill="#ffe08a" />
+</svg>

@@ -137,6 +137,10 @@ asegurarColumna('calificaciones', 'xp_ganada', 'INTEGER DEFAULT 0');
 asegurarColumna('calificaciones', 'detalle_respuestas', "TEXT DEFAULT '{}'");
 asegurarColumna('calificaciones', 'retroalimentacion', "TEXT DEFAULT ''");
 
+// Columnas de Puntos Académicos: cada actividad vale una parte de los 100 puntos de la materia
+asegurarColumna('evaluaciones', 'puntos_max', 'INTEGER DEFAULT 30');
+asegurarColumna('tareas', 'puntos_max', 'INTEGER DEFAULT 10');
+
 // 3. Semilla inicial de Profesor Game Master
 const existeProfesor = db.prepare('SELECT COUNT(*) as total FROM profesores').get();
 if (existeProfesor.total === 0) {

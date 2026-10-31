@@ -25,7 +25,21 @@ const obtenerTituloClase = (nivel, claseActual) => {
   return claseActual || 'Aprendiz de Código';
 };
 
-// Recalcular XP y Nivel de un estudiante sumando exámenes y tareas calificadas
+// --- CONSTANTES ACADÉMICAS DE LA MATERIA (Req.: nota máxima 100 puntos) ---
+const NOTA_MAX = 100; // La materia vale 100 puntos en total
+
+// Calcula los puntos ganados por una actividad según el desempeño (0-100) y sus puntos en la materia
+const puntosGanadosActividad = (desempenoPorcentaje, puntosMax) =>
+  Math.round((Math.min(NOTA_MAX, Math.max(0, Number(desempenoPorcentaje) || 0)) / NOTA_MAX) * (Number(puntosMax) || 0));
+
+// Suma de puntos ya asignados (evaluaciones + tareas) sin exceder los 100 de la materia
+const puntosAsignadosTotales = () => {
+  const evals = db.prepare('SELECT COALESCE(SUM(puntos_max), 0) as total FROM evaluaciones').get();
+  const tars = db.prepare('SELECT COALESCE(SUM(puntos_max), 0) as total FROM tareas').get();
+  return (evals?.total || 0) + (tars?.total || 0);
+};
+
+// Recalcular XP, Nivel y Nota Académica (0-100 puntos) de un estudiante
 const sincronizarProgresoEstudiante = (estudianteId) => {
   const examenes = db.prepare('SELECT COALESCE(SUM(xp_ganada), 0) as xp_eval FROM calificaciones WHERE estudiante_id = ?').get(estudianteId);
   const tareas = db.prepare('SELECT COALESCE(SUM(calificacion * 2), 0) as xp_tar FROM entregas WHERE estudiante_id = ? AND calificacion IS NOT NULL').get(estudianteId);
@@ -37,13 +51,40 @@ const sincronizarProgresoEstudiante = (estudianteId) => {
   const estActual = db.prepare('SELECT clase_rpg FROM estudiantes WHERE id = ?').get(estudianteId);
   const nuevaClase = obtenerTituloClase(nuevoNivel, estActual?.clase_rpg);
 
+  // 📚 NOTA ACADÉMICA: suma de puntos ganados por cada actividad, tope 100
+  const notaEval = db.prepare(`
+    SELECT COALESCE(SUM(ROUND(MIN(100, MAX(0, c.puntaje)) / 100.0 * e.puntos_max)), 0) as puntos
+    FROM calificaciones c
+    JOIN evaluaciones e ON c.evaluacion_id = e.id
+    WHERE c.estudiante_id = ?
+  `).get(estudianteId);
+  const notaTar = db.prepare(`
+    SELECT COALESCE(SUM(ROUND(MIN(100, MAX(0, en.calificacion)) / 100.0 * t.puntos_max)), 0) as puntos
+    FROM entregas en
+    JOIN tareas t ON en.tarea_id = t.id
+    WHERE en.estudiante_id = ? AND en.calificacion IS NOT NULL
+  `).get(estudianteId);
+
+  const puntosGanados = Math.min(NOTA_MAX, (notaEval?.puntos || 0) + (notaTar?.puntos || 0));
+  const totalEval = db.prepare('SELECT COUNT(*) as c FROM calificaciones WHERE estudiante_id = ?').get(estudianteId)?.c || 0;
+  const totalTar = db.prepare('SELECT COUNT(*) as c FROM entregas WHERE estudiante_id = ? AND calificacion IS NOT NULL').get(estudianteId)?.c || 0;
+
   db.prepare(`
     UPDATE estudiantes 
     SET xp = ?, nivel = ?, clase_rpg = ?
     WHERE id = ?
   `).run(xpTotal, nuevoNivel, nuevaClase, estudianteId);
 
-  return db.prepare('SELECT * FROM estudiantes WHERE id = ?').get(estudianteId);
+  const perfil = db.prepare('SELECT * FROM estudiantes WHERE id = ?').get(estudianteId);
+  return {
+    ...perfil,
+    nota_materia: puntosGanados,
+    puntos_ganados: puntosGanados,
+    puntos_disponibles: Math.max(0, puntosAsignadosTotales() - puntosGanados),
+    puntos_restantes_materia: Math.max(0, NOTA_MAX - puntosGanados),
+    total_evaluaciones: totalEval,
+    total_tareas_calificadas: totalTar
+  };
 };
 
 // --- AUTENTICACIÓN Y MANEJO SEGURO DE SESIONES (Req. 2, 3, 18, 19 y 20) ---
@@ -95,6 +136,69 @@ app.get('/api/estudiantes/:id/perfil', (req, res) => {
   const est = sincronizarProgresoEstudiante(req.params.id);
   if (!est) return res.status(404).json({ error: 'Estudiante no encontrado' });
   res.json(est);
+});
+
+// 📚 BOLETA ACADÉMICA: desglose de la nota (0-100 puntos) por actividad con su tema de origen
+app.get('/api/estudiantes/:id/boleta', (req, res) => {
+  const estudianteId = req.params.id;
+  const estudiante = sincronizarProgresoEstudiante(estudianteId);
+  if (!estudiante) return res.status(404).json({ error: 'Estudiante no encontrado' });
+
+  const rendimiento = db.prepare(`
+    SELECT 'examen' as tipo,
+           c.id as registro_id,
+           ev.titulo as actividad,
+           ev.puntos_max,
+           ROUND(MIN(100, MAX(0, c.puntaje)) / 100.0 * ev.puntos_max) as puntos_ganados,
+           MIN(100, MAX(0, c.puntaje)) as porcentaje,
+           t.titulo as tema_titulo,
+           c.fecha as fecha
+    FROM calificaciones c
+    JOIN evaluaciones ev ON c.evaluacion_id = ev.id
+    JOIN temas t ON ev.tema_id = t.id
+    WHERE c.estudiante_id = ?
+    UNION ALL
+    SELECT 'tarea' as tipo,
+           en.id as registro_id,
+           tt.titulo as actividad,
+           tt.puntos_max,
+           ROUND(MIN(100, MAX(0, en.calificacion)) / 100.0 * tt.puntos_max) as puntos_ganados,
+           MIN(100, MAX(0, en.calificacion)) as porcentaje,
+           t2.titulo as tema_titulo,
+           en.fecha as fecha
+    FROM entregas en
+    JOIN tareas tt ON en.tarea_id = tt.id
+    JOIN temas t2 ON tt.tema_id = t2.id
+    WHERE en.estudiante_id = ? AND en.calificacion IS NOT NULL
+    ORDER BY fecha DESC
+  `).all(estudianteId, estudianteId);
+
+  // Actividades aún no rendidas/entregadas (puntos que quedan por ganar)
+  const pendientes = db.prepare(`
+    SELECT 'examen' as tipo, ev.id as actividad_id, ev.titulo as actividad, ev.puntos_max, t.titulo as tema_titulo
+    FROM evaluaciones ev
+    JOIN temas t ON ev.tema_id = t.id
+    WHERE ev.id NOT IN (SELECT evaluacion_id FROM calificaciones WHERE estudiante_id = ?)
+    UNION ALL
+    SELECT 'tarea' as tipo, t.id as actividad_id, t.titulo as actividad, t.puntos_max, te.titulo as tema_titulo
+    FROM tareas t
+    JOIN temas te ON t.tema_id = te.id
+    WHERE t.id NOT IN (SELECT tarea_id FROM entregas WHERE estudiante_id = ? AND calificacion IS NOT NULL)
+  `).all(estudianteId, estudianteId);
+
+  res.json({
+    estudiante: {
+      id: estudiante.id,
+      nombre: estudiante.nombre,
+      codigo_unico: estudiante.codigo_unico
+    },
+    nota_materia: estudiante.nota_materia,
+    puntos_ganados: estudiante.puntos_ganados,
+    puntos_restantes_materia: estudiante.puntos_restantes_materia,
+    nota_max: NOTA_MAX,
+    rendimiento,
+    pendientes
+  });
 });
 
 // --- ESTUDIANTES Y GREMIO (Req. 6 y 7) ---
@@ -195,19 +299,29 @@ app.get('/api/evaluaciones', (req, res) => {
 });
 
 app.post('/api/evaluaciones', (req, res) => {
-  const { tema_id, titulo, nombre_jefe, xp_recompensa, fecha_limite } = req.body;
+  const { tema_id, titulo, nombre_jefe, xp_recompensa, fecha_limite, puntos_max } = req.body;
   if (!tema_id || !titulo?.trim()) return res.status(400).json({ error: 'Tema y título son obligatorios' });
 
   const jefe = nombre_jefe?.trim() || `Jefe Final: ${titulo.trim()}`;
   const xp = parseInt(xp_recompensa, 10) || 300;
   const limite = fecha_limite?.trim() || '24h';
 
-  const info = db.prepare(`
-    INSERT INTO evaluaciones (tema_id, titulo, nombre_jefe, xp_recompensa, fecha_limite) 
-    VALUES (?, ?, ?, ?, ?)
-  `).run(tema_id, titulo.trim(), jefe, xp, limite);
+  // 📚 Validación de puntos académicos: entero ≥ 1 y sin pasarse de los 100 de la materia
+  const puntos = Math.round(Number(puntos_max));
+  if (!Number.isFinite(puntos) || puntos < 1) {
+    return res.status(400).json({ error: 'Los puntos en la materia deben ser al menos 1.' });
+  }
+  const asignados = puntosAsignadosTotales();
+  if (asignados + puntos > NOTA_MAX) {
+    return res.status(400).json({ error: `Esta evaluación vale ${puntos} puntos, pero solo quedan ${NOTA_MAX - asignados} de los ${NOTA_MAX} puntos de la materia por asignar.` });
+  }
 
-  res.status(201).json({ id: info.lastInsertRowid, tema_id, titulo, nombre_jefe: jefe, xp_recompensa: xp });
+  const info = db.prepare(`
+    INSERT INTO evaluaciones (tema_id, titulo, nombre_jefe, xp_recompensa, fecha_limite, puntos_max) 
+    VALUES (?, ?, ?, ?, ?, ?)
+  `).run(tema_id, titulo.trim(), jefe, xp, limite, puntos);
+
+  res.status(201).json({ id: info.lastInsertRowid, tema_id, titulo, nombre_jefe: jefe, xp_recompensa: xp, puntos_max: puntos });
 });
 
 app.delete('/api/evaluaciones/:id', (req, res) => {
@@ -320,12 +434,19 @@ app.post('/api/evaluaciones/:id/calificar', (req, res) => {
 
   const perfilActualizado = sincronizarProgresoEstudiante(estudiante_id);
 
+  // 📚 Puntos académicos ganados en esta actividad (sobre los 100 de la materia)
+  const puntosMaxEval = Number(evaluacion?.puntos_max) || 0;
+  const puntosGanadosEval = puntosGanadosActividad(puntaje, puntosMaxEval);
+
   res.json({
     id: info.lastInsertRowid,
     puntaje,
     total_preguntas: preguntas.length,
     aciertos,
     xp_ganada: xpGanada,
+    puntos_max: puntosMaxEval,
+    puntos_ganados: puntosGanadosEval,
+    nota_materia: perfilActualizado?.nota_materia,
     retroalimentacion: retroGeneral,
     desglose,
     estudiante: perfilActualizado
@@ -334,7 +455,9 @@ app.post('/api/evaluaciones/:id/calificar', (req, res) => {
 
 app.get('/api/calificaciones', (req, res) => {
   const query = `
-    SELECT c.*, e.nombre as estudiante_nombre, e.codigo_unico, e.nivel as estudiante_nivel, ev.titulo as evaluacion_titulo
+    SELECT c.*, e.nombre as estudiante_nombre, e.codigo_unico, e.nivel as estudiante_nivel, ev.titulo as evaluacion_titulo,
+           ev.puntos_max,
+           ROUND(MIN(100, MAX(0, c.puntaje)) / 100.0 * ev.puntos_max) as puntos_ganados
     FROM calificaciones c
     JOIN estudiantes e ON c.estudiante_id = e.id
     JOIN evaluaciones ev ON c.evaluacion_id = ev.id
@@ -346,9 +469,12 @@ app.get('/api/calificaciones', (req, res) => {
 
 app.get('/api/calificaciones/estudiante/:id', (req, res) => {
   const query = `
-    SELECT c.*, ev.titulo as evaluacion_titulo, ev.nombre_jefe
+    SELECT c.*, ev.titulo as evaluacion_titulo, ev.nombre_jefe, ev.puntos_max,
+           ROUND(MIN(100, MAX(0, c.puntaje)) / 100.0 * ev.puntos_max) as puntos_ganados,
+           t.titulo as tema_titulo, t.bioma as tema_bioma
     FROM calificaciones c
     JOIN evaluaciones ev ON c.evaluacion_id = ev.id
+    JOIN temas t ON ev.tema_id = t.id
     WHERE c.estudiante_id = ?
     ORDER BY c.id DESC
   `;
@@ -378,17 +504,27 @@ app.get('/api/tareas', (req, res) => {
 });
 
 app.post('/api/tareas', (req, res) => {
-  const { tema_id, titulo, descripcion, fecha_limite, archivo_adjunto } = req.body;
+  const { tema_id, titulo, descripcion, fecha_limite, archivo_adjunto, puntos_max } = req.body;
   if (!tema_id || !titulo?.trim() || !descripcion?.trim()) {
     return res.status(400).json({ error: 'Tema, título y descripción son obligatorios.' });
   }
-  
+
+  // 📚 Validación de puntos académicos: entero ≥ 1 y sin pasarse de los 100 de la materia
+  const puntos = Math.round(Number(puntos_max));
+  if (!Number.isFinite(puntos) || puntos < 1) {
+    return res.status(400).json({ error: 'Los puntos en la materia deben ser al menos 1.' });
+  }
+  const asignados = puntosAsignadosTotales();
+  if (asignados + puntos > NOTA_MAX) {
+    return res.status(400).json({ error: `Esta tarea vale ${puntos} puntos, pero solo quedan ${NOTA_MAX - asignados} de los ${NOTA_MAX} puntos de la materia por asignar.` });
+  }
+
   // 💡 NUEVO: Recibimos el archivo (PDF/Word en Base64) en la instrucción INSERT
   const info = db.prepare(`
-    INSERT INTO tareas (tema_id, titulo, descripcion, fecha_limite, archivo_adjunto)
-    VALUES (?, ?, ?, ?, ?)
-  `).run(tema_id, titulo.trim(), descripcion.trim(), fecha_limite || 'Viernes 23:59 hrs', archivo_adjunto || null);
-  res.status(201).json({ id: info.lastInsertRowid });
+    INSERT INTO tareas (tema_id, titulo, descripcion, fecha_limite, archivo_adjunto, puntos_max)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `).run(tema_id, titulo.trim(), descripcion.trim(), fecha_limite || 'Viernes 23:59 hrs', archivo_adjunto || null, puntos);
+  res.status(201).json({ id: info.lastInsertRowid, puntos_max: puntos });
 });
 
 app.delete('/api/tareas/:id', (req, res) => {
@@ -429,9 +565,14 @@ app.post('/api/entregas', (req, res) => {
 
 app.get('/api/entregas/estudiante/:id', (req, res) => {
   const query = `
-    SELECT en.*, t.titulo as tarea_titulo
+    SELECT en.*, t.titulo as tarea_titulo, t.puntos_max,
+           CASE WHEN en.calificacion IS NULL THEN NULL
+                ELSE ROUND(MIN(100, MAX(0, en.calificacion)) / 100.0 * t.puntos_max)
+           END as puntos_ganados,
+           te.titulo as tema_titulo, te.bioma as tema_bioma
     FROM entregas en
     JOIN tareas t ON en.tarea_id = t.id
+    JOIN temas te ON t.tema_id = te.id
     WHERE en.estudiante_id = ?
   `;
   const misEntregas = db.prepare(query).all(req.params.id);
@@ -440,11 +581,18 @@ app.get('/api/entregas/estudiante/:id', (req, res) => {
 
 app.put('/api/entregas/:id/calificar', (req, res) => {
   const { calificacion, retroalimentacion } = req.body;
+
+  // 📚 Validación estricta: la nota de una actividad es un porcentaje de 0 a 100
+  const nota = Number(calificacion);
+  if (!Number.isFinite(nota) || nota < 0 || nota > 100) {
+    return res.status(400).json({ error: 'La calificación debe ser un número entre 0 y 100.' });
+  }
+
   db.prepare(`
     UPDATE entregas 
     SET calificacion = ?, retroalimentacion = ? 
     WHERE id = ?
-  `).run(calificacion, retroalimentacion?.trim() || '', req.params.id);
+  `).run(nota, retroalimentacion?.trim() || '', req.params.id);
 
   // Actualizar XP y Nivel del estudiante al recibir nota de tarea
   const entrega = db.prepare('SELECT estudiante_id FROM entregas WHERE id = ?').get(req.params.id);
