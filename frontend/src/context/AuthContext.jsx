@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
+import { API_URL } from '../config';
 
 const AuthContext = createContext();
 
@@ -55,6 +56,30 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // 🛡️ Avatar del estudiante: persiste en SQLite para sobrevivir al cierre de sesión.
+  const actualizarAvatarEstudiante = async (avatar) => {
+    if (!user?.id || user.rol !== 'estudiante') {
+      return { ok: false, error: 'Debes iniciar sesión como héroe para cambiar tu avatar.' };
+    }
+    try {
+      const res = await fetch(`${API_URL}/api/estudiantes/${user.id}/avatar`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ avatar })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        return { ok: false, error: data.error || 'No se pudo guardar el avatar.' };
+      }
+      const nuevaSesion = { ...user, avatar: data.avatar ?? avatar };
+      setUser(nuevaSesion);
+      localStorage.setItem('usuario_lms', JSON.stringify(nuevaSesion));
+      return { ok: true, avatar: nuevaSesion.avatar };
+    } catch {
+      return { ok: false, error: 'No se pudo conectar con el servidor para guardar el avatar.' };
+    }
+  };
+
   // Cierre de sesión seguro en cliente y servidor (Req. 19 y 20)
   const logout = async () => {
     try {
@@ -75,7 +100,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     // 💡 Asegúrate de incluir actualizarAvatar en el value del Provider
-    <AuthContext.Provider value={{ user, loginProfesor, loginEstudiante, refrescarEstudiante, actualizarAvatar, logout }}>
+    <AuthContext.Provider value={{ user, loginProfesor, loginEstudiante, refrescarEstudiante, actualizarAvatar, actualizarAvatarEstudiante, logout }}>
       {children}
     </AuthContext.Provider>
   );

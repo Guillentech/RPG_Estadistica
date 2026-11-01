@@ -12,34 +12,14 @@ import {
   Swords, Map, UserCog, Save, UploadCloud, FileText, ImagePlus
 } from 'lucide-react';
 import { StatBar } from '../components/rpg';
+import { GameMasterAvatar16Bit } from '../components/mapa/Sprites';
+import { urlArchivo } from '../config';
 
 // ============================================================================
 // 🎨 SPRITES PIXEL ART 16-BIT (SVG CON CRISP-EDGES)
 // Estos componentes dibujan arte retro en 16x16 píxeles sin necesidad de 
 // cargar imágenes externas que puedan romperse.
 // ============================================================================
-
-// 🧙‍♂️ Sprite 1: Avatar por defecto del Game Master (Mago Dorado)
-const GameMasterSprite16Bit = () => (
-  <svg width="52" height="52" viewBox="0 0 16 16" shapeRendering="crispEdges">
-    {/* Fondo oscuro del marco */}
-    <rect width="16" height="16" fill="#13092b" />
-    {/* Sombrero de Game Master con corona dorada */}
-    <rect x="5" y="1" width="6" height="2" fill="#6b21a8" />
-    <rect x="3" y="3" width="10" height="2" fill="#9333ea" />
-    <rect x="5" y="3" width="6" height="1" fill="#fde047" />
-    {/* Rostro y ojos brillantes */}
-    <rect x="4" y="5" width="8" height="4" fill="#fed7aa" />
-    <rect x="5" y="6" width="2" height="2" fill="#38bdf8" />
-    <rect x="9" y="6" width="2" height="2" fill="#38bdf8" />
-    {/* Barba blanca de sabio */}
-    <rect x="4" y="9" width="8" height="3" fill="#f8fafc" />
-    <rect x="5" y="12" width="6" height="1" fill="#cbd5e1" />
-    {/* Túnica carmesí/dorada */}
-    <rect x="3" y="11" width="10" height="5" fill="#7e22ce" />
-    <rect x="6" y="12" width="4" height="4" fill="#fbbf24" />
-  </svg>
-);
 
 // 🐉 Sprite 2: Icono de Jefe Final (Dragón / Demonio de Mazmorra)
 const BossDragonSprite16Bit = () => (
@@ -73,6 +53,7 @@ export default function PanelProfesor() {
   // 🗄️ ESTADOS DE DATOS SINCRONIZADOS CON LA BASE DE DATOS (SQLite)
   // --------------------------------------------------------------------------
   const [estudiantes, setEstudiantes] = useState([]);      // Lista de aventureros
+  const [unidades, setUnidades] = useState([]);             // Ciudadelas del Mapa Continental
   const [temas, setTemas] = useState([]);                   // Lista de biomas del mapa
   const [evaluaciones, setEvaluaciones] = useState([]);     // Lista de Jefes Finales
   const [calificaciones, setCalificaciones] = useState([]); // Historial de combates
@@ -121,6 +102,12 @@ export default function PanelProfesor() {
   const [temaTitulo, setTemaTitulo] = useState('');
   const [temaDesc, setTemaDesc] = useState('');
   const [temaBioma, setTemaBioma] = useState('mazmorra');
+  const [temaUnidadId, setTemaUnidadId] = useState('');
+
+  const [unidadNumero, setUnidadNumero] = useState('');
+  const [unidadNombre, setUnidadNombre] = useState('');
+  const [unidadDesc, setUnidadDesc] = useState('');
+  const [unidadBioma, setUnidadBioma] = useState('pradera');
 
   const [ejTemaId, setEjTemaId] = useState('');
   const [ejTitulo, setEjTitulo] = useState('');
@@ -153,6 +140,7 @@ export default function PanelProfesor() {
   // ==========================================================================
   const cargarDatos = () => {
     fetch('http://localhost:4000/api/estudiantes').then(r => r.json()).then(setEstudiantes);
+    fetch('http://localhost:4000/api/unidades').then(r => r.json()).then(setUnidades);
     fetch('http://localhost:4000/api/temas').then(r => r.json()).then(setTemas);
     fetch('http://localhost:4000/api/evaluaciones').then(r => r.json()).then(setEvaluaciones);
     fetch('http://localhost:4000/api/calificaciones').then(r => r.json()).then(setCalificaciones);
@@ -290,6 +278,31 @@ export default function PanelProfesor() {
     }
   };
 
+  const crearUnidad = async (e) => {
+    e.preventDefault();
+    if (!unidadNombre.trim()) return alert('La Ciudadela necesita un nombre.');
+    const res = await fetch('http://localhost:4000/api/unidades', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        numero: Number(unidadNumero) || unidades.length + 1,
+        nombre: unidadNombre.trim(),
+        descripcion: unidadDesc.trim(),
+        bioma: unidadBioma
+      })
+    });
+    if (res.ok) {
+      setUnidadNumero('');
+      setUnidadNombre('');
+      setUnidadDesc('');
+      cargarDatos();
+      alert('¡Ciudadela levantada en el Mapa Continental!');
+    } else {
+      const err = await res.json().catch(() => ({}));
+      alert(err.error || 'Error al crear la Ciudadela.');
+    }
+  };
+
   const crearTema = async (e) => {
     e.preventDefault();
     if (!temaTitulo.trim()) return;
@@ -299,7 +312,8 @@ export default function PanelProfesor() {
       body: JSON.stringify({
         titulo: temaTitulo.trim(),
         descripcion: temaDesc.trim(),
-        bioma: temaBioma
+        bioma: temaBioma,
+        unidad_id: temaUnidadId === '' ? null : Number(temaUnidadId)
       })
     });
     if (res.ok) {
@@ -307,6 +321,9 @@ export default function PanelProfesor() {
       setTemaDesc('');
       cargarDatos();
       alert('¡Nuevo Bioma desbloqueado en el Mapa 2D!');
+    } else {
+      const err = await res.json().catch(() => ({}));
+      alert(err.error || 'Error al crear el Bioma.');
     }
   };
 
@@ -507,11 +524,6 @@ export default function PanelProfesor() {
     cargarDatos();
   };
 
-  const eliminarEjemplo = async (id) => {
-    await fetch(`http://localhost:4000/api/ejemplos/${id}`, { method: 'DELETE' });
-    cargarDatos();
-  };
-
   const eliminarEvaluacion = async (id, titulo) => {
     if (!window.confirm(`¿Eliminar al Jefe "${titulo}"?`)) return;
     await fetch(`http://localhost:4000/api/evaluaciones/${id}`, { method: 'DELETE' });
@@ -570,7 +582,7 @@ export default function PanelProfesor() {
             {perfilDocente.avatar ? (
               <img src={perfilDocente.avatar} alt="Game Master" className="avatar-img" />
             ) : (
-              <GameMasterSprite16Bit />
+              <GameMasterAvatar16Bit />
             )}
           </button>
           <div className="hud-identity">
@@ -599,6 +611,10 @@ export default function PanelProfesor() {
             <span className="hud-kpi__label">Héroes</span>
           </div>
           <div className="hud-kpi hud-kpi--teacher">
+            <span className="hud-kpi__value">{unidades.length}</span>
+            <span className="hud-kpi__label">Ciudadelas</span>
+          </div>
+          <div className="hud-kpi hud-kpi--teacher">
             <span className="hud-kpi__value">{temas.length}</span>
             <span className="hud-kpi__label">Biomas</span>
           </div>
@@ -615,7 +631,7 @@ export default function PanelProfesor() {
         </button>
         <button className={`rpg-tab rpg-tab--map ${pestana === 'temas' ? 'is-active' : ''}`} onClick={() => setPestana('temas')}>
           <Map size={16} />
-          <span>3. Biomas ({temas.length})</span>
+          <span>3. Mapa ({unidades.length}🏰 · {temas.length})</span>
         </button>
         <button className={`rpg-tab rpg-tab--boss ${pestana === 'evaluaciones' ? 'is-active' : ''}`} onClick={() => setPestana('evaluaciones')}>
           <Swords size={16} /> <span>4. Jefes ({evaluaciones.length})</span>
@@ -818,10 +834,55 @@ export default function PanelProfesor() {
         <div className="grid-2">
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             <div className="card-pro">
+              <h3 className="pixel-font section-title section-title--gold">
+                🏰 LEVANTAR CIUDADELA (UNIDAD)
+              </h3>
+              <form onSubmit={crearUnidad}>
+                <div className="input-group">
+                  <label className="input-label">Número de la Unidad:</label>
+                  <input
+                    type="number"
+                    className="input-pro"
+                    placeholder={`Ej: ${unidades.length + 1}`}
+                    value={unidadNumero}
+                    onChange={(e) => setUnidadNumero(e.target.value)}
+                    min="1"
+                  />
+                </div>
+                <div className="input-group">
+                  <label className="input-label">Nombre de la Ciudadela:</label>
+                  <input type="text" className="input-pro" placeholder="Ej: Valle de las Frecuencias" value={unidadNombre} onChange={(e) => setUnidadNombre(e.target.value)} required />
+                </div>
+                <div className="input-group">
+                  <label className="input-label">Bioma del Interior:</label>
+                  <select className="input-pro" value={unidadBioma} onChange={(e) => setUnidadBioma(e.target.value)}>
+                    <option value="pradera">🌿 Pradera</option>
+                    <option value="valle">🏞️ Valle</option>
+                    <option value="bosque">🌲 Bosque</option>
+                    <option value="ciudadela">🏰 Ciudadela de piedra</option>
+                  </select>
+                </div>
+                <div className="input-group">
+                  <textarea className="input-pro" placeholder="Descripción de la Unidad..." value={unidadDesc} onChange={(e) => setUnidadDesc(e.target.value)} rows="2" />
+                </div>
+                <button type="submit" className="btn-pro btn-pro-primary btn-block">Levantar Ciudadela</button>
+              </form>
+            </div>
+
+            <div className="card-pro">
               <h3 className="pixel-font section-title section-title--teacher">
                 🏰 CONSTRUIR BIOMA EN EL MAPA 2D
               </h3>
               <form onSubmit={crearTema}>
+                <div className="input-group">
+                  <label className="input-label">Ciudadela / Unidad:</label>
+                  <select className="input-pro" value={temaUnidadId} onChange={(e) => setTemaUnidadId(e.target.value)}>
+                    <option value="">— Sin Unidad (Campamento del Gremio) —</option>
+                    {unidades.map(u => (
+                      <option key={u.id} value={u.id}>Unidad {u.numero} · {u.nombre}</option>
+                    ))}
+                  </select>
+                </div>
                 <div className="input-group">
                   <label className="input-label">Nombre de la Región / Bioma:</label>
                   <input type="text" className="input-pro" placeholder="Ej: Fortaleza de Cálculo" value={temaTitulo} onChange={(e) => setTemaTitulo(e.target.value)} required />
@@ -868,21 +929,36 @@ export default function PanelProfesor() {
             <h3 className="pixel-font section-title section-title--xp">
               🗺️ REGIONES ACTIVAS EN EL MAPA ({temas.length})
             </h3>
-            <div className="rpg-scroll" style={{ maxHeight: '560px' }}>
-              {temas.map(t => (
-                <div key={t.id} className="roster-item roster-item--teacher">
-                  <div className="roster-item__id">
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                      <strong className="text-teacher" style={{ fontSize: '20px' }}>🏰 {t.titulo}</strong>
-                      <span className="tag-bioma">
-                        {t.bioma || 'bosque'}
-                      </span>
+            <div className="rpg-scroll" style={{ maxHeight: '640px' }}>
+              {[...unidades.map(u => ({
+                clave: `u-${u.id}`,
+                titulo: `UNIDAD ${u.numero} · ${u.nombre}`,
+                temas: temas.filter(t => t.unidad_id === u.id)
+              })), {
+                clave: 'sin-unidad',
+                titulo: 'CAMPAMENTO DEL GREMIO',
+                temas: temas.filter(t => t.unidad_id == null)
+              }].filter(grupo => grupo.temas.length > 0).map(grupo => (
+                <div key={grupo.clave} style={{ marginBottom: '1rem' }}>
+                  <h4 className="pixel-font" style={{ fontSize: '11px', color: 'var(--gold)', margin: '0.5rem 0 0.4rem' }}>
+                    {grupo.titulo} ({grupo.temas.length})
+                  </h4>
+                  {grupo.temas.map(t => (
+                    <div key={t.id} className="roster-item roster-item--teacher">
+                      <div className="roster-item__id">
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                          <strong className="text-teacher" style={{ fontSize: '20px' }}>🏰 {t.titulo}</strong>
+                          <span className="tag-bioma">
+                            {t.bioma || 'bosque'}
+                          </span>
+                        </div>
+                        <p className="roster-meta" style={{ marginTop: '0.3rem' }}>{t.descripcion}</p>
+                      </div>
+                      <button onClick={() => eliminarTema(t.id, t.titulo)} className="btn-danger btn-sm" aria-label={`Destruir bioma ${t.titulo}`}>
+                        <Trash2 size={14} />
+                      </button>
                     </div>
-                    <p className="roster-meta" style={{ marginTop: '0.3rem' }}>{t.descripcion}</p>
-                  </div>
-                  <button onClick={() => eliminarTema(t.id, t.titulo)} className="btn-danger btn-sm" aria-label={`Destruir bioma ${t.titulo}`}>
-                    <Trash2 size={14} />
-                  </button>
+                  ))}
                 </div>
               ))}
               {temas.length === 0 && (
@@ -1145,6 +1221,17 @@ export default function PanelProfesor() {
                     <pre className="rpg-code rpg-code--tight">
                       {entrega.contenido}
                     </pre>
+                    {entrega.archivo_ruta && (
+                      <a
+                        href={urlArchivo(entrega.archivo_ruta)}
+                        download={entrega.archivo_nombre || `Entrega_${entrega.estudiante_nombre}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="quest-file"
+                      >
+                        <FileText size={14} /> {entrega.archivo_nombre || 'Descargar archivo adjunto'}
+                      </a>
+                    )}
                     <div className="form-grid-2 form-grid-2--wide">
                       <input type="number" className="input-pro" min="0" max="100" placeholder="Nota (0-100)" value={notaInput[entrega.id] !== undefined ? notaInput[entrega.id] : (entrega.calificacion ?? '')} onChange={(e) => setNotaInput({ ...notaInput, [entrega.id]: e.target.value })} />
                       <input type="text" className="input-pro" placeholder="Retroalimentación..." value={feedbackInput[entrega.id] !== undefined ? feedbackInput[entrega.id] : (entrega.retroalimentacion ?? '')} onChange={(e) => setFeedbackInput({ ...feedbackInput, [entrega.id]: e.target.value })} />
@@ -1220,7 +1307,7 @@ export default function PanelProfesor() {
               {perfilDocente.avatar ? (
                 <img src={perfilDocente.avatar} alt="Avatar" />
               ) : (
-                <GameMasterSprite16Bit />
+                <GameMasterAvatar16Bit />
               )}
               <input type="file" accept="image/*" ref={fileInputAvatar} style={{ display: 'none' }} onChange={handleAvatarChange} />
               <button

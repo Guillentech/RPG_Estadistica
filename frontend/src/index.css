@@ -14,6 +14,10 @@
    ===================================================================== */
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
 
+/* Tailwind v4 sin preflight: el reset global rompería el sistema pixel-art. */
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
 :root {
   /* Paleta */
   --ink: #120c2b;
@@ -259,6 +263,7 @@ strong, b { font-weight: 400; }
    --------------------------------------------------------------------- */
 .btn,
 .btn-pro,
+.btn-danger,
 .btn-retroceso,
 .btn-salir,
 .btn-guest {
@@ -290,6 +295,7 @@ strong, b { font-weight: 400; }
 
 .btn:hover,
 .btn-pro:hover,
+.btn-danger:hover,
 .btn-retroceso:hover,
 .btn-salir:hover,
 .btn-guest:hover {
@@ -298,6 +304,7 @@ strong, b { font-weight: 400; }
 
 .btn:active,
 .btn-pro:active,
+.btn-danger:active,
 .btn-retroceso:active,
 .btn-salir:active,
 .btn-guest:active {
@@ -1740,15 +1747,41 @@ p, li, td, th, label { overflow-wrap: break-word; }
 .alchemist-bubble__name { display: block; margin-bottom: 3px; font-family: var(--font-px); font-size: 8px; line-height: 1.5; color: var(--student-hi); }
 .alchemist-bubble__sprite { flex: 0 0 auto; line-height: 0; }
 
-.map-legend {
+/* Burbuja compacta: solo el sprite, para no tapar las Ciudadelas */
+.alchemist-bubble--compact {
   position: absolute;
-  left: 12px;
-  bottom: 12px;
-  z-index: 25;
-  padding: 5px 9px;
+  right: 10px;
+  bottom: 10px;
+  width: 52px;
+  height: 56px;
+  padding: 0;
+  justify-content: center;
+  gap: 0;
+}
+.alchemist-bubble--compact .alchemist-bubble__sprite svg { width: 44px; height: 47px; }
+.alchemist-bubble__alert {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 18px;
+  padding: 1px 4px;
   font-family: var(--font-px);
   font-size: 8px;
-  line-height: 1.6;
+  line-height: 1.4;
+  color: var(--ink);
+  background: var(--gold);
+  box-shadow: 0 0 0 2px var(--edge);
+}
+
+.map-legend {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  z-index: 26;
+  padding: 3px 6px;
+  font-family: var(--font-px);
+  font-size: 7px;
+  line-height: 1.5;
   color: var(--teacher);
   background: var(--overlay-soft);
   box-shadow: inset 0 0 0 2px var(--teacher);
@@ -3075,4 +3108,312 @@ body.home-active .header-pro {
 
   .portal-shell__sparks { display: none; }
   .neon-star { opacity: 0.6; }
+}
+   @media (max-width: 640px) {
+     .alchemist-bubble {
+       left: auto;
+       right: 8px;
+       bottom: 8px;
+       width: auto;
+       max-width: 190px;
+       padding: 4px 6px;
+       gap: 6px;
+     }
+     .alchemist-bubble__text {
+       font-size: 13px;
+       padding: 4px 6px;
+       display: -webkit-box;
+      line-clamp: 2;
+       -webkit-line-clamp: 2; /* Corta el texto a 2 líneas máximo */
+       -webkit-box-orient: vertical;
+       overflow: hidden;
+     }
+     .alchemist-bubble__sprite svg {
+       width: 32px;
+       height: 34px;
+     }
+   }
+
+/* ---------------------------------------------------------------------
+   Mapa Continental, Ciudadelas y senderos móviles
+   --------------------------------------------------------------------- */
+.mapa-wrapper { position: relative; }
+
+.mapa-ciudadela__progreso,
+.mapa-tema__indice {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  z-index: 2;
+  min-width: 22px;
+  padding: 2px 4px;
+  font-family: var(--font-px);
+  font-size: 8px;
+  line-height: 1.4;
+  color: var(--on-accent);
+  background: var(--student-lo);
+  box-shadow: 0 0 0 2px var(--edge);
+}
+
+.mapa-tema__indice {
+  left: -4px;
+  right: auto;
+  background: var(--gold);
+  color: var(--ink);
+}
+
+.map-node--ciudadela .map-nameplate {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  max-width: 104px;
+  padding: 2px 5px;
+  font-size: 7px;
+  background: var(--violet-lo);
+}
+.map-nameplate__tag {
+  font-size: 7px;
+  line-height: 1.4;
+  color: var(--gold);
+}
+.map-nameplate__name {
+  font-size: 7px;
+  line-height: 1.35;
+}
+
+.map-node--tema.is-complete .map-nameplate {
+  background: var(--gold);
+  color: var(--ink);
+}
+
+.map-node--ciudadela .map-node__art svg { width: 64px; height: 61px; }
+.map-node--tema .map-node__art svg { width: 46px; height: 41px; }
+.map-node--jefe .map-node__art svg { width: 52px; height: 50px; }
+.map-node--jefe .map-nameplate { max-width: 96px; padding: 2px 4px; font-size: 7px; }
+.mapa-tema__indice--jefe { background: var(--red); color: #fff; }
+.map-node--tema .map-nameplate { max-width: 84px; padding: 2px 4px; font-size: 7px; }
+.map-node--jefe { max-width: 40%; }
+
+.mapa-volver {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 30;
+  padding: 5px 8px;
+  font-family: var(--font-px);
+  font-size: 8px;
+  color: var(--gold);
+  background: var(--ink);
+  border: 0;
+  cursor: pointer;
+  box-shadow: 0 0 0 2px var(--gold);
+}
+.mapa-volver:hover { color: var(--ink); background: var(--gold); }
+
+/* Vista móvil: sin canvas diminuto */
+.mapa-movil {
+  width: 100%;
+  padding: 0.25rem 0 0.75rem;
+}
+.mapa-movil__banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.65rem;
+  padding: 0.45rem 0.7rem;
+  font-family: var(--font-px);
+  font-size: 8px;
+  line-height: 1.5;
+  color: var(--on-accent);
+  background: var(--student-lo);
+  box-shadow: 0 3px 0 0 var(--edge);
+}
+.mapa-movil__banner--unidad { align-items: flex-start; flex-wrap: wrap; }
+
+.ciudadela-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+.ciudadela-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.65rem 0.45rem;
+  text-align: center;
+  background: var(--panel);
+  border: 0;
+  cursor: pointer;
+  box-shadow:
+    0 0 0 2px var(--student),
+    inset 2px 2px 0 0 var(--panel-hi),
+    inset -2px -2px 0 0 var(--panel-lo);
+}
+.ciudadela-card:active { transform: translateY(2px); }
+.ciudadela-card.is-complete { box-shadow: 0 0 0 2px var(--gold); }
+.ciudadela-card__num { font-family: var(--font-px); font-size: 8px; color: var(--student-hi); }
+.ciudadela-card__art { line-height: 0; }
+.ciudadela-card__art svg { width: 70px; height: 67px; }
+.ciudadela-card__name { font-family: var(--font-px); font-size: 8px; line-height: 1.4; color: var(--text-main); }
+.ciudadela-card__meta { font-size: 15px; color: var(--mute); }
+
+.sendero-movil { display: flex; flex-direction: column; gap: 0.55rem; }
+.px-nodo--lista {
+  position: relative;
+  transform: none;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 0.65rem;
+  width: 100%;
+  min-height: 52px;
+  padding: 0.5rem 0.65rem;
+  text-align: left;
+  background: var(--panel);
+  box-shadow:
+    0 0 0 2px var(--student),
+    inset 2px 2px 0 0 var(--panel-hi);
+}
+.px-nodo--lista .px-nodo__chapa { flex: 0 0 auto; }
+.px-nodo--lista .px-nodo__etiqueta { display: none; }
+.px-nodo--lista.px-nodo--jefe { box-shadow: 0 0 0 2px var(--red); }
+.px-nodo__lista-texto { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.px-nodo__lista-texto strong { font-family: var(--font-px); font-size: 9px; line-height: 1.4; color: var(--text-main); overflow-wrap: anywhere; }
+.px-nodo__lista-texto small { font-size: 15px; color: var(--mute); }
+
+@media (max-width: 380px) {
+  .ciudadela-grid { grid-template-columns: 1fr; }
+}
+
+/* ---------------------------------------------------------------------
+   Header móvil compacto + avatares preset
+   --------------------------------------------------------------------- */
+.header-pro--movil {
+  flex-wrap: nowrap;
+  gap: 0.5rem;
+  padding: 0.45rem 0.6rem;
+}
+
+.header-pro--movil .brand-icon {
+  width: 28px;
+  height: 28px;
+  margin: 0;
+  flex: 0 0 28px;
+}
+
+.header-pro--movil .btn-retroceso,
+.header-pro--movil .btn-salir {
+  padding: 7px 9px;
+  margin: 0;
+}
+
+.header-pro--movil .btn-theme-toggle {
+  flex: 0 0 auto;
+}
+
+.avatar-preset {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--violet-lo);
+}
+
+.avatar-preset svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.perfil-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 0.6rem;
+  margin: 0.75rem 0;
+}
+
+.perfil-avatar-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.55rem;
+  border: 0;
+  cursor: pointer;
+  color: var(--text-main);
+  background: var(--panel-lo);
+  box-shadow: 0 0 0 2px var(--panel-hi);
+  font-family: var(--font-body);
+  font-size: 17px;
+}
+
+.perfil-avatar-option:hover { box-shadow: 0 0 0 2px var(--violet-hi); }
+
+.perfil-avatar-option.is-selected {
+  color: var(--on-accent);
+  background: var(--violet);
+  box-shadow: 0 0 0 2px var(--gold);
+}
+
+.perfil-avatar-option .avatar-preset {
+  width: 56px;
+  height: 56px;
+  box-shadow: 0 0 0 2px var(--edge);
+}
+
+.perfil-preview {
+  width: 92px;
+  height: 92px;
+  flex: 0 0 92px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: var(--panel-lo);
+  box-shadow: 0 0 0 2px var(--panel-hi), inset 0 0 0 2px var(--student);
+}
+
+.perfil-preview img,
+.perfil-preview .avatar-preset {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  image-rendering: pixelated;
+}
+
+.perfil-preview .avatar-preset { box-shadow: none; }
+
+.entrega-modal__archivo {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0.6rem 0;
+  padding: 0.55rem 0.7rem;
+  font-size: 18px;
+  color: var(--teacher);
+  background: var(--panel-lo);
+  box-shadow: inset 0 0 0 2px var(--panel-hi);
+  overflow-wrap: anywhere;
+}
+
+.entrega-modal__acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.8rem;
+}
+
+.perfil-mensaje {
+  margin-top: 0.6rem;
+  font-size: 18px;
+  color: var(--student-hi);
+}
+
+.perfil-mensaje.is-error { color: var(--red-hi); }
+
+@media (max-width: 640px) {
+  .header-pro--movil .brand-title { font-size: 9px; }
+  .perfil-grid { grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); }
+  .perfil-preview { width: 72px; height: 72px; flex-basis: 72px; }
 }

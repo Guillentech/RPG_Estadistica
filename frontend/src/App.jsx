@@ -3,21 +3,23 @@ import { BrowserRouter, Routes, Route, Navigate, Link, useNavigate, useLocation 
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { AudioProvider } from './context/AudioContext';
 import { AudioControls } from './components/rpg';
+import { AvatarEstudiante } from './components/perfil/Avatares';
+import useMediaQuery from './hooks/useMediaQuery';
 import Home from './pages/Home';
 import LoginProfesor from './pages/LoginProfesor';
 import AccesoEstudiante from './pages/AccesoEstudiante';
 import PanelProfesor from './pages/PanelProfesor';
 import PanelEstudiante from './pages/PanelEstudiante';
 import RendirEvaluacion from './pages/RendirEvaluacion';
-// 💡 CORRECCIÓN CRÍTICA: Se añadieron 'User' y 'Compass' a las importaciones
 import { 
-  LogOut, Swords, ArrowLeft, Shield, Sun, Moon, User, Compass
+  LogOut, Swords, ArrowLeft, Shield, Sun, Moon, Compass
 } from 'lucide-react';
 
 const HeaderGlobal = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const esMovil = useMediaQuery('(max-width: 639px)');
 
   const [theme, setTheme] = useState(() => localStorage.getItem('theme_lms') || 'dark');
   useEffect(() => {
@@ -53,6 +55,73 @@ const HeaderGlobal = () => {
     }
   };
 
+  // 📱 Header compacto: nivel, XP y Salir alineados en una sola fila.
+  if (esMovil) {
+    const nivelActual = user?.nivel || 1;
+    const xpActual = user?.xp || 0;
+
+    return (
+      <header className="header-pro header-pro--movil">
+        <div className="flex min-w-0 items-center gap-2">
+          {!enInicio && (
+            <button
+              onClick={manejarRetroceso}
+              className="btn-retroceso"
+              title={obtenerTextoRetroceso()}
+              aria-label={obtenerTextoRetroceso()}
+            >
+              <ArrowLeft size={14} />
+            </button>
+          )}
+
+          <Link to="/" className="flex min-w-0 items-center gap-2" aria-label="Ir a la portada">
+            <span className="brand-icon"><Swords size={16} /></span>
+          </Link>
+        </div>
+
+        <div className="flex shrink-0 items-center gap-1.5">
+          <button
+            className="btn-theme-toggle"
+            onClick={toggleTheme}
+            title="Cambiar tema claro/oscuro"
+            aria-label="Cambiar tema"
+          >
+            {theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
+          </button>
+
+          {user ? (
+            <>
+              <AvatarEstudiante avatar={user.avatar} size={24} className="shrink-0" />
+              <span className="pixel-font whitespace-nowrap text-[9px] text-gold">
+                NVL {nivelActual}
+              </span>
+              <span className="pixel-font whitespace-nowrap text-[9px] text-xp">
+                {xpActual} XP
+              </span>
+              <button
+                onClick={handleCerrarSesion}
+                className="btn-salir"
+                title="Salir"
+                aria-label="Cerrar sesión"
+              >
+                <LogOut size={14} /><span>Salir</span>
+              </button>
+            </>
+          ) : (
+            <div className="flex items-center gap-1">
+              <Link to="/estudiante" className="btn-guest btn-guest-student" aria-label="Entrar al Gremio" title="Entrar al Gremio">
+                <Swords size={14} />
+              </Link>
+              <Link to="/profesor" className="btn-guest btn-guest-teacher" aria-label="Acceso Game Master" title="Game Master">
+                <Shield size={14} />
+              </Link>
+            </div>
+          )}
+        </div>
+      </header>
+    );
+  }
+
   return (
     <header className="header-pro">
       <div className="header-left">
@@ -87,10 +156,12 @@ const HeaderGlobal = () => {
               
               {/* 💡 AQUÍ SE MUESTRA LA FOTO DE PERFIL EN TIEMPO REAL */}
               <div className="avatar-circle">
-                {user.avatar ? (
+                {user.rol === 'estudiante' ? (
+                  <AvatarEstudiante avatar={user.avatar} size={34} />
+                ) : user.avatar ? (
                   <img src={user.avatar} alt="Perfil" className="avatar-img" />
                 ) : (
-                  user.rol === 'profesor' ? <Shield size={16} /> : <User size={16} />
+                  <Shield size={16} />
                 )}
               </div>
 

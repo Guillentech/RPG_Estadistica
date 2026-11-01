@@ -1,160 +1,40 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Map, Backpack, Scroll, Users, Trophy, Swords, CloudLightning, 
-  Send, X, GraduationCap
+import {
+  Backpack, Scroll, Users, Trophy, CloudLightning, Send, GraduationCap, UserRound, FileText
 } from 'lucide-react';
 import { StatBar } from '../components/rpg';
+import MapaGeneral from '../components/mapa/MapaGeneral';
+import MapaUnidad from '../components/mapa/MapaUnidad';
+import ModalTema from '../components/mapa/ModalTema';
+import ModalEntrega from '../components/mapa/ModalEntrega';
+import PerfilEstudiante from '../components/perfil/PerfilEstudiante';
+import { urlArchivo } from '../config';
+import { AlchemistWizard16Bit, AvatarHero16Bit } from '../components/mapa/Sprites';
+import { TERRENOS, terrenoDeUnidad, ANCHO_LOGICO } from '../game/terreno';
+import { esTileTransitable, puntoInicio } from '../game/mapa';
+import { calcularProgresoUnidad, crearUnidadCampamento, temasDeUnidad } from '../game/progreso';
+import useMediaQuery from '../hooks/useMediaQuery';
 
 // 📚 Constante de la escala académica (la materia vale 100 puntos)
 const NOTA_MAX = 100;
 
-// ============================================================================
-// 💡 SPRITES PIXEL ART 16-BIT (SVG)
-// Estos componentes dibujan los gráficos del juego usando vectores (SVG) 
-// con la propiedad "shapeRendering='crispEdges'" para evitar el suavizado 
-// y mantener el aspecto retro pixelado.
-// ============================================================================
-
-// 🦸‍♂️ Sprite del Héroe: Cambia el color de la ropa según si es 'Arquera' o 'Mago'
-const AvatarHero16Bit = ({ clase = '' }) => {
-  const esArquera = clase.toLowerCase().includes('arquer');
-  return (
-    <svg width="46" height="46" viewBox="0 0 16 16" shapeRendering="crispEdges">
-      <rect width="16" height="16" fill="#1e1b4b" />
-      {/* Cabello / Capucha */}
-      <rect x="4" y="2" width="8" height="3" fill={esArquera ? '#059669' : '#7e22ce'} />
-      <rect x="3" y="4" width="10" height="2" fill={esArquera ? '#10b981' : '#9333ea'} />
-      <rect x="4" y="4" width="8" height="1" fill="#fbbf24" />
-      {/* Rostro 16-bit */}
-      <rect x="4" y="6" width="8" height="5" fill="#fed7aa" />
-      <rect x="5" y="7" width="2" height="2" fill="#0f172a" />
-      <rect x="9" y="7" width="2" height="2" fill="#0f172a" />
-      <rect x="5" y="7" width="1" height="1" fill="#ffffff" />
-      <rect x="9" y="7" width="1" height="1" fill="#ffffff" />
-      <rect x="7" y="9" width="2" height="1" fill="#f97316" />
-      {/* Armadura / Túnica */}
-      <rect x="3" y="11" width="10" height="5" fill={esArquera ? '#047857' : '#2563eb'} />
-      <rect x="6" y="11" width="4" height="5" fill="#fbbf24" />
-    </svg>
-  );
-};
-
-// 🦉 Sprite del Sabio Alquimista AI (El mentor del chat inferior)
-const AlchemistWizard16Bit = () => (
-  <svg width="64" height="68" viewBox="0 0 16 17" shapeRendering="crispEdges">
-    {/* Sombrero Arcano con Estrella */}
-    <rect x="6" y="0" width="4" height="2" fill="#581c87" />
-    <rect x="5" y="2" width="6" height="2" fill="#7e22ce" />
-    <rect x="2" y="4" width="12" height="2" fill="#9333ea" />
-    <rect x="7" y="3" width="2" height="1" fill="#fde047" />
-    {/* Rostro y Barba Blanca de Sabio */}
-    <rect x="5" y="6" width="6" height="3" fill="#fed7aa" />
-    <rect x="6" y="7" width="1" height="1" fill="#0f172a" />
-    <rect x="9" y="7" width="1" height="1" fill="#0f172a" />
-    <rect x="4" y="9" width="8" height="4" fill="#f8fafc" />
-    <rect x="5" y="13" width="6" height="1" fill="#e2e8f0" />
-    {/* Túnica Púrpura y Orbe Alquímico */}
-    <rect x="3" y="10" width="2" height="6" fill="#6b21a8" />
-    <rect x="11" y="10" width="2" height="6" fill="#6b21a8" />
-    <rect x="5" y="14" width="6" height="3" fill="#7e22ce" />
-    <rect x="13" y="7" width="2" height="2" fill="#38bdf8" />
-    <rect x="13" y="9" width="1" height="7" fill="#b45309" />
-  </svg>
-);
-
-// 🏰 Sprite de las Mazmorras/Castillos en el Mapa
-// Cambia sus banderines (rojo a verde) y apaga el aura maligna si el Jefe fue derrotado.
-const CastleDungeonSprite = ({ derrotado }) => (
-  <svg width="88" height="84" viewBox="0 0 22 21" shapeRendering="crispEdges">
-    {/* Aura o Jefe Demonio flotando sobre la mazmorra (desaparece al ganar) */}
-    {!derrotado && (
-      <g>
-        <rect x="6" y="1" width="2" height="2" fill="#fde047" />
-        <rect x="14" y="1" width="2" height="2" fill="#fde047" />
-        <rect x="7" y="2" width="8" height="5" fill="#dc2626" />
-        <rect x="8" y="4" width="2" height="1" fill="#fef08a" />
-        <rect x="12" y="4" width="2" height="1" fill="#fef08a" />
-      </g>
-    )}
-    {/* Estructura base del castillo */}
-    <rect x="2" y="6" width="2" height="2" fill="#cbd5e1" />
-    <rect x="5" y="6" width="2" height="2" fill="#cbd5e1" />
-    <rect x="15" y="6" width="2" height="2" fill="#cbd5e1" />
-    <rect x="18" y="6" width="2" height="2" fill="#cbd5e1" />
-    <rect x="2" y="8" width="5" height="11" fill="#64748b" />
-    <rect x="15" y="8" width="5" height="11" fill="#64748b" />
-    <rect x="7" y="9" width="8" height="10" fill="#475569" />
-    <rect x="8" y="8" width="2" height="1" fill="#94a3b8" />
-    <rect x="12" y="8" width="2" height="1" fill="#94a3b8" />
-    {/* Puerta principal */}
-    <rect x="9" y="13" width="4" height="6" fill="#0f172a" />
-    <rect x="10" y="12" width="2" height="1" fill="#0f172a" />
-    <rect x="10" y="13" width="2" height="6" fill="#78350f" />
-    {/* Banderines que cambian de color */}
-    <rect x="4" y="4" width="1" height="2" fill="#f8fafc" />
-    <rect x="5" y="4" width="2" height="1" fill={derrotado ? '#10b981' : '#ef4444'} />
-    <rect x="17" y="4" width="1" height="2" fill="#f8fafc" />
-    <rect x="18" y="4" width="2" height="1" fill={derrotado ? '#10b981' : '#ef4444'} />
-  </svg>
-);
-
-// 🏛️ Sprites de otros biomas (Ruinas, Laboratorio, Bosque)
-const BiomeStructureSprite = ({ tipo }) => {
-  if (tipo === 'ruinas') {
-    return (
-      <svg width="76" height="68" viewBox="0 0 18 16" shapeRendering="crispEdges">
-        <rect x="2" y="13" width="14" height="2" fill="#64748b" />
-        <rect x="3" y="4" width="3" height="9" fill="#cbd5e1" />
-        <rect x="8" y="5" width="2" height="8" fill="#94a3b8" />
-        <rect x="13" y="7" width="2" height="6" fill="#64748b" />
-        <rect x="2" y="3" width="9" height="2" fill="#e2e8f0" />
-        <rect x="3" y="5" width="2" height="3" fill="#10b981" />
-        <rect x="8" y="6" width="2" height="2" fill="#059669" />
-      </svg>
-    );
-  }
-  if (tipo === 'laboratorio') {
-    return (
-      <svg width="76" height="76" viewBox="0 0 18 18" shapeRendering="crispEdges">
-        <rect x="8" y="1" width="2" height="3" fill="#38bdf8" />
-        <rect x="5" y="4" width="8" height="3" fill="#7e22ce" />
-        <rect x="4" y="7" width="10" height="9" fill="#475569" />
-        <rect x="7" y="9" width="4" height="3" fill="#38bdf8" />
-        <rect x="8" y="13" width="2" height="3" fill="#0f172a" />
-        <rect x="3" y="16" width="12" height="1" fill="#94a3b8" />
-      </svg>
-    );
-  }
-  return (
-    <svg width="78" height="70" viewBox="0 0 18 16" shapeRendering="crispEdges">
-      <rect x="3" y="10" width="2" height="4" fill="#78350f" />
-      <rect x="13" y="10" width="2" height="4" fill="#78350f" />
-      <rect x="1" y="4" width="6" height="6" fill="#047857" />
-      <rect x="2" y="2" width="4" height="3" fill="#10b981" />
-      <rect x="11" y="4" width="6" height="6" fill="#065f46" />
-      <rect x="12" y="2" width="4" height="3" fill="#34d399" />
-      <rect x="7" y="10" width="4" height="4" fill="#d97706" />
-      <rect x="7" y="10" width="4" height="1" fill="#fde047" />
-      <rect x="8" y="11" width="2" height="1" fill="#fef08a" />
-    </svg>
-  );
-};
-
-// ============================================================================
-// 💡 COMPONENTE PRINCIPAL: PANEL DEL ESTUDIANTE (AVENTURERO)
-// ============================================================================
 export default function PanelEstudiante() {
   const { user, refrescarEstudiante } = useAuth();
   const navigate = useNavigate();
-  const canvasRef = useRef(null); // Referencia al motor del mapa 2D
+  const wrapperMapaRef = useRef(null);  // Contenedor para medir la escala entera
+  const esMovil = useMediaQuery('(max-width: 640px)');
 
   // 💡 Estados para la navegación de la barra inferior (Hotbar)
   const [vistaHotbar, setVistaHotbar] = useState('mapa');
 
+  // 💡 Escala entera del canvas (1x, 2x, 3x...) para evitar píxeles borrosos
+  const [escalaMapa, setEscalaMapa] = useState(2);
+
   // 💡 Estados para almacenar los datos traídos del Backend (SQLite)
   const [temas, setTemas] = useState([]);
+  const [unidades, setUnidades] = useState([]);
   const [evaluaciones, setEvaluaciones] = useState([]);
   const [calificaciones, setCalificaciones] = useState([]);
   const [tareas, setTareas] = useState([]);
@@ -162,15 +42,14 @@ export default function PanelEstudiante() {
   const [gremio, setGremio] = useState([]);
   const [boleta, setBoleta] = useState(null); // 📚 Boleta académica (nota 0-100 puntos)
 
-  // 💡 Estados del Motor de Mapa 2D
-  // 'heroPos' guarda las coordenadas X e Y en porcentaje (0% a 100%)
-  const [heroPos, setHeroPos] = useState({ x: 38, y: 52 });
-  const [caminando, setCaminando] = useState(false); // Para la animación de salto
-  const [zonaActivaModal, setZonaActivaModal] = useState(null); // Ventana al entrar a un bioma
+  // 💡 Estados del Motor de Mapa 2D por Tiles y Ciudadelas
+  const [heroPos, setHeroPos] = useState({ x: 15, y: 8 });
+  const [caminando, setCaminando] = useState(false);
+  const [zonaActivaModal, setZonaActivaModal] = useState(null);
+  const [unidadActiva, setUnidadActiva] = useState(null);
 
   // 💡 Estados de Entregas de Misiones (Trabajos Prácticos)
-  const [entregaTexto, setEntregaTexto] = useState({});
-  const [enviandoTarea, setEnviandoTarea] = useState(false);
+  const [tareaEnEntrega, setTareaEnEntrega] = useState(null);
 
   // 💡 Estados del Sabio Alquimista (Copiloto IA Estudiantil)
   const [dialogoAlquimistaAbierto, setDialogoAlquimistaAbierto] = useState(false);
@@ -178,38 +57,23 @@ export default function PanelEstudiante() {
   const [respuestaAlquimista, setRespuestaAlquimista] = useState('');
   const [cargandoAlquimista, setCargandoAlquimista] = useState(false);
 
-  // 📍 Coordenadas fijas donde se renderizan los Biomas en el Mapa 2D
-  const nodosBiomas = [
-    { x: 22, y: 30, biomaDefault: 'mazmorra', etiqueta: 'Mazmorra Central' },
-    { x: 24, y: 74, biomaDefault: 'ruinas', etiqueta: 'Ruinas Antiguas' },
-    { x: 68, y: 58, biomaDefault: 'bosque', etiqueta: 'Bosque de Código' },
-    { x: 74, y: 26, biomaDefault: 'laboratorio', etiqueta: 'Torre del Algoritmo' },
-    { x: 84, y: 72, biomaDefault: 'mazmorra', etiqueta: 'Fortaleza Final' }
-  ];
-
-  // 📍 Puntos de control (Checkpoints) en el camino empedrado para click rápido
-  const hitosCamino = [
-    { x: 23, y: 52, nivelReq: 1, nombre: 'Hito I' },
-    { x: 38, y: 52, nivelReq: 1, nombre: 'Cruce del Valle' },
-    { x: 50, y: 52, nivelReq: 2, nombre: 'Puente del Río' },
-    { x: 68, y: 41, nivelReq: 2, nombre: 'Hito II' },
-    { x: 76, y: 65, nivelReq: 3, nombre: 'Hito III' }
-  ];
-
   // 💡 FUNCIÓN: Cargar toda la data de la base de datos al inicio
   const cargarDatos = () => {
+    fetch('http://localhost:4000/api/unidades')
+      .then(r => { if (!r.ok) throw new Error('No se pudieron cargar las Ciudadelas'); return r.json(); })
+      .then(setUnidades)
+      .catch(() => setUnidades([]));
     fetch('http://localhost:4000/api/temas').then(r => r.json()).then(setTemas);
     fetch('http://localhost:4000/api/evaluaciones').then(r => r.json()).then(setEvaluaciones);
     fetch('http://localhost:4000/api/tareas').then(r => r.json()).then(setTareas);
     fetch('http://localhost:4000/api/gremio').then(r => r.json()).then(setGremio);
 
     if (user?.id) {
-      refrescarEstudiante(); // Actualiza XP y Nivel en vivo
+      refrescarEstudiante();
       fetch(`http://localhost:4000/api/calificaciones/estudiante/${user.id}`)
         .then(r => r.json())
         .then(setCalificaciones);
 
-      // 📚 Boleta académica: nota 0-100, desglose por actividad y puntos pendientes
       fetch(`http://localhost:4000/api/estudiantes/${user.id}/boleta`)
         .then(r => r.json())
         .then(setBoleta)
@@ -217,243 +81,137 @@ export default function PanelEstudiante() {
 
       fetch(`http://localhost:4000/api/entregas/estudiante/${user.id}`)
         .then(r => r.json())
-        .then(data => {
-          setMisEntregas(data);
-          const mapa = {};
-          data.forEach(e => { mapa[e.tarea_id] = e.contenido; });
-          setEntregaTexto(prev => ({ ...mapa, ...prev }));
-        });
+        .then(setMisEntregas);
     }
   };
 
-  // Se ejecuta una vez al montar la vista
   useEffect(() => {
     cargarDatos();
+    // cargarDatos se recrea en cada render; solo dependemos del usuario autenticado.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
 
   // ==========================================================================
-  // 💡 RENDERIZADOR CANVAS 16-BIT (EL MOTOR DEL MAPA 2D)
-  // Utiliza la API nativa de Canvas de HTML5 para dibujar la pradera, el río,
-  // los árboles y el camino frame por frame (a 60 fps).
+  // 💡 CÁLCULO DE ESCALA ENTERA (1x, 2x, 3x...) PARA EVITAR PÍXELES BORROSOS
   // ==========================================================================
   useEffect(() => {
-    // Si no estamos en la pestaña "mapa", no procesamos el motor para ahorrar RAM
-    if (vistaHotbar !== 'mapa') return;
-    
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    ctx.imageSmoothingEnabled = false; // Evita el blur, mantiene el pixel art afilado
-
-    let frame = 0;
-    let animId;
-
-    // Función auxiliar para dibujar "Adoquines" (el camino gris)
-    const dibujarAdoquin = (cx, cy, w, h) => {
-      ctx.fillStyle = '#57534e'; // Borde oscuro
-      ctx.fillRect(cx - 2, cy - 2, w + 4, h + 4);
-      ctx.fillStyle = '#a8a29e'; // Piedra clara
-      ctx.fillRect(cx, cy, w, h);
-
-      // Dibuja ladrillitos internos iterando sobre X y Y
-      for (let py = cy + 1; py < cy + h - 2; py += 5) {
-        const offset = ((py / 5) % 2) * 4;
-        for (let px = cx + 1 + offset; px < cx + w - 4; px += 8) {
-          ctx.fillStyle = (px + py) % 3 === 0 ? '#d6d3d1' : '#78716c';
-          ctx.fillRect(px, py, 6, 3);
-        }
-      }
+    const actualizarEscala = () => {
+      if (!wrapperMapaRef.current) return;
+      const anchoDisponible = wrapperMapaRef.current.clientWidth - 8;
+      const factorEntero = Math.max(1, Math.floor(anchoDisponible / ANCHO_LOGICO));
+      setEscalaMapa(factorEntero);
     };
 
-    // Función auxiliar para dibujar un árbol pixelado
-    const dibujarArbol16Bit = (tx, ty, variante = 0) => {
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.35)'; // Sombra
-      ctx.fillRect(tx + 2, ty + 18, 12, 4);
-      ctx.fillStyle = '#78350f'; // Tronco base
-      ctx.fillRect(tx + 5, ty + 12, 6, 8);
-      ctx.fillStyle = '#92400e'; // Brillo del tronco
-      ctx.fillRect(tx + 6, ty + 12, 2, 7);
-      
-      // Hojas verdes dibujadas en capas (layering)
-      ctx.fillStyle = variante === 1 ? '#065f46' : '#14532d';
-      ctx.fillRect(tx, ty + 4, 16, 10);
-      ctx.fillStyle = variante === 1 ? '#059669' : '#16a34a';
-      ctx.fillRect(tx + 2, ty + 1, 12, 9);
-      ctx.fillStyle = variante === 1 ? '#34d399' : '#4ade80';
-      ctx.fillRect(tx + 4, ty, 8, 4);
-      ctx.fillRect(tx + 3, ty + 3, 4, 2);
-    };
-
-    // 💡 Bucle principal de animación (Game Loop)
-    const renderLoop = () => {
-      frame++;
-      const W = 480; // Resolución base X
-      const H = 270; // Resolución base Y
-
-      // 1. Fondo de agua profunda
-      ctx.fillStyle = '#082f49';
-      ctx.fillRect(0, 0, W, H);
-
-      // 2. BIOMA IZQUIERDO: Pradera de Cálculo (Verde claro)
-      ctx.fillStyle = '#334155'; ctx.fillRect(14, 18, 206, 238); // Acantilado
-      ctx.fillStyle = '#15803d'; ctx.fillRect(14, 14, 206, 232); // Borde
-      ctx.fillStyle = '#22c55e'; ctx.fillRect(20, 20, 194, 220); // Pasto base
-
-      // Agregar flores y texturas al bioma izquierdo
-      for (let y = 26; y < 234; y += 16) {
-        for (let x = 26; x < 206; x += 18) {
-          ctx.fillStyle = '#16a34a';
-          ctx.fillRect(x, y, 3, 2);
-          ctx.fillRect(x + 2, y - 1, 2, 2);
-          if ((x + y) % 5 === 0) { // Probabilidad matemática de dibujar una flor
-            ctx.fillStyle = '#fef08a'; 
-            ctx.fillRect(x + 8, y + 6, 2, 2);
-          }
-        }
-      }
-
-      // 3. BIOMA DERECHO: Bosque de Algoritmos (Verde oscuro arcano)
-      ctx.fillStyle = '#1e293b'; ctx.fillRect(262, 18, 204, 238);
-      ctx.fillStyle = '#065f46'; ctx.fillRect(262, 14, 204, 232);
-      ctx.fillStyle = '#059669'; ctx.fillRect(268, 20, 192, 220);
-
-      for (let y = 28; y < 232; y += 16) {
-        for (let x = 274; x < 452; x += 20) {
-          ctx.fillStyle = '#047857';
-          ctx.fillRect(x, y, 4, 2);
-          if ((x * y) % 7 === 0) { // Cristales azules
-            ctx.fillStyle = '#38bdf8';
-            ctx.fillRect(x + 6, y + 4, 2, 2);
-          }
-        }
-      }
-
-      // 4. RÍO CENTRAL CON ANIMACIÓN DE CORRIENTE
-      ctx.fillStyle = '#0369a1'; ctx.fillRect(220, 0, 42, H);
-      ctx.fillStyle = '#0284c7'; ctx.fillRect(225, 0, 32, H);
-      ctx.fillStyle = '#38bdf8';
-      
-      // Desplaza el agua hacia abajo dividiendo el frame actual (velocidad de corriente)
-      const offsetAgua = Math.floor(frame / 6) % 24; 
-      for (let wy = -24 + offsetAgua; wy < H; wy += 24) {
-        ctx.fillRect(232, wy, 6, 3);
-        ctx.fillRect(244, wy + 12, 5, 2);
-      }
-      ctx.fillStyle = '#bae6fd'; // Espuma orillas
-      ctx.fillRect(220, 0, 2, H);
-      ctx.fillRect(260, 0, 2, H);
-
-      // 5. CUADRÍCULA EDUCATIVA SUTIL (Ayuda a ver el movimiento por casillas)
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
-      for (let gx = 0; gx < W; gx += 24) ctx.fillRect(gx, 0, 1, H);
-      for (let gy = 0; gy < H; gy += 24) ctx.fillRect(0, gy, W, 1);
-
-      // 6. CAMINOS EMPEDRADOS (Rutas entre biomas)
-      dibujarAdoquin(100, 75, 18, 130);
-      dibujarAdoquin(100, 132, 235, 18);
-      dibujarAdoquin(320, 68, 18, 95);
-      dibujarAdoquin(320, 145, 90, 16);
-      dibujarAdoquin(394, 145, 18, 55);
-
-      // 7. PUENTE DE MADERA SOBRE EL RÍO
-      const bx = 214, by = 127, bw = 54, bh = 28;
-      ctx.fillStyle = '#451a03'; ctx.fillRect(bx, by, bw, bh);
-      ctx.fillStyle = '#b45309'; ctx.fillRect(bx, by, bw, 4); ctx.fillRect(bx, by + bh - 4, bw, 4);
-      for (let px = bx + 3; px < bx + bw - 3; px += 6) {
-        ctx.fillStyle = (px % 12 === 0) ? '#92400e' : '#78350f';
-        ctx.fillRect(px, by + 4, 5, bh - 8);
-      }
-
-      // 8. ÁRBOLES DECORATIVOS FIJOS EN COORDENADAS ESPECÍFICAS
-      const arbolesIzq = [
-        [28, 28], [48, 34], [155, 32], [175, 45],
-        [32, 110], [52, 125], [160, 95], [34, 195], [165, 195]
-      ];
-      arbolesIzq.forEach(([ax, ay]) => dibujarArbol16Bit(ax, ay, 0));
-
-      const arbolesDer = [
-        [278, 32], [298, 42], [415, 28], [435, 42],
-        [280, 185], [302, 200], [428, 110], [442, 128]
-      ];
-      arbolesDer.forEach(([ax, ay]) => dibujarArbol16Bit(ax, ay, 1));
-
-      // Solicita el siguiente frame del navegador
-      animId = requestAnimationFrame(renderLoop);
-    };
-
-    renderLoop();
-    return () => cancelAnimationFrame(animId); // Limpia la animación al desmontar
+    actualizarEscala();
+    window.addEventListener('resize', actualizarEscala);
+    return () => window.removeEventListener('resize', actualizarEscala);
   }, [vistaHotbar]);
 
   // ==========================================================================
-  // 💡 LÓGICA DE MOVIMIENTO CON TECLADO (WASD / Flechas)
+  // 💡 DATOS DERIVADOS DEL MAPA CONTINENTAL Y DE LA UNIDAD ACTIVA
   // ==========================================================================
+  const temasSinUnidad = temas.filter(tema => tema.unidad_id == null);
+  const campamento = crearUnidadCampamento(temasSinUnidad);
+  const unidadesVisibles = campamento ? [...unidades, campamento] : unidades;
+  const temasUnidadActiva = unidadActiva
+    ? (unidadActiva.esCampamento ? temasSinUnidad : temasDeUnidad(temas, unidadActiva.id))
+    : [];
+  const terrenoActual = unidadActiva ? terrenoDeUnidad(unidadActiva) : TERRENOS.continental;
+
+  const progresoPorUnidad = Object.fromEntries(unidadesVisibles.map(unidad => {
+    const temasDeLaUnidad = unidad.esCampamento ? temasSinUnidad : temasDeUnidad(temas, unidad.id);
+    return [unidad.id, calcularProgresoUnidad({
+      temas: temasDeLaUnidad,
+      evaluaciones,
+      tareas,
+      calificaciones,
+      entregas: misEntregas
+    })];
+  }));
+
+  // ==========================================================================
+  // 💡 MOVIMIENTO DEL HÉROE Y NAVEGACIÓN ENTRE CIUDADELAS
+  // ==========================================================================
+  const moverHeroe = (col, fila) => {
+    if (!esTileTransitable(terrenoActual, col, fila)) return;
+    setCaminando(true);
+    setHeroPos({ x: col, y: fila });
+    setTimeout(() => setCaminando(false), 180);
+  };
+
   useEffect(() => {
-    // Si no estamos en el mapa, o hay una ventana abierta, bloqueamos el movimiento
-    if (vistaHotbar !== 'mapa' || zonaActivaModal || dialogoAlquimistaAbierto) return;
+    if (vistaHotbar !== 'mapa' || zonaActivaModal || dialogoAlquimistaAbierto) return undefined;
 
     const handleKeyDown = (e) => {
       const k = e.key.toLowerCase();
-      const paso = 3; // Porcentaje de pantalla que avanza por tecla
       let dx = 0;
       let dy = 0;
 
-      if (k === 'w' || k === 'arrowup') dy = -paso;
-      else if (k === 's' || k === 'arrowdown') dy = paso;
-      else if (k === 'a' || k === 'arrowleft') dx = -paso;
-      else if (k === 'd' || k === 'arrowright') dx = paso;
+      if (k === 'w' || k === 'arrowup') dy = -1;
+      else if (k === 's' || k === 'arrowdown') dy = 1;
+      else if (k === 'a' || k === 'arrowleft') dx = -1;
+      else if (k === 'd' || k === 'arrowright') dx = 1;
       else return;
 
       e.preventDefault();
-      setCaminando(true); // Activa animación CSS de salto
-      setHeroPos(prev => ({
-        // Limita que el héroe no se salga del mapa (Clamp entre 8% y 92%)
-        x: Math.max(8, Math.min(92, prev.x + dx)),
-        y: Math.max(12, Math.min(88, prev.y + dy))
-      }));
-      setTimeout(() => setCaminando(false), 150); // Desactiva animación tras el paso
+      setHeroPos(prev => {
+        const nuevaCol = Math.max(0, Math.min(29, prev.x + dx));
+        const nuevaFila = Math.max(0, Math.min(16, prev.y + dy));
+        if (!esTileTransitable(terrenoActual, nuevaCol, nuevaFila)) return prev;
+        return { x: nuevaCol, y: nuevaFila };
+      });
+      setCaminando(true);
+      setTimeout(() => setCaminando(false), 150);
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [vistaHotbar, zonaActivaModal, dialogoAlquimistaAbierto]);
+  }, [vistaHotbar, zonaActivaModal, dialogoAlquimistaAbierto, terrenoActual]);
 
-  // 💡 FUNCIÓN: Mover héroe a un bioma al hacerle clic
-  const caminarHaciaBioma = (tema, nodo) => {
-    setCaminando(true);
-    setHeroPos({ x: nodo.x + 3, y: nodo.y + 6 });
-    setTimeout(() => {
-      setCaminando(false);
-      setZonaActivaModal(tema); // Abre el modal del bioma (Pergaminos/Jefes)
-    }, 280);
+  const posicionInicial = (terreno) => {
+    const punto = puntoInicio(terreno);
+    return { x: punto.col, y: punto.fila };
   };
 
-  // 💡 FUNCIÓN: Enviar un Trabajo Práctico al Servidor
-  const enviarTrabajo = async (tareaId) => {
-    const contenido = entregaTexto[tareaId];
-    if (!contenido?.trim()) return alert('Redacta el pergamino de tu entrega antes de enviarlo.');
+  const entrarUnidad = (unidad, posicion) => {
+    setCaminando(true);
+    if (posicion) setHeroPos({ x: posicion.x, y: posicion.y });
+    setTimeout(() => {
+      setCaminando(false);
+      setUnidadActiva(unidad);
+      setHeroPos(posicionInicial(terrenoDeUnidad(unidad)));
+      setZonaActivaModal(null);
+    }, 240);
+  };
 
-    setEnviandoTarea(true);
-    try {
-      const res = await fetch('http://localhost:4000/api/entregas', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          tarea_id: tareaId,
-          estudiante_id: user.id,
-          contenido: contenido.trim()
-        })
-      });
-      const data = await res.json();
-      if (res.ok) {
-        alert(data.mensaje || '¡Misión entregada con éxito!');
-        cargarDatos();
-      }
-    } catch {
-      alert('Error al enviar la misión.');
-    } finally {
-      setEnviandoTarea(false);
+  const salirUnidad = () => {
+    setUnidadActiva(null);
+    setZonaActivaModal(null);
+    setHeroPos(posicionInicial(TERRENOS.continental));
+  };
+
+  const abrirTema = (tema, posicion) => {
+    if (posicion) {
+      setCaminando(true);
+      setHeroPos({ x: posicion.x, y: posicion.y });
+      setTimeout(() => setCaminando(false), 180);
     }
+    setZonaActivaModal({
+      titulo: tema.titulo,
+      descripcion: tema.descripcion,
+      ejemplos: tema.ejemplos || [],
+      evaluaciones: evaluaciones.filter(ev => ev.tema_id === tema.id)
+    });
+  };
+
+  const abrirJefeUnidad = (evals) => {
+    const nombreUnidad = unidadActiva?.esCampamento ? 'zona' : 'Unidad ' + (unidadActiva?.numero ?? '');
+    setZonaActivaModal({
+      titulo: 'Jefe de la ' + nombreUnidad,
+      descripcion: 'El guardián de la Ciudadela aguarda al final del sendero. Derrota a este jefe para cerrar la Unidad.',
+      ejemplos: [],
+      evaluaciones: evals
+    });
   };
 
   // 💡 FUNCIÓN: Consultar al Bot AI del Sabio Alquimista
@@ -468,7 +226,7 @@ export default function PanelEstudiante() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           mensaje: preguntaAlquimista.trim(),
-          modo: 'alquimista', // Dispara el System Prompt del Búho en el backend
+          modo: 'alquimista',
           contexto: `Biomas del mapa: ${titulosTemas}`
         })
       });
@@ -486,15 +244,12 @@ export default function PanelEstudiante() {
   // ==========================================================================
   const xpActual = user?.xp || 150;
   const nivelActual = user?.nivel || 1;
-  const xpEnNivel = xpActual % 250; // Progreso hacia el siguiente nivel (cada 250 XP sube de nivel)
+  const xpEnNivel = xpActual % 250;
 
-  // Determinar eventos pendientes para la stamina y el clima
   const examenesPendientes = evaluaciones.filter(ev => !calificaciones.some(c => c.evaluacion_id === ev.id));
   const tareasPendientes = tareas.filter(t => !misEntregas.some(e => e.tarea_id === t.id));
   
-  // La energía baja si hay exámenes pendientes (causa estrés)
   const energiaActual = Math.max(35, 100 - (examenesPendientes.length * 10));
-  // Si hay tareas o exámenes sin hacer, hay "Tormenta" en el mapa
   const hayTormenta = examenesPendientes.length > 0 || tareasPendientes.length > 0;
 
   return (
@@ -504,7 +259,6 @@ export default function PanelEstudiante() {
           1. TOP HUD 16-BIT (AVATAR IZQ | BARRAS XP Y ENERGÍA CENTRO | CLIMA DER)
          ===================================================================== */}
       <div className="hud-panel">
-        {/* IZQUIERDA: Avatar, Nombre, Nivel, Clase y Token */}
         <div className="hud-hero">
           <div className="hud-avatar">
             <AvatarHero16Bit clase={user?.clase_rpg || 'Arquera Lógica'} />
@@ -522,14 +276,12 @@ export default function PanelEstudiante() {
           </div>
         </div>
 
-        {/* CENTRO: Barras de XP (Oro) y Energía/Stamina (Cian) - estilo RPG pergamino */}
         <div className="hud-stats">
           <StatBar label="★ EXPERIENCIA (XP)" value={xpEnNivel} max={250} color="xp" suffix=" XP" showPercent />
           <StatBar label="⚡ ENERGÍA / STAMINA" value={energiaActual} max={100} color="stamina" suffix=" EN" showPercent />
           <StatBar label="❤ HP DEL JUGADOR" value={Math.min(100, 60 + nivelActual * 5)} max={100} color="hp" suffix=" HP" showPercent />
         </div>
 
-        {/* DERECHA: Widget del Clima */}
         <div className="hud-weather">
           <div className="hud-weather__icon">
             <CloudLightning size={22} />
@@ -546,156 +298,64 @@ export default function PanelEstudiante() {
         </div>
       </div>
 
-      {/* =====================================================================
-          2. VIEWPORT 16:9 DEL MAPA OVERWORLD 2D PIXEL ART
-         ===================================================================== */}
-      {vistaHotbar === 'mapa' && (
-        <div className="map-viewport">
-          {/* El Canvas de HTML5 donde corre el Game Loop */}
-          <canvas ref={canvasRef} width={480} height={270} className="pixel-canvas" />
+            {vistaHotbar === 'mapa' && (
+        <div ref={wrapperMapaRef} className="mapa-wrapper w-full flex justify-center overflow-x-auto">
+          {!unidadActiva ? (
+            <MapaGeneral
+              unidades={unidadesVisibles}
+              terreno={TERRENOS.continental}
+              heroPos={heroPos}
+              escala={escalaMapa}
+              caminando={caminando}
+              progresoPorUnidad={progresoPorUnidad}
+              claseHeroe={user?.clase_rpg || 'Arquera Lógica'}
+              esMovil={esMovil}
+              onMoverHeroe={moverHeroe}
+              onEntrarUnidad={entrarUnidad}
+            />
+          ) : (
+            <MapaUnidad
+              unidad={unidadActiva}
+              temas={temasUnidadActiva}
+              terreno={terrenoActual}
+              heroPos={heroPos}
+              escala={escalaMapa}
+              caminando={caminando}
+              claseHeroe={user?.clase_rpg || 'Arquera Lógica'}
+              evaluaciones={evaluaciones}
+              tareas={tareas}
+              calificaciones={calificaciones}
+              entregas={misEntregas}
+              esMovil={esMovil}
+              onVolver={salirUnidad}
+              onMoverHeroe={moverHeroe}
+              onTemaClick={abrirTema}
+              onJefeClick={abrirJefeUnidad}
+            />
+          )}
 
-          <div className="map-banner">
-            <span>MAPA DEL SEMESTRE</span>
-          </div>
+          {!unidadActiva && !esMovil && (
+            <button
+              type="button"
+              onClick={() => setDialogoAlquimistaAbierto(true)}
+              className="alchemist-bubble alchemist-bubble--compact"
+              title={examenesPendientes.length > 0
+                ? `El Jefe de "${examenesPendientes[0].titulo}" aguarda en una Ciudadela.`
+                : 'Consultar al Sabio Alquimista AI'}
+              aria-label="Abrir el Sabio Alquimista AI"
+            >
+              <span className="alchemist-bubble__sprite"><AlchemistWizard16Bit /></span>
+              <span className="alchemist-bubble__alert" aria-hidden="true">!</span>
+            </button>
+          )}
 
-          <div className="map-region map-region--west">
-            <span>REGIÓN OESTE: PRADERA DE CÁLCULO</span>
-          </div>
-
-          <div className="map-region map-region--east">
-            <span>REGIÓN ESTE: BOSQUE DE ALGORITMOS</span>
-          </div>
-
-          {/* Hitos del camino (Diamantes Verdes) */}
-          {hitosCamino.map((hito, i) => {
-            const desbloqueado = nivelActual >= hito.nivelReq;
-            return (
-              <button
-                type="button"
-                key={i}
-                onClick={() => setHeroPos({ x: hito.x, y: hito.y })}
-                title={`${hito.nombre} (Nivel ${hito.nivelReq})`}
-                className={`map-hito ${desbloqueado ? '' : 'is-locked'}`}
-                style={{ left: `${hito.x}%`, top: `${hito.y}%` }}
-              >
-                <span className="map-hito__gem" />
-                <span className="map-hito__label">{hito.nombre}</span>
-              </button>
-            );
-          })}
-
-          {/* Renderizado de Biomas y Castillos desde SQLite */}
-          {temas.map((tema, idx) => {
-            const nodo = nodosBiomas[idx % nodosBiomas.length];
-            const tipoBioma = idx === 0 ? 'mazmorra' : (tema.bioma || nodo.biomaDefault);
-            const evalsDeTema = evaluaciones.filter(ev => ev.tema_id === tema.id);
-            const jefeActivo = evalsDeTema[0];
-            const yaDerrotado = jefeActivo && calificaciones.some(c => c.evaluacion_id === jefeActivo.id);
-
-            return (
-              <button
-                type="button"
-                key={tema.id}
-                onClick={() => caminarHaciaBioma(tema, nodo)}
-                className="map-node"
-                style={{ left: `${nodo.x}%`, top: `${nodo.y}%` }}
-              >
-                {jefeActivo && (
-                  <span className={`rpg-boss-tag ${yaDerrotado ? 'is-defeated' : ''}`}>
-                    {yaDerrotado ? `✓ ${jefeActivo.titulo}` : `⚔️ ${jefeActivo.titulo}`}
-                  </span>
-                )}
-                <span className="map-node__art">
-                  {tipoBioma === 'mazmorra' ? <CastleDungeonSprite derrotado={yaDerrotado} /> : <BiomeStructureSprite tipo={tipoBioma} />}
-                </span>
-                <span className="map-nameplate">
-                  {tema.titulo}
-                </span>
-              </button>
-            );
-          })}
-
-          {/* PERSONAJE JUGABLE MOVIÉNDOSE EN EL MAPA */}
-          <div
-            className={`map-hero ${caminando ? 'is-walking' : ''}`}
-            style={{ left: `${heroPos.x}%`, top: `${heroPos.y}%` }}
-          >
-            <span className="map-hero__alert">!</span>
-            <span className="map-hero__frame">
-              <AvatarHero16Bit clase={user?.clase_rpg || 'Arquera Lógica'} />
-            </span>
-          </div>
-
-          {/* Sabio Alquimista AI (Esquina Inferior Derecha) */}
-          <button type="button" onClick={() => setDialogoAlquimistaAbierto(true)} className="alchemist-bubble">
-            <span className="alchemist-bubble__text">
-              <span className="alchemist-bubble__name">SABIO ALQUIMISTA AI</span>
-              {examenesPendientes.length > 0 ? `¡Atención! El Jefe de "${examenesPendientes[0].titulo}" aguarda en el castillo. ¿Repasamos los pergaminos?` : `¡Buen trabajo en el camino! Haz clic aquí para consultar cualquier duda del temario.`}
-            </span>
-            <span className="alchemist-bubble__sprite"><AlchemistWizard16Bit /></span>
-          </button>
-
-          {/* D-Pad Legend */}
-          <div className="map-legend">
-            MOVIMIENTO: WASD / CLIC EN BIOMA
-          </div>
-
-          {/* 💡 MODAL DE BIOMA (Pergaminos y Jefes al entrar) */}
           {zonaActivaModal && (
-            <div className="rpg-modal" role="dialog" aria-modal="true" aria-label={zonaActivaModal.titulo}>
-              <div className="rpg-modal__head">
-                <div>
-                  <span className="hud-eyebrow hud-eyebrow--xp">BIOMA ACADÉMICO DESBLOQUEADO</span>
-                  <h3 className="rpg-modal__title">{zonaActivaModal.titulo}</h3>
-                </div>
-                <button onClick={() => setZonaActivaModal(null)} className="btn-danger btn-sm">
-                  <X size={16} /> Cerrar
-                </button>
-              </div>
-              <div className="rpg-modal__body">
-                <p className="section-sub">{zonaActivaModal.descripcion}</p>
-
-                <div className="grid-2">
-                  {/* Lado de Pergaminos */}
-                  <div className="zone-column">
-                    <h4 className="zone-column__title">📜 PERGAMINOS DE ESTUDIO</h4>
-                    {zonaActivaModal.ejemplos?.length > 0 ? (
-                      zonaActivaModal.ejemplos.map(ej => (
-                        <div key={ej.id} className="pergamino-card">
-                          <strong className="pergamino-card__title">{ej.titulo}</strong>
-                          <pre className="rpg-code rpg-code--tight">{ej.contenido}</pre>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="rpg-empty">Sin pergaminos publicados en esta zona.</p>
-                    )}
-                  </div>
-
-                  {/* Lado de Evaluaciones (Jefes) */}
-                  <div className="zone-column zone-column--boss">
-                    <h4 className="zone-column__title">⚔️ JEFE DE MAZMORRA</h4>
-                    {evaluaciones.filter(ev => ev.tema_id === zonaActivaModal.id).map(ev => {
-                      const intento = calificaciones.find(c => c.evaluacion_id === ev.id);
-                      return (
-                        <div key={ev.id} className="boss-row">
-                          <div>
-                            <strong className="boss-row__title">{ev.titulo}</strong>
-                            <span className="boss-row__meta">📚 {ev.puntos_max ?? 30} de 100 pts • +{ev.xp_recompensa || 300} XP • {ev.total_preguntas} preguntas</span>
-                          </div>
-                          {intento ? (
-                            <span className="badge badge-success">Completado ({intento.puntaje}% = {intento.puntos_ganados ?? '—'} pts)</span>
-                          ) : (
-                            <button onClick={() => navigate(`/evaluacion/${ev.id}`)} className="btn-pro btn-pro-ai btn-sm">
-                              <Swords size={15} /> Iniciar Combate
-                            </button>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            </div>
+            <ModalTema
+              zona={zonaActivaModal}
+              calificaciones={calificaciones}
+              onClose={() => setZonaActivaModal(null)}
+              onIniciarEvaluacion={(ev) => navigate(`/evaluacion/${ev.id}`)}
+            />
           )}
 
           {/* 💡 MODAL DEL MENTOR AI (Chat con el Sabio Alquimista) */}
@@ -729,11 +389,9 @@ export default function PanelEstudiante() {
         </div>
       )}
 
-      {/* =====================================================================
+{/* =====================================================================
           3. SUB-VISTAS DE LA BARRA INFERIOR (INVENTARIO, PERGAMINOS, GREMIO, LOGROS)
          ===================================================================== */}
-      
-      {/* 💡 INVENTARIO (Aquí entregas las misiones y descargas PDFs/Word) */}
       {vistaHotbar === 'inventario' && (
         <div className="card-pro">
           <h3 className="pixel-font section-title section-title--gold">🎒 INVENTARIO Y MISIONES ({tareas.length})</h3>
@@ -752,7 +410,6 @@ export default function PanelEstudiante() {
                 </div>
                 <p className="quest-card__desc">{tar.descripcion}</p>
 
-                {/* 📚 Contexto académico: puntos de la materia que vale y nota obtenida */}
                 <span className="quest-card__meta text-xp">
                   📚 Vale {tar.puntos_max ?? 10} de 100 pts de la materia
                   {entrega?.calificacion != null && (
@@ -761,7 +418,6 @@ export default function PanelEstudiante() {
                   {entrega && entrega.calificacion == null && <> • Esperando calificación del Game Master</>}
                 </span>
 
-                {/* 💡 NUEVO: Botón de descarga de archivo adjunto (PDF/Word Base64) */}
                 {tar.archivo_adjunto && (
                   <a
                     href={tar.archivo_adjunto}
@@ -772,15 +428,28 @@ export default function PanelEstudiante() {
                   </a>
                 )}
 
-                <textarea
-                  className="input-pro"
-                  rows="3"
-                  placeholder="Escribe aquí tu código o respuesta de la misión..."
-                  value={entregaTexto[tar.id] || ''}
-                  onChange={(e) => setEntregaTexto({ ...entregaTexto, [tar.id]: e.target.value })}
-                />
-                <button onClick={() => enviarTrabajo(tar.id)} disabled={enviandoTarea} className="btn-pro btn-pro-primary btn-block" style={{ marginTop: '0.5rem' }}>
-                  <Send size={15} /> {entrega ? 'Actualizar Misión' : 'Enviar Misión'}
+                {entrega?.contenido && (
+                  <pre className="rpg-code rpg-code--tight">{entrega.contenido}</pre>
+                )}
+
+                {entrega?.archivo_ruta && (
+                  <a
+                    href={urlArchivo(entrega.archivo_ruta)}
+                    download={entrega.archivo_nombre || `Entrega_${tar.titulo}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="quest-file"
+                  >
+                    <FileText size={14} /> {entrega.archivo_nombre || 'Documento adjunto'}
+                  </a>
+                )}
+
+                <button
+                  onClick={() => setTareaEnEntrega(tar)}
+                  className="btn-pro btn-pro-primary btn-block"
+                  style={{ marginTop: '0.5rem' }}
+                >
+                  <Send size={15} /> {entrega ? 'Actualizar entrega' : 'Entregar misión'}
                 </button>
               </div>
             );
@@ -788,7 +457,8 @@ export default function PanelEstudiante() {
         </div>
       )}
 
-      {/* 💡 PERGAMINOS (Librería de teoría generada por el profe) */}
+      {vistaHotbar === 'perfil' && <PerfilEstudiante />}
+
       {vistaHotbar === 'pergaminos' && (
         <div className="card-pro">
           <h3 className="pixel-font section-title section-title--xp">📜 PERGAMINOS DE TEORÍA</h3>
@@ -809,7 +479,6 @@ export default function PanelEstudiante() {
         </div>
       )}
 
-      {/* 💡 GREMIO (Leaderboard / Ranking de XP) */}
       {vistaHotbar === 'gremio' && (
         <div className="card-pro">
           <h3 className="pixel-font section-title section-title--teacher">🛡️ TABLA DEL GREMIO</h3>
@@ -835,7 +504,6 @@ export default function PanelEstudiante() {
         </div>
       )}
 
-      {/* 💡 BOLETA ACADÉMICA (Contexto claro: nota de la materia sobre 100 puntos) */}
       {vistaHotbar === 'boleta' && (
         <div className="card-pro">
           <h3 className="pixel-font section-title section-title--gold">🎓 BOLETA DE LA MATERIA</h3>
@@ -844,7 +512,6 @@ export default function PanelEstudiante() {
             <p className="rpg-empty">Cargando boleta académica...</p>
           ) : (
             <>
-              {/* Encabezado: nota actual con escala visible */}
               <div className="achievement-row" style={{ alignItems: 'flex-start' }}>
                 <div>
                   <strong className="achievement-row__title">NOTA ACTUAL</strong>
@@ -871,7 +538,6 @@ export default function PanelEstudiante() {
                 (nunca supera {boleta.nota_max}). La XP y el nivel son progresión de tu héroe y <strong>no afectan la nota</strong>.
               </p>
 
-              {/* Desglose por actividad con su tema de origen */}
               <h4 className="zone-column__title">📜 ACTIVIDADES CALIFICADAS ({boleta.rendimiento.length})</h4>
               {boleta.rendimiento.length === 0 && (
                 <p className="rpg-empty">Aún no has ganado puntos. ¡Rinde un examen o entrega una misión!</p>
@@ -905,7 +571,6 @@ export default function PanelEstudiante() {
                 </div>
               )}
 
-              {/* Puntos que aún se pueden ganar */}
               <h4 className="zone-column__title" style={{ marginTop: '1rem' }}>⏳ PUNTOS PENDIENTES ({boleta.pendientes.length})</h4>
               {boleta.pendientes.length === 0 ? (
                 <p className="rpg-empty">¡Completaste todas las actividades de la materia!</p>
@@ -927,7 +592,6 @@ export default function PanelEstudiante() {
         </div>
       )}
 
-      {/* 💡 LOGROS (Historial de batallas y notas) */}
       {vistaHotbar === 'logros' && (
         <div className="card-pro">
           <h3 className="pixel-font section-title section-title--gold">🏆 LOGROS Y RESULTADOS</h3>
@@ -952,12 +616,25 @@ export default function PanelEstudiante() {
         </div>
       )}
 
+      {tareaEnEntrega && (
+        <ModalEntrega
+          tarea={tareaEnEntrega}
+          entrega={misEntregas.find(e => e.tarea_id === tareaEnEntrega.id)}
+          estudianteId={user?.id}
+          onClose={() => setTareaEnEntrega(null)}
+          onEnviada={(mensaje) => {
+            setTareaEnEntrega(null);
+            alert(mensaje);
+            cargarDatos();
+          }}
+        />
+      )}
+
       {/* =====================================================================
-          4. BOTTOM HUD (BARRA DE NAVEGACIÓN INFERIOR CON 5 ICONOS)
+          4. BOTTOM HUD (BARRA DE NAVEGACIÓN INFERIOR)
          ===================================================================== */}
       <div className="rpg-hotbar" style={{ marginTop: '0.85rem' }}>
         <button className={`rpg-hotbar-slot rpg-hotbar-slot--map ${vistaHotbar === 'mapa' ? 'active' : ''}`} onClick={() => setVistaHotbar('mapa')}>
-          <Map size={20} />
           <span className="pixel-font">Mapa</span>
         </button>
         <button className={`rpg-hotbar-slot rpg-hotbar-slot--bag ${vistaHotbar === 'inventario' ? 'active' : ''}`} onClick={() => setVistaHotbar('inventario')}>
@@ -979,6 +656,10 @@ export default function PanelEstudiante() {
         <button className={`rpg-hotbar-slot rpg-hotbar-slot--trophy ${vistaHotbar === 'logros' ? 'active' : ''}`} onClick={() => setVistaHotbar('logros')}>
           <Trophy size={20} />
           <span className="pixel-font">Logros</span>
+        </button>
+        <button className={`rpg-hotbar-slot ${vistaHotbar === 'perfil' ? 'active' : ''}`} onClick={() => setVistaHotbar('perfil')}>
+          <UserRound size={20} />
+          <span className="pixel-font">Perfil</span>
         </button>
       </div>
     </div>
