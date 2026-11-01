@@ -9,6 +9,7 @@ lerna-debug.log*
 
 database.sqlite 
 backend/database.sqlite
+backend/database.backup-*.sqlite
 
 node_modules
 dist
@@ -16,6 +17,12 @@ dist-ssr
 *.local
 backend/.env
 .archify
+
+# Adjuntos subidos por estudiantes (solo se versiona la carpeta)
+backend/uploads/*
+!backend/uploads/entregas/
+backend/uploads/entregas/*
+!backend/uploads/entregas/.gitkeep
 
 # Editor directories and files
 .vscode/*
