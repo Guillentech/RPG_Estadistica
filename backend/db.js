@@ -1,6 +1,9 @@
 import Database from 'better-sqlite3';
+import { fileURLToPath } from 'node:url';
 
-const db = new Database('database.sqlite');
+// Abre siempre backend/database.sqlite sin depender del directorio de ejecución
+const rutaBaseDatos = fileURLToPath(new URL('./database.sqlite', import.meta.url));
+const db = new Database(rutaBaseDatos);
 db.pragma('foreign_keys = ON');
 
 // 1. Estructura base compatible con la versión actual
@@ -19,6 +22,19 @@ db.exec(`
     nombre TEXT NOT NULL,
     codigo_unico TEXT UNIQUE NOT NULL,
     fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+
+  -- Unidades / Ciudadelas del Mapa Continental
+  CREATE TABLE IF NOT EXISTS unidades (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    numero INTEGER UNIQUE NOT NULL,
+    nombre TEXT NOT NULL,
+    descripcion TEXT,
+    bioma TEXT DEFAULT 'pradera',
+    pos_col INTEGER DEFAULT NULL,
+    pos_fila INTEGER DEFAULT NULL,
+    orden INTEGER DEFAULT 0,
+    activa INTEGER DEFAULT 1
   );
 
   -- Temas Académicos / Biomas del Mapa (Req. 8)
@@ -125,6 +141,13 @@ asegurarColumna('temas', 'bioma', "TEXT DEFAULT 'mazmorra'");
 asegurarColumna('temas', 'coord_x', 'INTEGER DEFAULT 50');
 asegurarColumna('temas', 'coord_y', 'INTEGER DEFAULT 50');
 
+// 🗺️ Agrupación dinámica por Unidad y posiciones en tiles (0..29 × 0..16)
+asegurarColumna('temas', 'unidad_id', 'INTEGER REFERENCES unidades(id) ON DELETE SET NULL');
+asegurarColumna('temas', 'orden', 'INTEGER DEFAULT 0');
+asegurarColumna('temas', 'pos_col', 'INTEGER DEFAULT NULL');
+asegurarColumna('temas', 'pos_fila', 'INTEGER DEFAULT NULL');
+asegurarColumna('ejemplos', 'orden', 'INTEGER DEFAULT 0');
+
 // Columnas de Jefes para evaluaciones
 asegurarColumna('evaluaciones', 'nombre_jefe', "TEXT DEFAULT 'Guardián del Algoritmo'");
 asegurarColumna('evaluaciones', 'es_jefe_final', 'INTEGER DEFAULT 1');
@@ -141,6 +164,12 @@ asegurarColumna('calificaciones', 'retroalimentacion', "TEXT DEFAULT ''");
 asegurarColumna('evaluaciones', 'puntos_max', 'INTEGER DEFAULT 30');
 asegurarColumna('tareas', 'puntos_max', 'INTEGER DEFAULT 10');
 
+// 📎 Adjuntos de las entregas: migración aditiva, no altera temas ni sus datos
+asegurarColumna('entregas', 'archivo_nombre', 'TEXT DEFAULT NULL');
+asegurarColumna('entregas', 'archivo_ruta', 'TEXT DEFAULT NULL');
+asegurarColumna('entregas', 'archivo_tipo', 'TEXT DEFAULT NULL');
+asegurarColumna('entregas', 'archivo_tamano', 'INTEGER DEFAULT NULL');
+
 // 3. Semilla inicial de Profesor Game Master
 const existeProfesor = db.prepare('SELECT COUNT(*) as total FROM profesores').get();
 if (existeProfesor.total === 0) {
@@ -150,7 +179,20 @@ if (existeProfesor.total === 0) {
   `).run();
 }
 
-// 4. Asegurar compañeros de Gremio de ejemplo para que el HUD del Mapa luzca como el mockup
+// 4. Semilla de las 4 Ciudadelas / Unidades del sílabo (solo si aún no existen)
+const totalUnidades = db.prepare('SELECT COUNT(*) as total FROM unidades').get().total;
+if (totalUnidades === 0) {
+  const insertarUnidad = db.prepare(`
+    INSERT INTO unidades (numero, nombre, descripcion, bioma, pos_col, pos_fila, orden)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `);
+  insertarUnidad.run(1, 'Pradera de las Variables', 'Unidad I: tipos de variables y primeros pasos de la estadística.', 'pradera', 7, 4, 1);
+  insertarUnidad.run(2, 'Valle de las Frecuencias', 'Unidad II: tablas de frecuencia y análisis de datos agrupados.', 'valle', 22, 4, 2);
+  insertarUnidad.run(3, 'Bosque Bidimensional', 'Unidad III: correlación, regresión y análisis bivariado.', 'bosque', 7, 12, 3);
+  insertarUnidad.run(4, 'Ciudadela de los Índices', 'Unidad IV: números índice, Gini y Lorenz.', 'ciudadela', 22, 12, 4);
+}
+
+// 5. Asegurar compañeros de Gremio de ejemplo para que el HUD del Mapa luzca como el mockup
 const totalEstudiantes = db.prepare('SELECT COUNT(*) as total FROM estudiantes').get().total;
 if (totalEstudiantes < 3) {
   const insertarCompanero = db.prepare(`

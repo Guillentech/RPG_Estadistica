@@ -2,6 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import crypto from 'crypto';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import multer from 'multer';
 import db from './db.js';
 
 dotenv.config();
@@ -9,10 +13,105 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 4000;
 
+// 📎 Carpeta de adjuntos: fuera del bundle y servida como estático de solo lectura.
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const UPLOADS_DIR = path.join(__dirname, 'uploads');
+const ENTREGAS_DIR = path.join(UPLOADS_DIR, 'entregas');
+fs.mkdirSync(ENTREGAS_DIR, { recursive: true });
+
+const MAX_ARCHIVO_BYTES = 10 * 1024 * 1024;
+const EXTENSIONES_ENTREGA = new Set(['.pdf', '.doc', '.docx']);
+const MIMES_ENTREGA = new Set([
+  'application/pdf',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+]);
+
+const almacenamientoEntregas = multer.diskStorage({
+  destination: (_req, _file, cb) => cb(null, ENTREGAS_DIR),
+  filename: (_req, file, cb) => {
+    const extension = path.extname(file.originalname).toLowerCase();
+    cb(null, `entrega-${crypto.randomUUID()}${extension}`);
+  }
+});
+
+const uploadEntrega = multer({
+  storage: almacenamientoEntregas,
+  limits: { fileSize: MAX_ARCHIVO_BYTES, files: 1 },
+  fileFilter: (_req, file, cb) => {
+    const extension = path.extname(file.originalname).toLowerCase();
+    const mimeValido = MIMES_ENTREGA.has(file.mimetype) || file.mimetype === 'application/octet-stream';
+    if (!EXTENSIONES_ENTREGA.has(extension) || !mimeValido) {
+      return cb(new Error('Solo se permiten archivos PDF, DOC o DOCX.'));
+    }
+    cb(null, true);
+  }
+});
+
+// Verifica la firma real del archivo además de su extensión declarada.
+const firmaArchivoValida = (ruta, extension) => {
+  try {
+    const descriptor = fs.openSync(ruta, 'r');
+    const cabecera = Buffer.alloc(8);
+    const leidos = fs.readSync(descriptor, cabecera, 0, cabecera.length, 0);
+    fs.closeSync(descriptor);
+    if (leidos < 4) return false;
+    if (extension === '.pdf') return cabecera.subarray(0, 5).toString('ascii') === '%PDF-';
+    if (extension === '.docx') {
+      return cabecera[0] === 0x50 && cabecera[1] === 0x4b && cabecera[2] === 0x03 && cabecera[3] === 0x04;
+    }
+    if (extension === '.doc') {
+      return cabecera[0] === 0xd0 && cabecera[1] === 0xcf && cabecera[2] === 0x11 && cabecera[3] === 0xe0;
+    }
+    return false;
+  } catch {
+    return false;
+  }
+};
+
+const borrarArchivoFisico = (rutaAbsoluta) => {
+  if (!rutaAbsoluta) return;
+  try {
+    const resoluta = path.resolve(rutaAbsoluta);
+    if (path.dirname(resoluta) !== path.resolve(ENTREGAS_DIR)) return;
+    fs.rmSync(resoluta, { force: true });
+  } catch {
+    // La limpieza de un archivo huérfano no debe romper la respuesta principal.
+  }
+};
+
+const borrarArchivoPorRutaPublica = (rutaPublica) => {
+  if (!rutaPublica) return;
+  borrarArchivoFisico(path.join(ENTREGAS_DIR, path.basename(rutaPublica)));
+};
+
+const ejecutarSubidaEntrega = (req, res, next) => {
+  uploadEntrega.single('archivo')(req, res, (error) => {
+    if (!error) return next();
+    const mensaje = error.code === 'LIMIT_FILE_SIZE'
+      ? 'El archivo supera el tamaño máximo permitido de 10 MB.'
+      : error.message;
+    return res.status(400).json({ error: mensaje });
+  });
+};
+
+const AVATARES_PRESET = new Set(['mago', 'arquera', 'guerrero', 'alquimista', 'game_master']);
+const MAX_AVATAR_BYTES = 2 * 1024 * 1024;
+
+const avatarValido = (avatar) => {
+  if (typeof avatar !== 'string' || !avatar) return null;
+  if (AVATARES_PRESET.has(avatar)) return avatar;
+  const coincidencia = avatar.match(/^data:image\/(png|jpeg|webp|gif);base64,([A-Za-z0-9+/=]+)$/);
+  if (!coincidencia) return null;
+  const bytes = Buffer.from(coincidencia[2], 'base64').length;
+  return bytes > 0 && bytes <= MAX_AVATAR_BYTES ? avatar : null;
+};
+
 app.use(cors());
 // 💡 Aumentamos el límite del body a 50mb para permitir subir PDFs/Word largos en Base64
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
+app.use('/uploads', express.static(UPLOADS_DIR, { fallthrough: true, index: false }));
 
 // Función auxiliar para calcular Nivel en base a XP (Req. 14)
 // Cada 250 XP sube 1 nivel de personaje
@@ -138,6 +237,27 @@ app.get('/api/estudiantes/:id/perfil', (req, res) => {
   res.json(est);
 });
 
+// 🛡️ Avatar del héroe: acepta un sprite preset o una imagen Base64 (máx. 2 MB).
+app.patch('/api/estudiantes/:id/avatar', (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id) || id < 1) {
+    return res.status(400).json({ error: 'El identificador del estudiante no es válido.' });
+  }
+
+  const avatar = avatarValido(req.body?.avatar);
+  if (!avatar) {
+    return res.status(400).json({
+      error: 'Elige un avatar válido o sube una imagen PNG, JPG, WEBP o GIF de hasta 2 MB.'
+    });
+  }
+
+  const estudiante = db.prepare('SELECT id FROM estudiantes WHERE id = ?').get(id);
+  if (!estudiante) return res.status(404).json({ error: 'Estudiante no encontrado' });
+
+  db.prepare('UPDATE estudiantes SET avatar = ? WHERE id = ?').run(avatar, id);
+  res.json({ success: true, avatar });
+});
+
 // 📚 BOLETA ACADÉMICA: desglose de la nota (0-100 puntos) por actividad con su tema de origen
 app.get('/api/estudiantes/:id/boleta', (req, res) => {
   const estudianteId = req.params.id;
@@ -237,10 +357,84 @@ app.delete('/api/estudiantes/:id', (req, res) => {
   res.json({ success: true });
 });
 
+// --- UNIDADES / CIUDADELAS DEL MAPA CONTINENTAL ---
+app.get('/api/unidades', (req, res) => {
+  const query = `
+    SELECT u.*,
+           (SELECT COUNT(*) FROM temas t WHERE t.unidad_id = u.id) as total_temas,
+           (SELECT COUNT(*) FROM evaluaciones e JOIN temas t ON e.tema_id = t.id WHERE t.unidad_id = u.id) as total_evaluaciones,
+           (SELECT COUNT(*) FROM tareas ta JOIN temas t ON ta.tema_id = t.id WHERE t.unidad_id = u.id) as total_tareas
+    FROM unidades u
+    WHERE u.activa = 1
+    ORDER BY u.orden ASC, u.numero ASC
+  `;
+  res.json(db.prepare(query).all());
+});
+
+app.post('/api/unidades', (req, res) => {
+  const { numero, nombre, descripcion, bioma, pos_col, pos_fila, orden } = req.body;
+  const numeroUnidad = Math.round(Number(numero));
+  if (!Number.isFinite(numeroUnidad) || numeroUnidad < 1) {
+    return res.status(400).json({ error: 'El número de la Unidad debe ser un entero mayor o igual a 1.' });
+  }
+  if (!nombre?.trim()) {
+    return res.status(400).json({ error: 'El nombre de la Ciudadela es obligatorio.' });
+  }
+
+  const existente = db.prepare('SELECT id FROM unidades WHERE numero = ?').get(numeroUnidad);
+  if (existente) {
+    return res.status(400).json({ error: `La Unidad ${numeroUnidad} ya existe en el mapa.` });
+  }
+
+  const info = db.prepare(`
+    INSERT INTO unidades (numero, nombre, descripcion, bioma, pos_col, pos_fila, orden)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    numeroUnidad,
+    nombre.trim(),
+    descripcion?.trim() || '',
+    bioma || 'pradera',
+    Number.isInteger(pos_col) ? pos_col : null,
+    Number.isInteger(pos_fila) ? pos_fila : null,
+    Number.isInteger(orden) ? orden : numeroUnidad
+  );
+
+  res.status(201).json({ id: info.lastInsertRowid, numero: numeroUnidad, nombre: nombre.trim() });
+});
+
+app.patch('/api/unidades/:id', (req, res) => {
+  const actual = db.prepare('SELECT * FROM unidades WHERE id = ?').get(req.params.id);
+  if (!actual) return res.status(404).json({ error: 'La Ciudadela no existe.' });
+
+  const { nombre, descripcion, bioma, pos_col, pos_fila, orden, activa } = req.body;
+  const nuevoNombre = nombre?.trim() || actual.nombre;
+  if (!nuevoNombre) return res.status(400).json({ error: 'El nombre de la Ciudadela no puede quedar vacío.' });
+
+  db.prepare(`
+    UPDATE unidades
+    SET nombre = ?, descripcion = ?, bioma = ?, pos_col = ?, pos_fila = ?, orden = ?, activa = ?
+    WHERE id = ?
+  `).run(
+    nuevoNombre,
+    descripcion ?? actual.descripcion,
+    bioma ?? actual.bioma,
+    Number.isInteger(pos_col) ? pos_col : actual.pos_col,
+    Number.isInteger(pos_fila) ? pos_fila : actual.pos_fila,
+    Number.isInteger(orden) ? orden : actual.orden,
+    Number.isInteger(activa) ? activa : actual.activa,
+    req.params.id
+  );
+
+  res.json({ success: true, id: Number(req.params.id) });
+});
+
 // --- TEMAS / BIOMAS Y EJEMPLOS / PERGAMINOS (Req. 8 y 9) ---
 app.get('/api/temas', (req, res) => {
-  const temas = db.prepare('SELECT * FROM temas ORDER BY id ASC').all();
-  const ejemplos = db.prepare('SELECT * FROM ejemplos').all();
+  const filtroUnidad = req.query.unidad_id != null ? Number(req.query.unidad_id) : null;
+  const temas = filtroUnidad != null && Number.isFinite(filtroUnidad)
+    ? db.prepare('SELECT * FROM temas WHERE unidad_id = ? ORDER BY orden ASC, id ASC').all(filtroUnidad)
+    : db.prepare('SELECT * FROM temas ORDER BY COALESCE(unidad_id, 0) ASC, orden ASC, id ASC').all();
+  const ejemplos = db.prepare('SELECT * FROM ejemplos ORDER BY orden ASC, id ASC').all();
   
   const data = temas.map((t, index) => ({
     ...t,
@@ -251,19 +445,69 @@ app.get('/api/temas', (req, res) => {
 });
 
 app.post('/api/temas', (req, res) => {
-  const { titulo, descripcion, bioma, coord_x, coord_y } = req.body;
+  const { titulo, descripcion, bioma, unidad_id, orden, pos_col, pos_fila } = req.body;
   if (!titulo?.trim()) return res.status(400).json({ error: 'El título del tema/bioma es obligatorio' });
 
-  const biomaElegido = bioma || 'bosque';
-  const x = coord_x ?? Math.floor(20 + Math.random() * 60);
-  const y = coord_y ?? Math.floor(25 + Math.random() * 50);
+  let unidadSegura = null;
+  if (unidad_id != null && unidad_id !== '') {
+    const unidad = db.prepare('SELECT * FROM unidades WHERE id = ?').get(unidad_id);
+    if (!unidad) return res.status(400).json({ error: 'La Unidad seleccionada no existe.' });
+    unidadSegura = unidad;
+  }
+
+  const biomaElegido = bioma || unidadSegura?.bioma || 'bosque';
+  const ordenFinal = Number.isInteger(orden)
+    ? orden
+    : (db.prepare('SELECT COALESCE(MAX(orden), 0) + 1 as siguiente FROM temas WHERE unidad_id IS ?').get(unidadSegura?.id ?? null)?.siguiente || 1);
 
   const info = db.prepare(`
-    INSERT INTO temas (titulo, descripcion, bioma, coord_x, coord_y) 
-    VALUES (?, ?, ?, ?, ?)
-  `).run(titulo.trim(), descripcion?.trim() || '', biomaElegido, x, y);
+    INSERT INTO temas (titulo, descripcion, bioma, unidad_id, orden, pos_col, pos_fila) 
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    titulo.trim(),
+    descripcion?.trim() || '',
+    biomaElegido,
+    unidadSegura?.id ?? null,
+    ordenFinal,
+    Number.isInteger(pos_col) ? pos_col : null,
+    Number.isInteger(pos_fila) ? pos_fila : null
+  );
 
-  res.status(201).json({ id: info.lastInsertRowid, titulo, descripcion, bioma: biomaElegido });
+  res.status(201).json({ id: info.lastInsertRowid, titulo, descripcion, bioma: biomaElegido, unidad_id: unidadSegura?.id ?? null, orden: ordenFinal });
+});
+
+app.put('/api/temas/:id', (req, res) => {
+  const actual = db.prepare('SELECT * FROM temas WHERE id = ?').get(req.params.id);
+  if (!actual) return res.status(404).json({ error: 'El tema no existe.' });
+
+  const { titulo, descripcion, bioma, unidad_id, orden, pos_col, pos_fila } = req.body;
+  let unidadFinal = actual.unidad_id;
+  if (unidad_id !== undefined) {
+    if (unidad_id === null || unidad_id === '') {
+      unidadFinal = null;
+    } else {
+      const unidad = db.prepare('SELECT id FROM unidades WHERE id = ?').get(unidad_id);
+      if (!unidad) return res.status(400).json({ error: 'La Unidad seleccionada no existe.' });
+      unidadFinal = unidad.id;
+    }
+  }
+
+  db.prepare(`
+    UPDATE temas
+    SET titulo = ?, descripcion = ?, bioma = ?, unidad_id = ?, orden = ?, pos_col = ?, pos_fila = ?
+    WHERE id = ?
+  `).run(
+    titulo?.trim() || actual.titulo,
+    descripcion ?? actual.descripcion,
+    bioma || actual.bioma,
+    unidadFinal,
+    Number.isInteger(orden) ? orden : actual.orden,
+    Number.isInteger(pos_col) ? pos_col : actual.pos_col,
+    Number.isInteger(pos_fila) ? pos_fila : actual.pos_fila,
+    req.params.id
+  );
+
+  res.json({ success: true, id: Number(req.params.id) });
 });
 
 app.delete('/api/temas/:id', (req, res) => {
@@ -272,12 +516,15 @@ app.delete('/api/temas/:id', (req, res) => {
 });
 
 app.post('/api/ejemplos', (req, res) => {
-  const { tema_id, titulo, contenido } = req.body;
+  const { tema_id, titulo, contenido, orden } = req.body;
   if (!tema_id || !titulo?.trim() || !contenido?.trim()) {
     return res.status(400).json({ error: 'Tema, título y contenido del pergamino son obligatorios' });
   }
-  const info = db.prepare('INSERT INTO ejemplos (tema_id, titulo, contenido) VALUES (?, ?, ?)').run(tema_id, titulo.trim(), contenido.trim());
-  res.status(201).json({ id: info.lastInsertRowid, tema_id, titulo, contenido });
+  const ordenFinal = Number.isInteger(orden)
+    ? orden
+    : (db.prepare('SELECT COALESCE(MAX(orden), 0) + 1 as siguiente FROM ejemplos WHERE tema_id = ?').get(tema_id)?.siguiente || 1);
+  const info = db.prepare('INSERT INTO ejemplos (tema_id, titulo, contenido, orden) VALUES (?, ?, ?, ?)').run(tema_id, titulo.trim(), contenido.trim(), ordenFinal);
+  res.status(201).json({ id: info.lastInsertRowid, tema_id, titulo, contenido, orden: ordenFinal });
 });
 
 app.delete('/api/ejemplos/:id', (req, res) => {
@@ -544,23 +791,93 @@ app.get('/api/tareas/:id/entregas', (req, res) => {
   res.json(entregas);
 });
 
-app.post('/api/entregas', (req, res) => {
-  const { tarea_id, estudiante_id, contenido } = req.body;
-  if (!tarea_id || !estudiante_id || !contenido?.trim()) {
-    return res.status(400).json({ error: 'Debes redactar el pergamino de tu entrega antes de enviarlo.' });
+app.post('/api/entregas', ejecutarSubidaEntrega, (req, res) => {
+  const tareaId = Number(req.body?.tarea_id);
+  const estudianteId = Number(req.body?.estudiante_id);
+  const contenido = (req.body?.contenido || '').trim();
+  const archivo = req.file || null;
+  const limpiarArchivoNuevo = () => {
+    if (archivo) borrarArchivoFisico(archivo.path);
+  };
+
+  if (!Number.isInteger(tareaId) || tareaId < 1 || !Number.isInteger(estudianteId) || estudianteId < 1) {
+    limpiarArchivoNuevo();
+    return res.status(400).json({ error: 'La misión y el estudiante son obligatorios.' });
+  }
+  if (!contenido && !archivo) {
+    limpiarArchivoNuevo();
+    return res.status(400).json({ error: 'Adjunta un archivo o redacta el pergamino de tu entrega antes de enviarlo.' });
   }
 
-  const previa = db.prepare('SELECT id FROM entregas WHERE tarea_id = ? AND estudiante_id = ?').get(tarea_id, estudiante_id);
-  if (previa) {
-    db.prepare('UPDATE entregas SET contenido = ?, fecha = CURRENT_TIMESTAMP WHERE id = ?').run(contenido.trim(), previa.id);
-    return res.json({ success: true, mensaje: '¡Misión actualizada en el Gremio con éxito!' });
+  const tarea = db.prepare('SELECT id FROM tareas WHERE id = ?').get(tareaId);
+  if (!tarea) {
+    limpiarArchivoNuevo();
+    return res.status(404).json({ error: 'La misión indicada no existe.' });
+  }
+  const estudiante = db.prepare('SELECT id FROM estudiantes WHERE id = ?').get(estudianteId);
+  if (!estudiante) {
+    limpiarArchivoNuevo();
+    return res.status(404).json({ error: 'El estudiante indicado no existe.' });
   }
 
-  const info = db.prepare(`
-    INSERT INTO entregas (tarea_id, estudiante_id, contenido)
-    VALUES (?, ?, ?)
-  `).run(tarea_id, estudiante_id, contenido.trim());
-  res.status(201).json({ id: info.lastInsertRowid, mensaje: '¡Misión entregada! Cuando el Game Master la califique recibirás tu XP.' });
+  if (archivo) {
+    const extension = path.extname(archivo.originalname).toLowerCase();
+    if (!firmaArchivoValida(archivo.path, extension)) {
+      limpiarArchivoNuevo();
+      return res.status(400).json({ error: 'El contenido del archivo no coincide con un PDF, DOC o DOCX válido.' });
+    }
+  }
+
+  try {
+    const previa = db.prepare(`
+      SELECT id, archivo_nombre, archivo_ruta, archivo_tipo, archivo_tamano
+      FROM entregas
+      WHERE tarea_id = ? AND estudiante_id = ?
+    `).get(tareaId, estudianteId);
+
+    const archivoNombre = archivo ? archivo.originalname : (previa?.archivo_nombre ?? null);
+    const archivoRuta = archivo ? `/uploads/entregas/${archivo.filename}` : (previa?.archivo_ruta ?? null);
+    const archivoTipo = archivo ? archivo.mimetype : (previa?.archivo_tipo ?? null);
+    const archivoTamano = archivo ? archivo.size : (previa?.archivo_tamano ?? null);
+
+    if (previa) {
+      db.prepare(`
+        UPDATE entregas
+        SET contenido = ?, fecha = CURRENT_TIMESTAMP,
+            archivo_nombre = ?, archivo_ruta = ?, archivo_tipo = ?, archivo_tamano = ?
+        WHERE id = ?
+      `).run(contenido, archivoNombre, archivoRuta, archivoTipo, archivoTamano, previa.id);
+
+      if (archivo && previa.archivo_ruta) {
+        borrarArchivoPorRutaPublica(previa.archivo_ruta);
+      }
+      return res.json({
+        success: true,
+        mensaje: '¡Misión actualizada en el Gremio con éxito!',
+        archivo_nombre: archivoNombre,
+        archivo_ruta: archivoRuta
+      });
+    }
+
+    const info = db.prepare(`
+      INSERT INTO entregas (
+        tarea_id, estudiante_id, contenido,
+        archivo_nombre, archivo_ruta, archivo_tipo, archivo_tamano
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `).run(tareaId, estudianteId, contenido, archivoNombre, archivoRuta, archivoTipo, archivoTamano);
+
+    res.status(201).json({
+      id: info.lastInsertRowid,
+      mensaje: '¡Misión entregada! Cuando el Game Master la califique recibirás tu XP.',
+      archivo_nombre: archivoNombre,
+      archivo_ruta: archivoRuta
+    });
+  } catch (error) {
+    limpiarArchivoNuevo();
+    console.error('❌ Error al guardar la entrega:', error.message);
+    return res.status(500).json({ error: 'No se pudo guardar la entrega. Intenta nuevamente.' });
+  }
 });
 
 app.get('/api/entregas/estudiante/:id', (req, res) => {

@@ -1,0 +1,258 @@
+{
+  "unidades": [
+    {
+      "numero": 1,
+      "nombre": "Pradera de las Variables",
+      "descripcion": "UNIDAD I. Tipos de variables y niveles de medición",
+      "bioma": "pradera",
+      "pos_col": 7,
+      "pos_fila": 4
+    },
+    {
+      "numero": 2,
+      "nombre": "Valle de las Frecuencias",
+      "descripcion": "UNIDAD II. Distribuciones de frecuencias unidimensionales",
+      "bioma": "valle",
+      "pos_col": 22,
+      "pos_fila": 4
+    },
+    {
+      "numero": 3,
+      "nombre": "Bosque Bidimensional",
+      "descripcion": "UNIDAD III. Distribuciones de frecuencias bidimensionales",
+      "bioma": "bosque",
+      "pos_col": 7,
+      "pos_fila": 12
+    },
+    {
+      "numero": 4,
+      "nombre": "Ciudadela de los Índices",
+      "descripcion": "UNIDAD IV. Indicadores y números índices",
+      "bioma": "ciudadela",
+      "pos_col": 22,
+      "pos_fila": 12
+    }
+  ],
+  "temas": [
+    {
+      "unidad_numero": 1,
+      "orden": 1,
+      "titulo": "Tema 1.1. Introducción a la estadística",
+      "descripcion": "Concepto, importancia, contexto histórico y aplicaciones de la estadística en la sociedad (economía, ciencias sociales, informática). Estadística descriptiva e inferencial.",
+      "subtemas": ["Concepto e importancia", "Contexto histórico", "Aplicaciones en informática y sociedad", "Descriptiva vs Inferencial"],
+      "actividad": { "titulo": "Actividad 1.1: Glosario Estadístico", "descripcion": "Elaborar un glosario con los conceptos estadísticos fundamentales discutidos en clase.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+    },
+    {
+      "unidad_numero": 1,
+      "orden": 2,
+      "titulo": "Tema 1.2. Conceptos básicos de estadística",
+      "descripcion": "Estudio de poblaciones, muestras, unidades estadísticas, individuos, datos, variables, atributos y conjuntos de datos.",
+      "subtemas": ["Población y Muestra", "Unidad estadística e Individuo", "Dato y Variable", "Atributos y características"],
+      "actividad": { "titulo": "Actividad 1.2: Análisis de Base de Datos", "descripcion": "Identificar las variables presentes dentro de una base de datos real proporcionada.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+    },
+    {
+      "unidad_numero": 1,
+      "orden": 3,
+      "titulo": "Tema 1.3. Tipos de datos y variables estadísticas",
+      "descripcion": "Clasificación de variables cualitativas y cuantitativas (discretas y continuas). Diferencias e identificación en entornos reales.",
+      "subtemas": ["Variables cualitativas", "Variables cuantitativas", "Discretas y continuas", "Casos de la vida real"],
+      "actividad": { "titulo": "Actividad 1.3: Clasificación de Variables", "descripcion": "Clasificar un listado de variables según su naturaleza y nivel de medición.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+    },
+    {
+      "unidad_numero": 1,
+      "orden": 4,
+      "titulo": "Tema 1.4. Niveles o escalas de medición",
+      "descripcion": "Estudio detallado de las escalas nominal, ordinal, de intervalo y de razón. Características y diferencias prácticas.",
+      "subtemas": ["Escala nominal y ordinal", "Escala de intervalo y razón", "Diferencias clave", "Ejemplos prácticos"],
+      "actividad": { "titulo": "Actividad 1.4: Taller de Escalas", "descripcion": "Resolver la guía práctica sobre emparejamiento de variables con sus respectivos niveles de medición.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+    },
+    {
+      "unidad_numero": 1,
+      "orden": 5,
+      "titulo": "Tema 1.5. Técnicas de adquisición de datos",
+      "descripcion": "Concepto de recolección, fuentes de información primarias y secundarias. Organización inicial de la información.",
+      "subtemas": ["Fuentes primarias y secundarias", "Técnicas de adquisición", "Organización de información", "Selección de variables"],
+      "actividad": { "titulo": "Actividad 1.5: Selección de Variables", "descripcion": "Definir y seleccionar las variables idóneas para iniciar una investigación estadística.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+    },
+    {
+      "unidad_numero": 1,
+      "orden": 6,
+      "titulo": "Tema 1.6. Elaboración de cuestionarios",
+      "descripcion": "Diseño de instrumentos, tipos de preguntas (abiertas/cerradas), organización, estructura y métodos de validación.",
+      "subtemas": ["Concepto y características", "Preguntas abiertas y cerradas", "Diseño de instrumentos", "Validación"],
+      "actividad": { "titulo": "Actividad 1.6: Diseño de Instrumento", "descripcion": "Diseñar un cuestionario estructurado para recopilar información y presentar el informe del instrumento.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" },
+      "jefe": { "titulo": "Jefe de la Unidad I", "nombre_jefe": "Guardián de las Variables", "puntos_max": 10, "xp_recompensa": 300 }
+    },
+    {
+      "unidad_numero": 2,
+      "orden": 1,
+      "titulo": "Tema 2.1. Organización y reducción de datos",
+      "descripcion": "Ordenamiento, clasificación y tabulación de datos estadísticos. Diferencias entre datos agrupados y no agrupados.",
+      "subtemas": ["Clasificación de información", "Ordenamiento de datos", "Datos agrupados y no agrupados", "Importancia de la tabulación"],
+      "actividad": { "titulo": "Actividad 2.1: Tabulación de Datos", "descripcion": "Clasificar y ordenar un conjunto de datos brutos del sector informático.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+    },
+    {
+      "unidad_numero": 2,
+      "orden": 2,
+      "titulo": "Tema 2.2. Distribuciones de frecuencias",
+      "descripcion": "Construcción e interpretación de tablas de frecuencias absolutas, relativas, acumuladas y relativas acumuladas.",
+      "subtemas": ["Frecuencia absoluta y relativa", "Frecuencias acumuladas", "Tablas para datos agrupados", "Interpretación estadística"],
+      "actividad": { "titulo": "Actividad 2.2: Tabla de Frecuencias", "descripcion": "Resolver ejercicios prácticos de construcción de tablas de distribución de frecuencias.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+    },
+    {
+      "unidad_numero": 2,
+      "orden": 3,
+      "titulo": "Tema 2.3. Representación gráfica de datos",
+      "descripcion": "Uso de gráficos circulares, de barras, histogramas, polígonos de frecuencias y ojivas para variables cualitativas y cuantitativas.",
+      "subtemas": ["Gráficos cualitativos", "Histograma y Polígono", "La Ojiva acumulada", "Interpretación gráfica"],
+      "actividad": { "titulo": "Actividad 2.3: Laboratorio en Excel", "descripcion": "Construir e interpretar gráficos estadísticos e histogramas utilizando Excel con datos reales.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+    },
+    {
+      "unidad_numero": 2,
+      "orden": 4,
+      "titulo": "Tema 2.4. Medidas de posición central",
+      "descripcion": "Cálculo, propiedades e interpretación de la media aritmética, la mediana y la moda para datos agrupados y no agrupados.",
+      "subtemas": ["Media aritmética", "La Mediana", "La Moda", "Cálculo e interpretación"],
+      "actividad": { "titulo": "Actividad 2.4: Cálculo de Tendencia Central", "descripcion": "Calcular e interpretar las medidas de posición central para un conjunto de datos no agrupados.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+    },
+    {
+      "unidad_numero": 2,
+      "orden": 5,
+      "titulo": "Tema 2.5. Medidas de posición no central",
+      "descripcion": "Concepto, algoritmos de cálculo e interpretación de resultados de los cuartiles, deciles y percentiles.",
+      "subtemas": ["Los Cuartiles", "Los Deciles", "Los Percentiles", "Interpretación de posición"],
+      "actividad": { "titulo": "Actividad 2.5: Guía de Cuartiles y Percentiles", "descripcion": "Resolver problemas de localización de medidas de posición no central sobre rendimiento académico.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+    },
+    {
+      "unidad_numero": 2,
+      "orden": 6,
+      "titulo": "Tema 2.6. Medidas de dispersión",
+      "descripcion": "Estudio de la variabilidad: rango, varianza, desviación estándar y coeficiente de variación. Comparación de muestras.",
+      "subtemas": ["Rango o recorrido", "La Varianza", "Desviación estándar", "Coeficiente de variación"],
+      "actividad": { "titulo": "Actividad 2.6: Análisis de Variabilidad", "descripcion": "Calcular la varianza y desviación estándar para determinar la dispersión de dos conjuntos de datos.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+    },
+    {
+      "unidad_numero": 2,
+      "orden": 7,
+      "titulo": "Tema 2.7. Medidas de concentración y forma",
+      "descripcion": "Análisis del perfil de la distribución a través del estudio de la asimetría y el grado de curtosis.",
+      "subtemas": ["Concentración estadística", "Modelos de forma", "Asimetría", "Curtosis"],
+      "actividad": { "titulo": "Actividad 2.7: Estudio de Forma", "descripcion": "Identificar el tipo de asimetría y curtosis que presentan las curvas de frecuencias provistas.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+    },
+    {
+      "unidad_numero": 2,
+      "orden": 8,
+      "titulo": "Tema 2.8. Análisis e interpretación de información estadística",
+      "descripcion": "Integración de resultados mediante tablas de resumen, gráficos e informes descriptivos finales.",
+      "subtemas": ["Tablas de resumen", "Integración de descriptores", "Elaboración de informes", "Presentación de resultados"],
+      "actividad": { "titulo": "Actividad 2.8: Informe Estadístico Final", "descripcion": "Elaborar y exponer un informe estadístico descriptivo completo con un set de datos de libre elección.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" },
+      "jefe": { "titulo": "Jefe de la Unidad II", "nombre_jefe": "Señor de las Frecuencias", "puntos_max": 10, "xp_recompensa": 300 }
+    },
+    {
+      "unidad_numero": 3,
+      "orden": 1,
+      "titulo": "Tema 3.1. Introducción al análisis bidimensional",
+      "descripcion": "Estudio simultáneo de dos variables cuantitativas o cualitativas. Organización de datos bidimensionales interrelacionados.",
+      "subtemas": ["Análisis bivariado", "Unidimensional vs Bidimensional", "Interrelación de variables", "Estructura de organización"],
+      "actividad": { "titulo": "Actividad 3.1: Mapeo Bivariado", "descripcion": "Organizar un registro bivariado inicial diferenciando la naturaleza de ambas variables.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+    },
+    {
+      "unidad_numero": 3,
+      "orden": 2,
+      "titulo": "Tema 3.2. Tablas de correlación",
+      "descripcion": "Construcción, ordenamiento e interpretación de frecuencias estructuradas en matrices y tablas de correlación.",
+      "subtemas": ["Matrices de datos", "Construcción de tablas", "Frecuencias cruzadas", "Interpretación matricial"],
+      "actividad": { "titulo": "Actividad 3.2: Construcción de Matrices", "descripcion": "Estructurar una tabla de correlación a partir de datos recopilados de velocidad de red y latencia.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+    },
+    {
+      "unidad_numero": 3,
+      "orden": 3,
+      "titulo": "Tema 3.3. Asociación entre variables cualitativas",
+      "descripcion": "Estudio de tablas de contingencia, distribuciones conjuntas, marginales y condicionales aplicadas a atributos cualitativos.",
+      "subtemas": ["Tablas de contingencia", "Distribución conjunta", "Distribución marginal", "Distribución condicional"],
+      "actividad": { "titulo": "Actividad 3.3: Tablas de Contingencia", "descripcion": "Resolver ejercicios analíticos de distribuciones marginales y condicionales.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+    },
+    {
+      "unidad_numero": 3,
+      "orden": 4,
+      "titulo": "Tema 3.4. Representación gráfica de datos bidimensionales",
+      "descripcion": "Uso especializado de diagramas de dispersión, gráficos de burbujas y barras agrupadas para representar patrones de comportamiento.",
+      "subtemas": ["Gráficos bivariados", "Diagrama de dispersión", "Identificación de patrones", "Comportamientos visuales"],
+      "actividad": { "titulo": "Actividad 3.4: Diagramas de Dispersión", "descripcion": "Elaborar gráficos de dispersión e identificar visualmente tendencias de asociación.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+    },
+    {
+      "unidad_numero": 3,
+      "orden": 5,
+      "titulo": "Tema 3.5. Correlación entre variables",
+      "descripcion": "Concepto de correlación lineal. Cálculo del coeficiente de correlación de Pearson, interpretación de signo y magnitud.",
+      "subtemas": ["Correlación positiva y negativa", "Ausencia de relación lineal", "Coeficiente de Pearson", "Cálculo e interpretación"],
+      "actividad": { "titulo": "Actividad 3.5: Coeficiente de Pearson", "descripcion": "Calcular matemáticamente e interpretar el coeficiente de correlación para dos variables físicas.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+    },
+    {
+      "unidad_numero": 3,
+      "orden": 6,
+      "titulo": "Tema 3.6. Regresión lineal simple",
+      "descripcion": "Construcción del modelo matemático lineal, determinación de variables independientes y dependientes, ecuación y predicciones.",
+      "subtemas": ["Variable dependiente e independiente", "Ecuación de la recta de regresión", "Ajuste lineal por mínimos cuadrados", "Aplicaciones y predicciones"],
+      "actividad": { "titulo": "Actividad 3.6: Ajuste de Regresión Simple", "descripcion": "Resolver problemas de regresión lineal simple y trazar la recta estimada sobre el gráfico.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" },
+      "jefe": { "titulo": "Jefe de la Unidad III", "nombre_jefe": "Espíritu de la Correlación", "puntos_max": 10, "xp_recompensa": 300 }
+    },
+    {
+      "unidad_numero": 4,
+      "orden": 1,
+      "titulo": "Tema 4.1. Proporciones, razones, tasas e incrementos",
+      "descripcion": "Conceptos y cálculos de indicadores básicos como proporciones, razones, tasas absolutas y relativas. Aplicación en biología y economía.",
+      "subtemas": ["Cálculo de Proporciones y Razones", "Cálculo de Tasas", "Incrementos absolutos", "Incrementos relativos"],
+      "actividad": { "titulo": "Actividad 4.1: Práctica de Tasas y Razones", "descripcion": "Resolver la guía analítica sobre el cálculo de incrementos porcentuales y proporciones.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+    },
+    {
+      "unidad_numero": 4,
+      "orden": 2,
+      "titulo": "Tema 4.2. Introducción a los números índices",
+      "descripcion": "Importancia, propiedades y características fundamentales de los números índices simples y compuestos en series de tiempo.",
+      "subtemas": ["Concepto y propiedades", "Importancia económica", "Índices simples", "Índices compuestos"],
+      "actividad": { "titulo": "Actividad 4.2: Investigación de Índices", "descripcion": "Analizar la utilidad de los números índices compuesto dentro del comercio tecnológico nacional.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+    },
+    {
+      "unidad_numero": 4,
+      "orden": 3,
+      "titulo": "Tema 4.3. Índices simples",
+      "descripcion": "Cálculo e interpretación analítica de índices simples de precios, índices de cantidad e índices de valor.",
+      "subtemas": ["Índices simples de precios", "Índices de cantidades", "Índices de valor", "Interpretación de resultados"],
+      "actividad": { "titulo": "Actividad 4.3: Ejercicios de Índices Simples", "descripcion": "Calcular los índices de precios simples para un listado histórico de hardware de computación.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+    },
+    {
+      "unidad_numero": 4,
+      "orden": 4,
+      "titulo": "Tema 4.4. Índices compuestos",
+      "descripcion": "Estudio de índices compuestos agregativos y aditivos. Métodos combinados para evaluar variaciones complejas de precios.",
+      "subtemas": ["Índices combinados", "Modelos agregativos", "Métodos aditivos", "Comparaciones complejas"],
+      "actividad": { "titulo": "Actividad 4.4: Cálculo de Índices Compuestos", "descripcion": "Desarrollar problemas estadísticos utilizando índices compuestos aplicados a la canasta básica.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+    },
+    {
+      "unidad_numero": 4,
+      "orden": 5,
+      "titulo": "Tema 4.5. Deflactación y cambio de base",
+      "descripcion": "Procesos de ajuste monetario, deflactación de series de tiempo económicas y metodologías de cambio de base indexada.",
+      "subtemas": ["Concepto de deflactación", "Series económicas", "Cambio de base indexada", "Procedimientos matemáticos"],
+      "actividad": { "titulo": "Actividad 4.5: Taller de Deflactación", "descripcion": "Resolver casos prácticos de deflactación y cambio de base de indicadores inflacionarios.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+    },
+    {
+      "unidad_numero": 4,
+      "orden": 6,
+      "titulo": "Tema 4.6. Construcción de indicadores estadísticos",
+      "descripcion": "Diseño y estructuración de indicadores en ámbitos socioeconómicos, ambientales y en el uso de tecnologías de la información (TIC).",
+      "subtemas": ["Concepto de indicador", "Indicadores socioeconómicos", "Indicadores ambientales", "Indicadores TIC"],
+      "actividad": { "titulo": "Actividad 4.6: Matriz de Indicadores TIC", "descripcion": "Diseñar una propuesta metodológica para evaluar el acceso a internet rural mediante indicadores.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+    },
+    {
+      "unidad_numero": 4,
+      "orden": 7,
+      "titulo": "Tema 4.7. Índice de Gini y curva de Lorenz",
+      "descripcion": "Estudio cuantitativo de la concentración y la desigualdad económica mediante la construcción de la curva de Lorenz y el cálculo del coeficiente de Gini.",
+      "subtemas": ["Concentración económica", "Curva de Lorenz gráfica", "Fórmula del Índice de Gini", "Análisis de desigualdad"],
+      "actividad": { "titulo": "Actividad 4.7: Gráfico de Lorenz", "descripcion": "Construir de manera gráfica la curva de Lorenz y calcular el índice de Gini basándose en ingresos reales.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" },
+      "jefe": { "titulo": "Jefe de la Unidad IV", "nombre_jefe": "Fortaleza de Gini y Lorenz", "puntos_max": 10, "xp_recompensa": 300 }
+    }
+  ]
+}
