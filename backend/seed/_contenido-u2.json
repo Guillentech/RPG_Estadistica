@@ -1,0 +1,375 @@
+{
+  "unidad_numero": 2,
+  "objetivo": "Organizar, resumir y representar información estadística mediante tablas de distribución de frecuencias, gráficos y medidas descriptivas.",
+  "temas": [
+    {
+      "orden": 1,
+      "titulo": "Tema 2.1. Organización y reducción de datos",
+      "subtemas": [
+        {
+          "titulo": "Concepto de organización de datos",
+          "contenido": "La organización de datos es el proceso de reunir, clasificar y estructurar la información recogida para que pueda analizarse con claridad. Consiste en convertir datos dispersos en un conjunto ordenado según criterios definidos, como la variable medida o el rango de valores. Por ejemplo, registrar las edades de treinta estudiantes y agruparlas por intervalos permite observar patrones que el listado original oculta."
+        },
+        {
+          "titulo": "Clasificación de información estadística",
+          "contenido": "Clasificar la información consiste en separar los datos en grupos o clases mutuamente excluyentes de acuerdo con una característica común. La clasificación puede ser cualitativa, cuando agrupa por atributos como el sexo o la carrera, o cuantitativa, cuando agrupa por valores numéricos como la estatura. Una buena clasificación debe ser exhaustiva, de modo que ningún dato quede fuera de las categorías definidas."
+        },
+        {
+          "titulo": "Ordenamiento de datos",
+          "contenido": "El ordenamiento de datos es la disposición de las observaciones en una secuencia lógica, generalmente ascendente o descendente. Suele realizarse tomando como criterio la variable de interés, lo que facilita localizar valores extremos, detectar repeticiones y calcular medidas de posición. Por ejemplo, ordenar de menor a mayor los tiempos de respuesta de un servidor permite identificar de inmediato el más rápido y el más lento."
+        },
+        {
+          "titulo": "Datos agrupados",
+          "contenido": "Los datos agrupados son aquellos que se resumen en intervalos o clases, perdiendo el detalle individual pero ganando claridad global. Se emplean cuando el número de observaciones es grande o cuando la variable es continua y conviene presentarla por rangos. Por ejemplo, en lugar de listar cien salarios, se agrupan en intervalos como de 500 a 999 y de 1000 a 1499."
+        },
+        {
+          "titulo": "Datos no agrupados",
+          "contenido": "Los datos no agrupados son los valores originales de cada observación, presentados uno por uno y sin intervalos de clase. Conservan toda la información individual y se utilizan cuando el conjunto es pequeño o cuando se requiere precisión exacta. Por ejemplo, las calificaciones 15, 17, 12, 19 y 14 obtenidas por cinco alumnos constituyen datos no agrupados."
+        },
+        {
+          "titulo": "Organización de conjuntos de datos",
+          "contenido": "Organizar un conjunto de datos implica definir las variables, depurar los registros incompletos o erróneos y disponer la información en una estructura tabular coherente. Este paso previo garantiza que los cálculos posteriores sean confiables y reproducibles. Por ejemplo, una matriz con una fila por estudiante y columnas para edad, sexo y nota final constituye un conjunto de datos organizado."
+        },
+        {
+          "titulo": "Importancia de la tabulación de información",
+          "contenido": "La tabulación consiste en presentar los datos ordenados en filas y columnas con encabezados claros, lo que permite comparar categorías y detectar tendencias con rapidez. Su importancia radica en que reduce el volumen de información sin perder contenido sustantivo y facilita el cálculo de frecuencias y porcentajes. Una tabla bien elaborada debe indicar la fuente, las unidades y el total de las observaciones."
+        }
+      ]
+    },
+    {
+      "orden": 2,
+      "titulo": "Tema 2.2. Distribuciones de frecuencias",
+      "subtemas": [
+        {
+          "titulo": "Concepto de distribución de frecuencias",
+          "contenido": "Una distribución de frecuencias es una tabla que muestra cada valor o clase de la variable junto con el número de veces que aparece en el conjunto de datos. Resume la información y revela dónde se concentran las observaciones. Por ejemplo, si 12 de 40 estudiantes obtuvieron la nota 16, ese valor tendrá frecuencia absoluta 12 dentro de la distribución."
+        },
+        {
+          "titulo": "Frecuencia absoluta",
+          "contenido": "La frecuencia absoluta, denotada f sub i, es el número de observaciones que pertenecen a un valor o intervalo de la variable. Su suma en toda la distribución es igual al tamaño de la muestra n. Por ejemplo, si en un grupo de 30 alumnos 8 usan laptop, la frecuencia absoluta de la categoría laptop es 8."
+        },
+        {
+          "titulo": "Frecuencia relativa",
+          "contenido": "La frecuencia relativa, denotada h sub i, se obtiene dividiendo la frecuencia absoluta entre el total de observaciones, es decir h sub i igual a f sub i entre n. Expresa la proporción del total que representa cada valor y su suma es igual a 1. Multiplicada por 100 se convierte en porcentaje; por ejemplo, 8 de 30 equivale a 0,267 o 26,7 por ciento."
+        },
+        {
+          "titulo": "Frecuencia acumulada",
+          "contenido": "La frecuencia acumulada, denotada F sub i, resulta de sumar sucesivamente las frecuencias absolutas hasta el valor o clase considerado. Indica cuántas observaciones son menores o iguales a ese valor. Por ejemplo, si las frecuencias son 5, 8 y 7, la frecuencia acumulada del segundo valor es 5 más 8, es decir 13."
+        },
+        {
+          "titulo": "Frecuencia relativa acumulada",
+          "contenido": "La frecuencia relativa acumulada, denotada H sub i, se obtiene sumando las frecuencias relativas hasta la clase considerada, o bien dividiendo la frecuencia acumulada entre n. Representa la proporción de datos iguales o inferiores a ese valor y culmina en 1. Por ejemplo, H sub 3 igual a 0,75 significa que el 75 por ciento de las observaciones no supera el tercer valor."
+        },
+        {
+          "titulo": "Distribución de frecuencias para datos no agrupados",
+          "contenido": "Cuando los datos no están agrupados, la tabla lista cada valor distinto de la variable con su frecuencia correspondiente. Es apropiada para variables discretas con pocos valores diferentes o para muestras pequeñas. Por ejemplo, para el número de hijos por familia se puede construir una fila por cada valor: 0, 1, 2, 3 y así sucesivamente."
+        },
+        {
+          "titulo": "Distribución de frecuencias para datos agrupados",
+          "contenido": "Para datos agrupados la tabla se construye con intervalos de clase, generalmente de igual amplitud, y registra cuántas observaciones caen en cada uno. Se requiere calcular el rango, elegir el número de clases y definir los límites. Por ejemplo, con datos de 20 a 80 años se podrían usar clases de 20 a 29, de 30 a 39 y así hasta 70 a 79."
+        },
+        {
+          "titulo": "Construcción de tablas de frecuencias",
+          "contenido": "Construir una tabla de frecuencias implica ordenar los datos, determinar los valores o intervalos, contar las observaciones y calcular las frecuencias relativas y acumuladas. En datos agrupados se aplica la regla de Sturges, k igual a 1 más 3,322 por el logaritmo de n, para fijar el número de clases. El resultado debe incluir encabezados, totales y unidades claramente indicadas."
+        },
+        {
+          "titulo": "Interpretación de tablas estadísticas",
+          "contenido": "Interpretar una tabla estadística consiste en leer las frecuencias y los porcentajes para describir el comportamiento de la variable, identificando los valores más frecuentes y los extremos. Se debe distinguir entre frecuencia absoluta y relativa para no confundir volumen con proporción. Por ejemplo, una clase con 20 casos en una muestra de 200 representa solo el 10 por ciento del total."
+        }
+      ]
+    },
+    {
+      "orden": 3,
+      "titulo": "Tema 2.3. Representación gráfica de datos",
+      "subtemas": [
+        {
+          "titulo": "Importancia de la representación gráfica",
+          "contenido": "La representación gráfica permite visualizar la distribución de los datos de forma inmediata, destacando la forma, la concentración y los valores atípicos. Un gráfico bien elegido comunica en segundos lo que una tabla exige comparar fila por fila. Su importancia radica en que facilita la interpretación y la comunicación de resultados a públicos no especializados."
+        },
+        {
+          "titulo": "Gráficos para variables cualitativas",
+          "contenido": "Las variables cualitativas se representan mediante gráficos que comparan categorías, como las barras o los sectores circulares, donde la altura o el ángulo refleja la frecuencia. No deben usarse histogramas ni polígonos, pues estas categorías no tienen continuidad numérica. Por ejemplo, las carreras profesionales de un grupo se muestran adecuadamente con un gráfico de barras por carrera."
+        },
+        {
+          "titulo": "Gráficos para variables cuantitativas",
+          "contenido": "Las variables cuantitativas admiten gráficos que respetan el orden y la continuidad de los valores, como el histograma, el polígono de frecuencias y la ojiva. También pueden emplearse diagramas de caja o de tallo y hojas. Por ejemplo, la distribución de estaturas de un curso se representa naturalmente con un histograma de intervalos contiguos."
+        },
+        {
+          "titulo": "Gráfico de barras",
+          "contenido": "El gráfico de barras representa cada categoría con un rectángulo cuya altura o longitud es proporcional a su frecuencia. Las barras se separan entre sí para indicar que las categorías son independientes. Por ejemplo, un gráfico de barras puede comparar el número de usuarios de cuatro sistemas operativos distintos."
+        },
+        {
+          "titulo": "Gráfico circular",
+          "contenido": "El gráfico circular, o de sectores, divide un círculo en porciones cuyo ángulo es proporcional a la frecuencia relativa de cada categoría. Es útil para mostrar la composición de un total, preferentemente con pocas categorías. Por ejemplo, si una categoría representa el 25 por ciento, su sector abarca 90 grados del círculo."
+        },
+        {
+          "titulo": "Histograma",
+          "contenido": "El histograma representa datos agrupados mediante barras contiguas cuyas bases son los intervalos de clase y cuyas alturas corresponden a las frecuencias. La ausencia de separación refleja la continuidad de la variable cuantitativa. Por ejemplo, un histograma de edades con clases de cinco años muestra de inmediato en qué rango se concentra la población."
+        },
+        {
+          "titulo": "Polígono de frecuencias",
+          "contenido": "El polígono de frecuencias se construye uniendo con segmentos los puntos que representan la marca de clase y su frecuencia. A diferencia del histograma, permite comparar varias distribuciones en un mismo plano. Por ejemplo, superponer dos polígonos de notas permite contrastar el rendimiento de dos paralelos de un mismo curso."
+        },
+        {
+          "titulo": "Ojiva o curva de frecuencias acumuladas",
+          "contenido": "La ojiva es la gráfica de las frecuencias acumuladas, donde cada punto indica cuántas observaciones son menores o iguales a un valor determinado. Su forma creciente permite localizar cuartiles y percentiles de manera aproximada. Por ejemplo, la ojiva de notas muestra qué porcentaje de estudiantes queda por debajo de una calificación dada."
+        },
+        {
+          "titulo": "Interpretación de representaciones gráficas",
+          "contenido": "Interpretar un gráfico exige identificar los ejes, las unidades, la escala y la fuente antes de describir su forma. Se debe observar dónde se concentran los datos, si existen simetrías, picos o valores atípicos y qué implican para el fenómeno estudiado. Por ejemplo, un histograma con dos picos sugiere la mezcla de dos poblaciones distintas."
+        }
+      ],
+      "nota": "Los tipos particulares de gráficos anteriores constituyen una propuesta de desarrollo de las representaciones gráficas contempladas en el programa."
+    },
+    {
+      "orden": 4,
+      "titulo": "Tema 2.4. Medidas de posición central",
+      "subtemas": [
+        {
+          "titulo": "Concepto de medidas de tendencia central",
+          "contenido": "Las medidas de tendencia central son valores que resumen un conjunto de datos indicando alrededor de qué punto se concentran las observaciones. Las principales son la media aritmética, la mediana y la moda, cada una con propiedades y usos propios. Por ejemplo, la media de las notas de un curso resume el rendimiento global en un solo número."
+        },
+        {
+          "titulo": "Media aritmética",
+          "contenido": "La media aritmética es la suma de todos los valores dividida entre el número de observaciones. Se calcula como la suma de las x sub i dividida entre n, utiliza toda la información disponible y es sensible a los valores extremos. Por ejemplo, la media de 4, 6, 8 y 10 es 28 entre 4, es decir 7."
+        },
+        {
+          "titulo": "Mediana",
+          "contenido": "La mediana es el valor central de un conjunto ordenado, que deja igual número de observaciones por debajo y por encima. Si n es par, se promedian los dos valores centrales. Es resistente a los valores atípicos; por ejemplo, en la serie 2, 4, 6 y 100 la mediana es 5, muy distinta de la media, que es 28."
+        },
+        {
+          "titulo": "Moda",
+          "contenido": "La moda es el valor que aparece con mayor frecuencia en el conjunto de datos. Puede no existir, ser única o haber varias modas, y es la única medida de tendencia central aplicable a variables cualitativas. Por ejemplo, en la serie 3, 5, 5, 7 y 9 la moda es 5 por repetirse dos veces."
+        },
+        {
+          "titulo": "Cálculo de medidas centrales para datos agrupados",
+          "contenido": "En datos agrupados la media se calcula con la marca de clase, multiplicando cada frecuencia por su marca y dividiendo entre n. La mediana y la moda se obtienen por interpolación dentro del intervalo que las contiene, usando sus fórmulas específicas. Por ejemplo, con clases de 10 a 20 y marca 15, la media pondera esa marca por su frecuencia."
+        },
+        {
+          "titulo": "Cálculo de medidas centrales para datos no agrupados",
+          "contenido": "Con datos no agrupados la media se obtiene sumando los valores y dividiendo entre n, mientras la mediana requiere ordenar y ubicar la posición n más 1 entre 2. La moda se identifica contando repeticiones. Por ejemplo, en la serie 7, 8, 8, 9 y 11 la mediana es 8 y la moda también es 8."
+        },
+        {
+          "titulo": "Interpretación de resultados",
+          "contenido": "Interpretar las medidas centrales implica traducir el número al contexto del fenómeno y comparar las tres medidas para detectar asimetrías. Si la media supera a la mediana, ello sugiere la presencia de valores altos extremos. Por ejemplo, un salario medio muy superior al salario mediano indica fuerte concentración de ingresos en pocas personas."
+        }
+      ]
+    },
+    {
+      "orden": 5,
+      "titulo": "Tema 2.5. Medidas de posición no central",
+      "subtemas": [
+        {
+          "titulo": "Concepto de medidas de posición",
+          "contenido": "Las medidas de posición, o cuantiles, dividen el conjunto ordenado de datos en partes que contienen igual proporción de observaciones. Permiten ubicar un valor respecto del resto de la distribución. A diferencia de la tendencia central, no buscan el centro sino puntos de referencia como el 25, el 50 o el 90 por ciento."
+        },
+        {
+          "titulo": "Cuartiles",
+          "contenido": "Los cuartiles son tres valores que dividen los datos ordenados en cuatro partes iguales: Q1, Q2 y Q3. El segundo cuartil coincide con la mediana y entre Q1 y Q3 se encuentra el 50 por ciento central de las observaciones. Por ejemplo, Q1 igual a 12 indica que el 25 por ciento de los datos es menor o igual a 12."
+        },
+        {
+          "titulo": "Deciles",
+          "contenido": "Los deciles son nueve valores que dividen la distribución en diez partes iguales, denotados desde D1 hasta D9. Cada decil acumula el 10 por ciento de las observaciones, de modo que D5 equivale a la mediana. Por ejemplo, D7 igual a 45 significa que el 70 por ciento de los datos no supera 45."
+        },
+        {
+          "titulo": "Percentiles",
+          "contenido": "Los percentiles son noventa y nueve valores que dividen los datos en cien partes iguales, denotados desde P1 hasta P99. Cada uno indica el porcentaje de observaciones que queda por debajo. Por ejemplo, un estudiante ubicado en el percentil 85 superó aproximadamente al 85 por ciento de sus compañeros."
+        },
+        {
+          "titulo": "Cálculo de medidas de posición",
+          "contenido": "Para datos no agrupados se ordena la serie y se localiza la posición multiplicando k por n y dividiendo entre 100 para percentiles, o entre 4 para cuartiles, interpolando si el resultado no es entero. En datos agrupados se aplica interpolación dentro de la clase correspondiente. Por ejemplo, P50 con n igual a 40 se ubica en la posición 20."
+        },
+        {
+          "titulo": "Interpretación de resultados",
+          "contenido": "Interpretar un cuantil consiste en expresar qué proporción de la población queda por debajo del valor hallado y compararlo con el contexto del estudio. Estas medidas son resistentes a los valores extremos y muy útiles en educación, salud y economía. Por ejemplo, ubicarse sobre el P90 indica un desempeño superior al 90 por ciento del grupo."
+        }
+      ]
+    },
+    {
+      "orden": 6,
+      "titulo": "Tema 2.6. Medidas de dispersión",
+      "subtemas": [
+        {
+          "titulo": "Concepto de dispersión",
+          "contenido": "Las medidas de dispersión cuantifican cuán alejados están los datos respecto de su centro, complementando la información de la tendencia central. Dos conjuntos pueden tener la misma media y comportamientos muy distintos. Por ejemplo, medias iguales a 7 en los conjuntos 6, 7 y 8 y en los conjuntos 1, 7 y 13 describen realidades totalmente diferentes."
+        },
+        {
+          "titulo": "Rango o recorrido",
+          "contenido": "El rango es la diferencia entre el valor máximo y el mínimo del conjunto, es decir, el máximo menos el mínimo. Es la medida de dispersión más simple y fácil de calcular, pero solo usa dos observaciones y es muy sensible a los extremos. Por ejemplo, en los datos 5, 9, 12 y 20 el rango es 20 menos 5, es decir 15."
+        },
+        {
+          "titulo": "Varianza",
+          "contenido": "La varianza es el promedio de las desviaciones al cuadrado respecto de la media, dividiendo la suma de esos cuadrados entre n menos 1 en el caso de una muestra. Al elevar al cuadrado se evita la cancelación de desviaciones positivas y negativas. Por ejemplo, datos muy alejados de la media producen una varianza grande."
+        },
+        {
+          "titulo": "Desviación estándar",
+          "contenido": "La desviación estándar es la raíz cuadrada de la varianza y se expresa en las mismas unidades que la variable. Indica la distancia típica de las observaciones respecto de la media. Por ejemplo, si la desviación es de 3 años, las edades suelen apartarse unas tres unidades del promedio del grupo."
+        },
+        {
+          "titulo": "Coeficiente de variación",
+          "contenido": "El coeficiente de variación relaciona la desviación estándar con la media y se expresa en porcentaje, multiplicando ese cociente por 100. Al carecer de unidades permite comparar la variabilidad de variables distintas o de escalas diferentes. Por ejemplo, un coeficiente de 5 por ciento indica alta homogeneidad, mientras uno de 40 por ciento señala gran dispersión."
+        },
+        {
+          "titulo": "Interpretación de las medidas de dispersión",
+          "contenido": "Interpretar la dispersión consiste en determinar si los datos son homogéneos o heterogéneos respecto del promedio. Valores bajos indican concentración alrededor de la media y valores altos, alta variabilidad. Por ejemplo, dos cursos con media 15 pero desviaciones de 1 y de 4 evidencian que el primero es mucho más uniforme que el segundo."
+        },
+        {
+          "titulo": "Comparación de conjuntos de datos",
+          "contenido": "Comparar conjuntos requiere contrastar simultáneamente el centro y la dispersión, pues una media sola puede resultar engañosa. Cuando las unidades o las escalas difieren, el coeficiente de variación es el criterio adecuado. Por ejemplo, entre dos proveedores con tiempos medios parecidos se prefiere el de menor desviación por ser más predecible."
+        }
+      ]
+    },
+    {
+      "orden": 7,
+      "titulo": "Tema 2.7. Medidas de concentración y forma",
+      "subtemas": [
+        {
+          "titulo": "Concepto de concentración estadística",
+          "contenido": "La concentración estadística estudia cómo se reparte el total de una variable entre las unidades observadas, distinguiendo si el reparto es equitativo o está sesgado hacia pocos individuos. Se aplica especialmente a ingresos, riqueza o ventas. Por ejemplo, si el 20 por ciento de los clientes genera el 80 por ciento de las ventas, existe alta concentración."
+        },
+        {
+          "titulo": "Análisis de concentración de datos",
+          "contenido": "El análisis de concentración se apoya en la curva de Lorenz y en el índice de Gini para medir la desigualdad del reparto. La curva compara la proporción acumulada de unidades con la proporción acumulada del total. Por ejemplo, una curva de Lorenz muy alejada de la diagonal indica una distribución muy desigual."
+        },
+        {
+          "titulo": "Medidas de forma de una distribución",
+          "contenido": "Las medidas de forma describen la silueta de la distribución sin atender a su centro ni a su dispersión. Las principales son la asimetría, que mide la falta de simetría, y la curtosis, que mide el apuntamiento o la concentración en las colas. Por ejemplo, una campana de Gauss perfecta tiene asimetría cero y curtosis estándar."
+        },
+        {
+          "titulo": "Asimetría",
+          "contenido": "La asimetría indica hacia qué lado se extiende la cola de la distribución respecto de su centro. Es positiva cuando la cola se alarga hacia la derecha y negativa cuando se alarga hacia la izquierda. Por ejemplo, los ingresos suelen presentar asimetría positiva, con pocos valores muy altos que estiran la cola derecha."
+        },
+        {
+          "titulo": "Curtosis",
+          "contenido": "La curtosis mide el grado de apuntamiento de la distribución y el peso de sus colas en comparación con la distribución normal. Se distingue entre distribuciones leptocúrticas, mesocúrticas y platicúrticas. Por ejemplo, una distribución leptocúrtica tiene un pico alto y colas pesadas, lo que implica mayor presencia de valores extremos."
+        },
+        {
+          "titulo": "Interpretación de distribuciones estadísticas",
+          "contenido": "Interpretar una distribución implica combinar centro, dispersión, asimetría y curtosis para describir su comportamiento completo. La forma orienta sobre la idoneidad de ciertas medidas y sobre la presencia de valores atípicos. Por ejemplo, ante una fuerte asimetría conviene preferir la mediana como medida central representativa."
+        }
+      ]
+    },
+    {
+      "orden": 8,
+      "titulo": "Tema 2.8. Análisis e interpretación de información estadística",
+      "subtemas": [
+        {
+          "titulo": "Organización de resultados",
+          "contenido": "Organizar los resultados consiste en reunir y ordenar los cálculos obtenidos durante el análisis para presentarlos de manera coherente y trazable. Se agrupan por variable u objetivo, conservando las unidades y el tamaño de la muestra. Por ejemplo, un analista reúne medias, desviaciones y frecuencias de cada variable antes de redactar el informe."
+        },
+        {
+          "titulo": "Elaboración de tablas de resumen",
+          "contenido": "Las tablas de resumen concentran los descriptores más relevantes de cada variable en un formato compacto y comparable. Deben incluir título, unidades, tamaño de muestra y medidas seleccionadas con criterio. Por ejemplo, una tabla con n, media, mediana, desviación estándar y coeficiente de variación por grupo sintetiza todo el análisis descriptivo."
+        },
+        {
+          "titulo": "Elaboración de gráficos estadísticos",
+          "contenido": "Elaborar gráficos estadísticos implica elegir la representación adecuada al tipo de variable y cuidar las escalas, las etiquetas y los títulos. El gráfico debe apoyar el mensaje del análisis y no distorsionarlo. Por ejemplo, para comparar la evolución mensual de ventas se usa un gráfico de líneas con eje temporal claramente rotulado."
+        },
+        {
+          "titulo": "Interpretación de medidas descriptivas",
+          "contenido": "Interpretar las medidas descriptivas significa explicar en el lenguaje del dominio qué indican el centro, la dispersión y la forma hallados. No basta con reportar cifras: hay que señalar su significado práctico y sus limitaciones. Por ejemplo, un coeficiente de variación alto puede advertir sobre la inestabilidad de un proceso productivo."
+        },
+        {
+          "titulo": "Elaboración de informes estadísticos",
+          "contenido": "Un informe estadístico es un documento estructurado que presenta objetivos, metodología, resultados y conclusiones sustentados en evidencia numérica. Debe redactarse con precisión, citar la fuente de los datos y evitar afirmaciones que los resultados no respalden. Por ejemplo, incluye introducción, análisis descriptivo, gráficos y recomendaciones finales."
+        },
+        {
+          "titulo": "Presentación de resultados",
+          "contenido": "Presentar resultados consiste en comunicar los hallazgos de forma clara y adaptada al público destinatario, apoyándose en tablas y gráficos cuidadosamente seleccionados. Se recomienda destacar las conclusiones principales antes que los detalles técnicos. Por ejemplo, una exposición final resume en tres ideas clave lo encontrado y responde las preguntas de la investigación."
+        }
+      ]
+    }
+  ],
+  "preguntas_jefe": [
+    {
+      "enunciado": "En estadística, los datos agrupados se caracterizan porque:",
+      "opcion_a": "conservan cada valor original sin ninguna transformación",
+      "opcion_b": "se resumen en intervalos o clases que pierden el detalle individual",
+      "opcion_c": "solo pueden aplicarse a variables cualitativas",
+      "opcion_d": "no requieren ningún criterio de ordenamiento previo",
+      "opcion_correcta": "B",
+      "explicacion": "Los datos agrupados se organizan en clases o intervalos para resumir conjuntos grandes, sacrificando el detalle individual en favor de una visión global."
+    },
+    {
+      "enunciado": "Si una distribución tiene n = 50 observaciones y una categoría presenta frecuencia absoluta 10, su frecuencia relativa es:",
+      "opcion_a": "0,50",
+      "opcion_b": "5",
+      "opcion_c": "0,20",
+      "opcion_d": "10 %",
+      "opcion_correcta": "C",
+      "explicacion": "La frecuencia relativa se obtiene dividiendo la frecuencia absoluta entre el total: 10 / 50 = 0,20, equivalente al 20 %."
+    },
+    {
+      "enunciado": "La ojiva o curva de frecuencias acumuladas se utiliza principalmente para:",
+      "opcion_a": "mostrar cuántas observaciones son menores o iguales a un valor dado",
+      "opcion_b": "comparar la altura de barras separadas entre categorías",
+      "opcion_c": "representar la proporción de cada categoría dentro de un círculo",
+      "opcion_d": "medir la dispersión de los datos respecto de la media",
+      "opcion_correcta": "A",
+      "explicacion": "La ojiva grafica frecuencias acumuladas, por lo que permite saber qué cantidad o proporción de datos queda por debajo de un valor."
+    },
+    {
+      "enunciado": "Para representar el número de usuarios de cinco sistemas operativos distintos, el gráfico más adecuado es:",
+      "opcion_a": "un histograma con barras contiguas",
+      "opcion_b": "un polígono de frecuencias acumuladas",
+      "opcion_c": "una ojiva de frecuencias relativas",
+      "opcion_d": "un gráfico de barras o un gráfico circular",
+      "opcion_correcta": "D",
+      "explicacion": "El sistema operativo es una variable cualitativa sin continuidad numérica, por lo que corresponde un gráfico de barras o de sectores, no un histograma."
+    },
+    {
+      "enunciado": "En el conjunto 2, 4, 6, 8 y 100, ¿por qué la mediana representa mejor el centro que la media?",
+      "opcion_a": "porque la mediana asigna igual peso a todos los valores",
+      "opcion_b": "porque la media siempre resulta menor que la mediana",
+      "opcion_c": "porque la mediana no se ve afectada por el valor extremo 100",
+      "opcion_d": "porque ambas medidas coinciden exactamente en este conjunto",
+      "opcion_correcta": "C",
+      "explicacion": "La mediana es resistente a valores atípicos, mientras que la media se desplaza notablemente por efecto del valor 100."
+    },
+    {
+      "enunciado": "Para calcular la media aritmética de datos agrupados se emplea la expresión:",
+      "opcion_a": "x̄ = Σ f_i · m_i / n",
+      "opcion_b": "x̄ = Σ f_i / n",
+      "opcion_c": "x̄ = (x_max − x_min) / 2",
+      "opcion_d": "x̄ = Σ (x_i − x̄)² / n",
+      "opcion_correcta": "A",
+      "explicacion": "En datos agrupados cada frecuencia se pondera por la marca de clase m_i y la suma se divide entre el total de observaciones n."
+    },
+    {
+      "enunciado": "Un estudiante que se ubica en el percentil 85 de su promoción significa que:",
+      "opcion_a": "obtuvo exactamente 85 puntos en el examen",
+      "opcion_b": "pertenece al 85 % de alumnos con menor rendimiento",
+      "opcion_c": "superó solo al 15 % de sus compañeros",
+      "opcion_d": "superó aproximadamente al 85 % de sus compañeros",
+      "opcion_correcta": "D",
+      "explicacion": "El percentil 85 indica que el 85 % de las observaciones queda por debajo de ese valor, es decir, superó a cerca del 85 % del grupo."
+    },
+    {
+      "enunciado": "El coeficiente de variación resulta especialmente útil porque:",
+      "opcion_a": "mide la asimetría de la distribución",
+      "opcion_b": "expresa la dispersión como porcentaje y permite comparar variables con distintas unidades",
+      "opcion_c": "elimina por completo el efecto de los valores extremos",
+      "opcion_d": "coincide siempre con el valor de la desviación estándar",
+      "opcion_correcta": "B",
+      "explicacion": "Al ser un cociente entre la desviación estándar y la media, carece de unidades y permite comparar la variabilidad entre variables o escalas diferentes."
+    },
+    {
+      "enunciado": "Si una distribución de ingresos presenta asimetría positiva, se espera que:",
+      "opcion_a": "la cola se extienda hacia la izquierda y la media sea menor que la mediana",
+      "opcion_b": "la distribución sea perfectamente simétrica respecto de su media",
+      "opcion_c": "la cola se extienda hacia la derecha y la media supere a la mediana",
+      "opcion_d": "la curtosis sea necesariamente negativa",
+      "opcion_correcta": "C",
+      "explicacion": "La asimetría positiva alarga la cola derecha por valores altos extremos, lo que arrastra la media por encima de la mediana."
+    },
+    {
+      "enunciado": "En la elaboración de un informe estadístico, la tabla de resumen debe incluir principalmente:",
+      "opcion_a": "los descriptores relevantes de cada variable con sus unidades y tamaño de muestra",
+      "opcion_b": "únicamente los gráficos, sin ninguna cifra de apoyo",
+      "opcion_c": "todos los datos originales sin procesar ni ordenar",
+      "opcion_d": "solo las conclusiones del investigador sin evidencia numérica",
+      "opcion_correcta": "A",
+      "explicacion": "Una tabla de resumen sintetiza el análisis presentando los descriptores clave por variable, junto con unidades y el tamaño de la muestra utilizada."
+    }
+  ]
+}

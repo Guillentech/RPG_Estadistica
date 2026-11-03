@@ -1,0 +1,298 @@
+{
+  "unidad_numero": 1,
+  "objetivo": "Identificar los conceptos fundamentales de la estadística, clasificar los tipos de variables y reconocer las escalas de medición utilizadas en la recopilación y organización de información.",
+  "temas": [
+    {
+      "orden": 1,
+      "titulo": "Tema 1.1. Introducción a la estadística",
+      "subtemas": [
+        {
+          "titulo": "Concepto de estadística",
+          "contenido": "La estadística es la disciplina que se ocupa de recolectar, organizar, presentar y analizar datos para obtener conclusiones y apoyar la toma de decisiones. Trabaja con información numérica o categórica obtenida de la realidad y la transforma en conocimiento útil. Por ejemplo, calcular el promedio de calificaciones de un curso es una aplicación básica de esta ciencia."
+        },
+        {
+          "titulo": "Importancia de la estadística",
+          "contenido": "La estadística es importante porque permite resumir grandes volúmenes de información y detectar patrones que no se ven a simple vista. Sustenta decisiones en salud, educación, economía y tecnología con evidencia y no con intuición. Además, facilita comparar situaciones, evaluar resultados y comunicar hallazgos de forma clara mediante tablas y gráficos."
+        },
+        {
+          "titulo": "Contexto histórico de la estadística",
+          "contenido": "La estadística nace vinculada al recuento de población y bienes en antiguas civilizaciones como Egipto, China y Roma. Su desarrollo moderno se asocia a los censos del siglo XVII y a los trabajos de Pascal, Laplace y Gauss sobre probabilidad. En el siglo XX, Pearson, Fisher y otros consolidaron la inferencia y el diseño experimental, dando forma a la estadística actual."
+        },
+        {
+          "titulo": "Aplicaciones de la estadística en la sociedad",
+          "contenido": "La estadística se aplica en casi todos los ámbitos de la vida social: encuestas de opinión, campañas de salud pública, planificación urbana y evaluación de políticas. Los medios usan tasas y porcentajes para describir fenómenos como el desempleo o la inflación. También permite detectar desigualdades y medir el impacto de programas sociales con datos verificables."
+        },
+        {
+          "titulo": "Aplicaciones en la economía, ciencias sociales, ciencias naturales e informática",
+          "contenido": "En economía la estadística mide inflación, producto interno bruto y desempleo; en ciencias sociales analiza encuestas y comportamientos; en ciencias naturales apoya experimentos y estudios de población; y en informática sustenta la minería de datos, el aprendizaje automático y la evaluación de sistemas. Un ejemplo es usar la media y la desviación estándar para comparar el rendimiento de dos algoritmos."
+        },
+        {
+          "titulo": "Estadística descriptiva y análisis inferencial",
+          "contenido": "La estadística descriptiva organiza, resume y representa los datos de una muestra o población mediante tablas, gráficos y medidas como la media. La estadística inferencial, en cambio, usa los resultados de una muestra para estimar o probar hipótesis sobre la población, apoyándose en la probabilidad. Por ejemplo, describir las edades de un grupo es descriptivo; estimar la edad media de toda una ciudad es inferencial."
+        }
+      ]
+    },
+    {
+      "orden": 2,
+      "titulo": "Tema 1.2. Conceptos básicos de estadística",
+      "subtemas": [
+        {
+          "titulo": "Población",
+          "contenido": "Población es el conjunto completo de individuos, objetos o elementos que presentan una característica común y sobre el cual se desea obtener información. Puede ser finita, como los estudiantes de una carrera, o infinita, como los resultados posibles de un proceso. Se representa con la letra N cuando se refiere al tamaño total de la población."
+        },
+        {
+          "titulo": "Muestra",
+          "contenido": "La muestra es un subconjunto representativo de la población, seleccionado para estudiarlo y generalizar los resultados. Se denota con la letra n y debe elegirse con técnicas de muestreo adecuadas para evitar sesgos. Por ejemplo, encuestar a 200 de los 5000 estudiantes de una universidad para conocer sus hábitos de estudio."
+        },
+        {
+          "titulo": "Unidad estadística",
+          "contenido": "La unidad estadística es el elemento individual sobre el cual se recogen los datos y que se somete a observación. Puede ser una persona, una empresa, una familia, una máquina o un registro. Por ejemplo, en un estudio sobre ventas tecnológicas, cada tienda de la cadena puede constituir una unidad estadística."
+        },
+        {
+          "titulo": "Individuo o elemento de estudio",
+          "contenido": "El individuo o elemento de estudio es cada uno de los componentes que forman la población o la muestra. Es la entidad concreta de la que se obtiene la información y suele coincidir con la unidad estadística. En un censo escolar, cada estudiante matriculado es un individuo de la población estudiada."
+        },
+        {
+          "titulo": "Dato estadístico",
+          "contenido": "El dato estadístico es el valor o registro que se obtiene al observar una característica en una unidad de estudio. Puede ser numérico o categórico y por sí solo dice poco; adquiere sentido cuando se agrupa y procesa. Por ejemplo, la edad de 20 años de un estudiante es un dato dentro de una encuesta."
+        },
+        {
+          "titulo": "Variable estadística",
+          "contenido": "Una variable estadística es la característica que se observa o mide en las unidades de estudio y que puede tomar distintos valores. Se simboliza con letras como X, Y o Z y puede ser cualitativa o cuantitativa. Por ejemplo, el nivel de estudios, la estatura o el número de hijos son variables de una encuesta."
+        },
+        {
+          "titulo": "Atributos y características",
+          "contenido": "Los atributos son las propiedades cualitativas que distinguen a los elementos de una población, como el sexo, la profesión o el estado civil. Las características abarcan tanto atributos como rasgos cuantificables, por ejemplo el peso o el ingreso. En la práctica, el atributo se describe con palabras y la característica cuantitativa se mide con números."
+        },
+        {
+          "titulo": "Conjuntos de datos",
+          "contenido": "Un conjunto de datos es la agrupación organizada de los valores obtenidos para una o varias variables en un grupo de unidades. Suele presentarse en tablas o matrices donde las filas son individuos y las columnas son variables. Por ejemplo, una base con las notas, edades y carreras de 500 estudiantes forma un conjunto de datos."
+        }
+      ]
+    },
+    {
+      "orden": 3,
+      "titulo": "Tema 1.3. Tipos de datos y variables estadísticas",
+      "subtemas": [
+        {
+          "titulo": "Concepto de variable",
+          "contenido": "Una variable es una característica de la población o muestra que puede asumir diferentes valores o categorías. Su variación es lo que permite comparar y analizar los elementos estudiados. Por ejemplo, la variable temperatura de un servidor puede tomar valores distintos en cada hora de medición."
+        },
+        {
+          "titulo": "Variables cualitativas",
+          "contenido": "Las variables cualitativas describen atributos o cualidades que no se expresan con números, sino con categorías o etiquetas. Pueden ser nominales, si no hay orden, u ordinales, si existe jerarquía. Por ejemplo, el tipo de sistema operativo o el nivel de satisfacción de un usuario son variables cualitativas."
+        },
+        {
+          "titulo": "Variables cuantitativas",
+          "contenido": "Las variables cuantitativas expresan cantidades numéricas sobre las que se pueden realizar operaciones aritméticas. Se dividen en discretas, cuando surgen de un conteo, y continuas, cuando provienen de una medición. Por ejemplo, el número de equipos de una oficina es cuantitativa discreta y el consumo de energía en kilovatios es continua."
+        },
+        {
+          "titulo": "Variables discretas",
+          "contenido": "Las variables discretas solo admiten valores enteros o separados entre sí, generalmente producto de un conteo. No tienen sentido las fracciones entre dos valores consecutivos. Por ejemplo, el número de hijos por familia, de empleados por empresa o de computadoras por laboratorio son variables discretas."
+        },
+        {
+          "titulo": "Variables continuas",
+          "contenido": "Las variables continuas pueden tomar cualquier valor dentro de un intervalo, incluidos los decimales, porque provienen de una medición. Entre dos valores siempre es posible encontrar otro valor intermedio. Por ejemplo, la estatura en metros, el peso en kilogramos o la latencia de una red en milisegundos son variables continuas."
+        },
+        {
+          "titulo": "Diferencias entre datos cualitativos y cuantitativos",
+          "contenido": "Los datos cualitativos describen categorías y se analizan con frecuencias y porcentajes, mientras que los cuantitativos se expresan con números y admiten medidas como la media. La diferencia clave está en que solo los datos cuantitativos permiten operaciones aritméticas con sentido. Por ejemplo, se puede promediar la edad, pero no el estado civil."
+        },
+        {
+          "titulo": "Identificación de variables en situaciones reales",
+          "contenido": "Identificar variables en situaciones reales exige observar qué se mide y cómo se expresa el resultado. Si la respuesta es una categoría, la variable es cualitativa; si es un número contable, es discreta; si surge de un instrumento de medición, es continua. Por ejemplo, en un hospital se registran el grupo sanguíneo, el número de visitas y la temperatura del paciente."
+        }
+      ]
+    },
+    {
+      "orden": 4,
+      "titulo": "Tema 1.4. Niveles o escalas de medición",
+      "subtemas": [
+        {
+          "titulo": "Escala nominal",
+          "contenido": "La escala nominal clasifica los elementos en categorías sin orden ni jerarquía, y solo permite distinguir igualdad o diferencia. Los valores son etiquetas y no admiten operaciones aritméticas. Por ejemplo, el sexo, el estado civil o el tipo de sangre son variables medidas en escala nominal."
+        },
+        {
+          "titulo": "Escala ordinal",
+          "contenido": "La escala ordinal ordena las categorías según una jerarquía, aunque no garantiza que las distancias entre niveles sean iguales. Permite comparar mayor o menor, pero no sumar ni restar los valores. Por ejemplo, el nivel de satisfacción bajo, medio y alto, o el grado académico alcanzado, se miden en escala ordinal."
+        },
+        {
+          "titulo": "Escala de intervalo",
+          "contenido": "La escala de intervalo tiene categorías ordenadas y distancias iguales entre valores, pero su cero es arbitrario y no indica ausencia de la característica. Permite sumar y restar, mas no multiplicar o dividir con sentido. Por ejemplo, la temperatura en grados Celsius, donde 0 °C no significa ausencia de calor."
+        },
+        {
+          "titulo": "Escala de razón",
+          "contenido": "La escala de razón posee orden, distancias iguales y un cero absoluto que representa la ausencia real de la característica. Por ello admite todas las operaciones aritméticas, incluidas razones y proporciones. Por ejemplo, el peso, la estatura, el ingreso y el tiempo en segundos se miden en escala de razón."
+        },
+        {
+          "titulo": "Características de cada escala",
+          "contenido": "Cada escala se distingue por las propiedades que conserva: identidad en la nominal, orden en la ordinal, distancia en la de intervalo y cero absoluto en la de razón. A mayor nivel de medición, más operaciones estadísticas son válidas. Por ejemplo, solo con escala de razón se puede afirmar que 80 kg es el doble de 40 kg."
+        },
+        {
+          "titulo": "Diferencias entre los niveles de medición",
+          "contenido": "La diferencia principal entre los niveles de medición radica en las operaciones permitidas y en la naturaleza del cero. La nominal solo agrupa, la ordinal ordena, la de intervalo mide distancias y la de razón permite proporciones. Elegir mal la escala lleva a interpretaciones erróneas, como promediar códigos postales o afirmar que 30 °C es el doble de 15 °C."
+        },
+        {
+          "titulo": "Ejemplos prácticos de aplicación",
+          "contenido": "En un mismo estudio conviven varias escalas: el tipo de conexión es nominal, la calidad del servicio es ordinal, la temperatura del equipo es de intervalo y el tiempo de descarga es de razón. Reconocerlas orienta el análisis descriptivo adecuado. Por ejemplo, para el tipo de conexión se usan frecuencias y para el tiempo de descarga se puede calcular la media."
+        }
+      ]
+    },
+    {
+      "orden": 5,
+      "titulo": "Tema 1.5. Técnicas de adquisición de datos",
+      "subtemas": [
+        {
+          "titulo": "Concepto de recolección de datos",
+          "contenido": "La recolección de datos es el proceso sistemático de obtener información de las unidades de estudio mediante instrumentos y procedimientos definidos. Debe ser confiable, ordenada y coherente con los objetivos de la investigación. Por ejemplo, aplicar una encuesta estandarizada a los usuarios de una plataforma para medir su satisfacción."
+        },
+        {
+          "titulo": "Fuentes de información",
+          "contenido": "Las fuentes de información son los lugares o medios de donde provienen los datos. Pueden ser primarias, cuando el investigador las genera directamente, o secundarias, cuando reutiliza información ya recopilada por otros. Por ejemplo, una encuesta propia es fuente primaria y un anuario estadístico oficial es fuente secundaria."
+        },
+        {
+          "titulo": "Técnicas de adquisición de datos",
+          "contenido": "Las técnicas de adquisición de datos son los métodos empleados para obtener información, como la encuesta, la entrevista, la observación, el experimento y la revisión documental. Cada técnica se elige según el objetivo, el tipo de variable y los recursos disponibles. Por ejemplo, la observación directa sirve para registrar el uso de equipos en un laboratorio."
+        },
+        {
+          "titulo": "Recolección de información primaria y secundaria",
+          "contenido": "La recolección primaria obtiene datos nuevos directamente de la realidad mediante instrumentos diseñados para el estudio. La secundaria trabaja con datos ya publicados o registrados por otras instituciones, como censos, informes o bases de datos. Por ejemplo, aplicar un cuestionario es recolección primaria, mientras consultar registros del INE es secundaria."
+        },
+        {
+          "titulo": "Organización de información estadística",
+          "contenido": "La organización de la información estadística consiste en clasificar, codificar y ordenar los datos obtenidos para que puedan analizarse con claridad. Incluye la depuración de errores, la asignación de códigos y la construcción de tablas iniciales. Por ejemplo, convertir las respuestas de una encuesta en una matriz con una fila por participante y una columna por variable."
+        },
+        {
+          "titulo": "Selección de variables para una investigación",
+          "contenido": "Seleccionar variables para una investigación implica definir cuáles responden al problema planteado y pueden medirse de forma confiable. Deben ser pertinentes, suficientes y operacionalizables en indicadores concretos. Por ejemplo, para estudiar la brecha digital se eligen el acceso a internet, el tipo de dispositivo y la frecuencia de uso."
+        }
+      ]
+    },
+    {
+      "orden": 6,
+      "titulo": "Tema 1.6. Elaboración de cuestionarios",
+      "subtemas": [
+        {
+          "titulo": "Concepto de cuestionario",
+          "contenido": "Un cuestionario es un instrumento formado por un conjunto ordenado de preguntas que se aplica a las unidades de estudio para recoger información de manera uniforme. Permite estandarizar las respuestas y facilitar su posterior tabulación. Por ejemplo, el formulario que completa un cliente para evaluar un servicio técnico es un cuestionario."
+        },
+        {
+          "titulo": "Características de un cuestionario",
+          "contenido": "Un cuestionario debe ser claro, breve, ordenado y pertinente al objetivo del estudio. Sus preguntas tienen que ser comprensibles, no ambiguas ni tendenciosas, y el lenguaje debe adaptarse al público. Por ejemplo, conviene evitar términos técnicos innecesarios y probar el instrumento antes de aplicarlo a toda la muestra."
+        },
+        {
+          "titulo": "Tipos de preguntas",
+          "contenido": "Los cuestionarios pueden incluir preguntas abiertas, cerradas, de opción múltiple, dicotómicas o mixtas, según el grado de libertad que se dé al encuestado. Cada tipo produce datos con distintos niveles de medición y análisis. Por ejemplo, preguntar la edad en años es una pregunta abierta cuantitativa y elegir un rango de edad es cerrada."
+        },
+        {
+          "titulo": "Preguntas abiertas y cerradas",
+          "contenido": "Las preguntas abiertas permiten responder libremente y aportan información rica, pero son difíciles de codificar. Las cerradas ofrecen alternativas predefinidas, facilitan el análisis y reducen la ambigüedad. Por ejemplo, ¿qué opina del servicio? es abierta, mientras ¿cómo califica el servicio: bueno, regular o malo? es cerrada."
+        },
+        {
+          "titulo": "Diseño de instrumentos de recolección",
+          "contenido": "El diseño de un instrumento de recolección parte de los objetivos y variables del estudio y define preguntas, escalas de respuesta y formato de aplicación. Debe cuidar la secuencia lógica, la extensión y la presentación visual. Por ejemplo, se inicia con datos generales, se continúa con el tema central y se cierra con preguntas de opinión."
+        },
+        {
+          "titulo": "Organización de preguntas",
+          "contenido": "Organizar las preguntas significa ordenarlas de lo general a lo específico, agruparlas por temas y evitar saltos que confundan al encuestado. Las preguntas sensibles se ubican al final y las de control se distribuyen estratégicamente. Por ejemplo, en una encuesta académica se presentan primero los datos personales y luego los hábitos de estudio."
+        },
+        {
+          "titulo": "Validación del instrumento",
+          "contenido": "La validación del instrumento verifica que mida realmente lo que pretende medir y que sea confiable y comprensible. Se realiza mediante juicio de expertos, pruebas piloto y análisis de consistencia. Por ejemplo, aplicar el cuestionario a un grupo pequeño permite detectar preguntas ambiguas y ajustarlas antes de la aplicación definitiva."
+        }
+      ]
+    }
+  ],
+  "preguntas_jefe": [
+    {
+      "enunciado": "La estadística descriptiva se caracteriza principalmente por:",
+      "opcion_a": "Organizar, resumir y representar los datos de una muestra o población",
+      "opcion_b": "Estimar parámetros poblacionales a partir de una muestra",
+      "opcion_c": "Probar hipótesis sobre la población usando probabilidad",
+      "opcion_d": "Seleccionar aleatoriamente las unidades de estudio",
+      "opcion_correcta": "A",
+      "explicacion": "La estadística descriptiva se limita a describir y resumir el conjunto de datos observado. Estimar parámetros y probar hipótesis corresponde a la estadística inferencial."
+    },
+    {
+      "enunciado": "En un estudio sobre los estudiantes de una universidad se encuesta a 150 de ellos. El conjunto total de estudiantes corresponde a:",
+      "opcion_a": "La muestra",
+      "opcion_b": "La población",
+      "opcion_c": "La unidad estadística",
+      "opcion_d": "La variable",
+      "opcion_correcta": "B",
+      "explicacion": "La población es el conjunto completo de elementos con la característica de interés, en este caso todos los estudiantes. Los 150 encuestados forman la muestra."
+    },
+    {
+      "enunciado": "El número de computadoras por laboratorio en una universidad es una variable:",
+      "opcion_a": "Cualitativa nominal",
+      "opcion_b": "Cualitativa ordinal",
+      "opcion_c": "Cuantitativa discreta",
+      "opcion_d": "Cuantitativa continua",
+      "opcion_correcta": "C",
+      "explicacion": "Se trata de un conteo que solo admite valores enteros, por lo que es cuantitativa discreta. No proviene de una medición con decimales ni describe una categoría."
+    },
+    {
+      "enunciado": "La temperatura medida en grados Celsius constituye un ejemplo de escala:",
+      "opcion_a": "Nominal",
+      "opcion_b": "Ordinal",
+      "opcion_c": "De razón",
+      "opcion_d": "De intervalo",
+      "opcion_correcta": "D",
+      "explicacion": "La escala de intervalo tiene distancias iguales, pero su cero es arbitrario: 0 °C no implica ausencia de temperatura. Por eso no puede afirmarse que 30 °C sea el doble de 15 °C."
+    },
+    {
+      "enunciado": "¿Cuál de las siguientes variables es cualitativa?",
+      "opcion_a": "El tipo de sangre de un paciente",
+      "opcion_b": "El peso en kilogramos de un paciente",
+      "opcion_c": "El número de hijos de una familia",
+      "opcion_d": "El tiempo de conexión a internet en minutos",
+      "opcion_correcta": "A",
+      "explicacion": "El tipo de sangre expresa una categoría sin orden jerárquico, por lo que es cualitativa nominal. Las demás opciones son cantidades numéricas medibles o contables."
+    },
+    {
+      "enunciado": "El valor 20 años registrado para un estudiante en una encuesta se denomina:",
+      "opcion_a": "Variable",
+      "opcion_b": "Dato estadístico",
+      "opcion_c": "Unidad estadística",
+      "opcion_d": "Población",
+      "opcion_correcta": "B",
+      "explicacion": "El dato estadístico es el valor concreto obtenido al observar una característica en una unidad de estudio. La variable sería la edad en general, no el valor 20."
+    },
+    {
+      "enunciado": "Consultar el último anuario estadístico publicado por una institución oficial corresponde a una fuente de información:",
+      "opcion_a": "Primaria",
+      "opcion_b": "Experimental",
+      "opcion_c": "Secundaria",
+      "opcion_d": "Directa",
+      "opcion_correcta": "C",
+      "explicacion": "La fuente secundaria reutiliza datos ya recopilados y publicados por otras instituciones. La fuente primaria sería generar los datos directamente mediante un instrumento propio."
+    },
+    {
+      "enunciado": "Antes de analizar una encuesta, el investigador convierte las respuestas en una matriz con una fila por participante. Esta acción corresponde a:",
+      "opcion_a": "La validación del instrumento",
+      "opcion_b": "El muestreo aleatorio",
+      "opcion_c": "La definición de la población",
+      "opcion_d": "La organización de la información estadística",
+      "opcion_correcta": "D",
+      "explicacion": "Organizar la información implica clasificar, codificar y ordenar los datos para facilitar su análisis. La matriz es una forma típica de estructurar los datos recolectados."
+    },
+    {
+      "enunciado": "El nivel de satisfacción de un cliente clasificado como bajo, medio o alto se mide en escala:",
+      "opcion_a": "Nominal",
+      "opcion_b": "Ordinal",
+      "opcion_c": "De intervalo",
+      "opcion_d": "De razón",
+      "opcion_correcta": "B",
+      "explicacion": "Existe un orden entre las categorías, pero no puede asegurarse que las distancias sean iguales. Por ello la escala adecuada es la ordinal."
+    },
+    {
+      "enunciado": "La aplicación de un cuestionario a un grupo pequeño para detectar preguntas ambiguas antes de su aplicación definitiva se denomina:",
+      "opcion_a": "Prueba piloto",
+      "opcion_b": "Muestreo estratificado",
+      "opcion_c": "Codificación",
+      "opcion_d": "Observación directa",
+      "opcion_correcta": "A",
+      "explicacion": "La prueba piloto permite ensayar el instrumento y ajustar su redacción, orden y opciones de respuesta. Forma parte del proceso de validación del cuestionario."
+    }
+  ]
+}

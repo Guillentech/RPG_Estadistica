@@ -1,0 +1,306 @@
+{
+  "unidad_numero": 3,
+  "objetivo": "Analizar la relación existente entre dos variables estadísticas mediante tablas de contingencia, distribuciones conjuntas, gráficos, correlación y regresión lineal simple.",
+  "temas": [
+    {
+      "orden": 1,
+      "titulo": "Tema 3.1. Introducción al análisis bidimensional",
+      "subtemas": [
+        {
+          "titulo": "Concepto de análisis bidimensional",
+          "contenido": "El análisis bidimensional es el estudio simultáneo de dos variables medidas sobre una misma unidad de observación, con el fin de describir si existe alguna relación entre ellas. A diferencia del análisis de una sola variable, aquí cada individuo aporta un par ordenado de valores. Por ejemplo, en una muestra de computadoras se registra la velocidad del procesador y el consumo de energía de cada equipo, y se analiza cómo se comportan ambas juntas."
+        },
+        {
+          "titulo": "Diferencias entre análisis unidimensional y bidimensional",
+          "contenido": "El análisis unidimensional describe una variable a la vez mediante tablas de frecuencia, medias o gráficos simples, mientras que el bidimensional estudia la variación conjunta de dos variables. El primero responde a preguntas como cuál es el promedio de edad del grupo; el segundo responde si la edad se relaciona con el nivel de ingreso. En consecuencia, el análisis bidimensional requiere organizar los datos en pares y emplear herramientas como tablas cruzadas, dispersión y correlación."
+        },
+        {
+          "titulo": "Estudio de dos variables estadísticas",
+          "contenido": "Estudiar dos variables estadísticas consiste en registrar para cada individuo dos características y examinar su comportamiento conjunto. Ese registro suele expresarse como pares ordenados del tipo (x, y), donde x es el valor de la primera variable e y el de la segunda. Por ejemplo, para cada estudiante se anotan las horas de estudio semanales y la calificación obtenida, lo que permite observar si quienes estudian más tienden a obtener mejores notas."
+        },
+        {
+          "titulo": "Variables cualitativas y cuantitativas",
+          "contenido": "En el análisis bidimensional cada variable puede ser cualitativa, si expresa una categoría o atributo, o cuantitativa, si expresa una cantidad numérica. Las variables cuantitativas se dividen en discretas y continuas según tomen valores contables o medibles. Un ejemplo es cruzar el tipo de conexión a internet, variable cualitativa, con la velocidad de descarga en megabits por segundo, variable cuantitativa continua."
+        },
+        {
+          "titulo": "Relación entre dos variables",
+          "contenido": "La relación entre dos variables indica cómo cambia una cuando cambia la otra, sin que ello implique necesariamente causalidad. Puede ser directa, si ambas tienden a crecer juntas, inversa, si una crece mientras la otra disminuye, o inexistente. Por ejemplo, al comparar la temperatura ambiente y el consumo eléctrico de un edificio se observa una relación directa, mientras que entre la antigüedad de un equipo y su velocidad de proceso la relación es inversa."
+        },
+        {
+          "titulo": "Organización de datos bidimensionales",
+          "contenido": "Organizar datos bidimensionales significa disponer los pares de observaciones en una tabla de doble entrada o en una matriz, de modo que cada fila represente un individuo y cada columna una variable. Esta estructura facilita el conteo de frecuencias conjuntas y el cálculo posterior de medidas de asociación. Por ejemplo, una tabla con filas de marcas de teléfono y columnas de rangos de precio permite resumir rápidamente cómo se distribuyen los modelos del mercado."
+        }
+      ]
+    },
+    {
+      "orden": 2,
+      "titulo": "Tema 3.2. Tablas de correlación",
+      "subtemas": [
+        {
+          "titulo": "Concepto de tablas de correlación",
+          "contenido": "Una tabla de correlación es una tabla de doble entrada que muestra cómo se distribuyen conjuntamente las frecuencias de dos variables, generalmente cuantitativas agrupadas en intervalos. Cada celda indica cuántas observaciones presentan a la vez una clase de la primera variable y una clase de la segunda. Por ejemplo, una tabla que cruza rangos de edad con rangos de ingreso mensual permite ver en qué combinaciones se concentra la población estudiada."
+        },
+        {
+          "titulo": "Organización de datos en tablas",
+          "contenido": "Para organizar los datos en una tabla de correlación se definen primero las clases o intervalos de cada variable y luego se cuenta cuántas observaciones caen en cada combinación. Las filas suelen corresponder a la variable X y las columnas a la variable Y, y los totales de fila y columna se anotan en los márgenes. Un ejemplo típico es clasificar los salarios en tramos de 500 a 999, de 1000 a 1499 y así sucesivamente, y cruzarlos con los años de experiencia."
+        },
+        {
+          "titulo": "Construcción de tablas de correlación",
+          "contenido": "La construcción de una tabla de correlación sigue tres pasos: elegir los intervalos de cada variable, recorrer los datos contando la frecuencia de cada par de clases y sumar los totales marginales para verificar que coincidan con el tamaño de la muestra. La suma de todas las celdas debe igualar el número total de observaciones. Por ejemplo, con 50 viviendas se cruzan los tramos de superficie con los tramos de precio, y la suma de las celdas debe dar exactamente 50."
+        },
+        {
+          "titulo": "Interpretación de resultados",
+          "contenido": "Interpretar una tabla de correlación consiste en observar dónde se concentran las frecuencias mayores y si la nube de celdas se desplaza en diagonal. Si las frecuencias altas se ubican de arriba hacia abajo a la derecha, sugiere relación inversa; si van de abajo hacia arriba a la derecha, sugiere relación directa. Por ejemplo, si las viviendas más grandes se concentran en los precios más altos, la tabla evidencia una asociación positiva entre superficie y precio."
+        },
+        {
+          "titulo": "Distribuciones de frecuencias bidimensionales",
+          "contenido": "Una distribución de frecuencias bidimensional describe, mediante una función de frecuencias f(x, y), cuántas observaciones presentan simultáneamente cada par de valores o clases. De ella se derivan las distribuciones marginales, que resumen una variable ignorando la otra, y las condicionales, que fijan un valor de una variable. Por ejemplo, al cruzar el sexo con el nivel educativo de una encuesta se obtiene una distribución bidimensional de la que pueden leerse ambos tipos de distribuciones."
+        }
+      ]
+    },
+    {
+      "orden": 3,
+      "titulo": "Tema 3.3. Asociación entre variables cualitativas",
+      "subtemas": [
+        {
+          "titulo": "Concepto de asociación estadística",
+          "contenido": "La asociación estadística es la tendencia de dos variables a presentarse juntas con cierta regularidad, de modo que la distribución de una cambia al conocer la categoría de la otra. No exige causalidad ni medición numérica, pues puede detectarse entre atributos. Por ejemplo, existe asociación si el hábito de fumar se presenta con mayor frecuencia entre quienes padecen cierta enfermedad respiratoria que entre quienes no la padecen."
+        },
+        {
+          "titulo": "Relación entre variables cualitativas",
+          "contenido": "Dos variables cualitativas se relacionan cuando las proporciones de las categorías de una varían según la categoría de la otra. Para evaluarla se comparan las distribuciones condicionales y se observa si difieren entre sí. Por ejemplo, si la preferencia por una red social cambia notablemente entre grupos de edad, se concluye que existe relación entre la edad y la red social preferida."
+        },
+        {
+          "titulo": "Tablas de contingencia",
+          "contenido": "Una tabla de contingencia es una tabla de doble entrada que clasifica las unidades según dos variables cualitativas y registra la frecuencia de cada combinación de categorías. En sus márgenes se anotan los totales de fila y de columna, que corresponden a las frecuencias marginales. Por ejemplo, una tabla que cruza el turno de trabajo con la presencia de estrés laboral permite comparar cuántos casos se presentan en cada turno."
+        },
+        {
+          "titulo": "Construcción de tablas de contingencia",
+          "contenido": "Construir una tabla de contingencia implica definir las categorías de ambas variables, contar cuántos individuos pertenecen a cada cruce y añadir los totales marginales. El total general debe coincidir con el tamaño de la muestra y conviene acompañar la tabla con porcentajes por fila o por columna. Por ejemplo, con 200 clientes se cruza el canal de compra, presencial o en línea, con el nivel de satisfacción, alto, medio o bajo."
+        },
+        {
+          "titulo": "Distribuciones conjuntas",
+          "contenido": "La distribución conjunta presenta las frecuencias o probabilidades de que dos variables tomen simultáneamente determinados valores. En una tabla de contingencia corresponde al conjunto de las celdas interiores, cuya suma total es la unidad o el total de la muestra. Por ejemplo, la probabilidad de que un cliente sea joven y compre en línea es una frecuencia conjunta que se lee directamente en la celda correspondiente."
+        },
+        {
+          "titulo": "Distribuciones marginales",
+          "contenido": "Las distribuciones marginales se obtienen sumando las frecuencias de cada fila o de cada columna de la tabla, y describen el comportamiento de una sola variable sin considerar la otra. Su nombre proviene de los márgenes de la tabla donde se anotan los totales. Por ejemplo, el total de clientes satisfechos, sin importar el canal de compra, es una frecuencia marginal de la variable satisfacción."
+        },
+        {
+          "titulo": "Distribuciones condicionales",
+          "contenido": "Una distribución condicional describe la distribución de una variable dentro de una categoría fija de la otra, dividiendo las frecuencias de la fila o columna entre su total respectivo. Permite responder qué proporción de un grupo presenta determinada característica. Por ejemplo, la proporción de compradores en línea que están satisfechos se calcula dividiendo los satisfechos en línea entre el total de compradores en línea."
+        },
+        {
+          "titulo": "Interpretación de tablas de contingencia",
+          "contenido": "Interpretar una tabla de contingencia requiere comparar las distribuciones condicionales y no solo mirar los totales, pues un total grande puede ocultar diferencias internas. Si las proporciones condicionales son semejantes, se concluye independencia; si difieren, hay asociación. Por ejemplo, si el 80 por ciento de los usuarios presenciales está satisfecho frente al 40 por ciento de los usuarios en línea, la satisfacción depende del canal de compra."
+        }
+      ]
+    },
+    {
+      "orden": 4,
+      "titulo": "Tema 3.4. Representación gráfica de datos bidimensionales",
+      "subtemas": [
+        {
+          "titulo": "Representación gráfica de dos variables",
+          "contenido": "La representación gráfica de dos variables busca mostrar visualmente cómo se comportan juntas las observaciones, ubicando cada individuo en un plano o en un gráfico categorizado. Esta representación facilita detectar tendencias, agrupamientos y valores atípicos que una tabla numérica podría ocultar. Por ejemplo, al graficar horas de conexión frente a datos consumidos, se aprecia de inmediato si el consumo crece con el tiempo de uso."
+        },
+        {
+          "titulo": "Gráficos para variables cualitativas",
+          "contenido": "Cuando ambas variables son cualitativas se emplean gráficos de barras agrupadas o apiladas, que comparan las categorías de una variable dentro de cada categoría de la otra. La altura de cada barra representa la frecuencia o el porcentaje condicional. Por ejemplo, un gráfico de barras agrupadas puede mostrar la preferencia de sistemas operativos separada por segmento de usuarios, hogar, empresa o educativo."
+        },
+        {
+          "titulo": "Gráficos para variables cuantitativas",
+          "contenido": "Para variables cuantitativas se utilizan diagramas de dispersión, gráficos de burbujas o líneas cuando existe un orden natural, como el tiempo. Estos gráficos conservan la información numérica de cada observación y permiten evaluar la forma de la relación. Por ejemplo, un gráfico de burbujas puede representar la potencia de un procesador en el eje horizontal, su precio en el vertical y el tamaño de la burbuja según su consumo energético."
+        },
+        {
+          "titulo": "Gráficos de dispersión",
+          "contenido": "El gráfico de dispersión ubica cada par de valores como un punto en un plano cartesiano, con una variable en el eje X y la otra en el eje Y. La forma de la nube de puntos revela si la relación es lineal, curvilínea o inexistente, y su inclinación indica el sentido. Por ejemplo, al graficar inversión publicitaria frente a ventas, una nube ascendente sugiere que a mayor inversión corresponden mayores ventas."
+        },
+        {
+          "titulo": "Gráficos agrupados",
+          "contenido": "Los gráficos agrupados comparan simultáneamente varias categorías o subgrupos, mostrando barras o series lado a lado para cada nivel de la variable principal. Son útiles cuando se desea contrastar el comportamiento de una variable cuantitativa entre distintos grupos. Por ejemplo, un gráfico de barras agrupadas puede comparar el gasto promedio en tecnología entre hombres y mujeres en cada rango de edad."
+        },
+        {
+          "titulo": "Interpretación de representaciones gráficas",
+          "contenido": "Interpretar un gráfico bidimensional exige leer los ejes, las escalas, las unidades y la leyenda antes de extraer conclusiones sobre la relación. Se observa la dirección de la nube, su grado de concentración y la presencia de puntos alejados del patrón general. Por ejemplo, si en un gráfico de dispersión la mayoría de puntos se alinea de forma ascendente y compacta, se concluye una relación lineal positiva y fuerte."
+        },
+        {
+          "titulo": "Identificación de patrones de comportamiento",
+          "contenido": "Identificar patrones consiste en reconocer estructuras repetidas en la nube de datos, como tendencias lineales, curvas, conglomerados o valores atípicos. Estos patrones orientan la elección del modelo estadístico adecuado y alertan sobre observaciones que requieren revisión. Por ejemplo, si los puntos se agrupan en dos nubes separadas, puede existir una tercera variable oculta, como el tipo de usuario, que explique esa división."
+        }
+      ]
+    },
+    {
+      "orden": 5,
+      "titulo": "Tema 3.5. Correlación entre variables",
+      "subtemas": [
+        {
+          "titulo": "Concepto de correlación",
+          "contenido": "La correlación es una medida del grado en que dos variables cuantitativas varían conjuntamente de forma lineal, es decir, de cuánto se aproximan sus puntos a una recta. No indica causalidad, solo intensidad y sentido de la asociación. Por ejemplo, la correlación entre la estatura y el peso de un grupo de personas suele ser positiva y alta, sin que una variable cause directamente la otra."
+        },
+        {
+          "titulo": "Importancia del análisis de correlación",
+          "contenido": "El análisis de correlación es importante porque permite cuantificar y comparar relaciones entre variables antes de construir modelos predictivos. Ayuda a seleccionar variables relevantes, detectar redundancias y evitar conclusiones basadas en impresiones visuales. Por ejemplo, en un estudio sobre rendimiento académico, saber que las horas de estudio correlacionan con la nota justifica profundizar con un modelo de regresión."
+        },
+        {
+          "titulo": "Correlación positiva",
+          "contenido": "Existe correlación positiva cuando al aumentar una variable la otra también tiende a aumentar, de modo que la nube de puntos asciende de izquierda a derecha. Su coeficiente toma valores mayores que cero y se acerca a uno cuando la relación es más fuerte. Por ejemplo, la relación entre los años de experiencia de un programador y su productividad medida en tareas completadas suele ser positiva."
+        },
+        {
+          "titulo": "Correlación negativa",
+          "contenido": "La correlación es negativa cuando al aumentar una variable la otra tiende a disminuir, y la nube de puntos desciende de izquierda a derecha. Su coeficiente es menor que cero y se aproxima a menos uno cuando la relación inversa es más intensa. Por ejemplo, la relación entre el tiempo de respuesta de un servidor y la velocidad de conexión de los usuarios suele ser negativa, pues a mayor velocidad menor tiempo de espera."
+        },
+        {
+          "titulo": "Ausencia de correlación lineal",
+          "contenido": "La ausencia de correlación lineal ocurre cuando no existe una tendencia recta entre las variables, de modo que la nube de puntos no muestra dirección definida y el coeficiente se aproxima a cero. Esto no descarta una relación curva, pues puede existir dependencia no lineal. Por ejemplo, la relación entre la edad y el uso de redes sociales puede ser alta en jóvenes y baja en adultos, sin ajustarse a una recta."
+        },
+        {
+          "titulo": "Coeficiente de correlación",
+          "contenido": "El coeficiente de correlación de Pearson, denotado r, mide la intensidad y el sentido de la relación lineal entre dos variables y varía entre menos uno y uno. Se calcula como r igual a la covarianza de X e Y dividida entre el producto de sus desviaciones estándar. Un valor de r igual a 0,85 indica una relación positiva fuerte, mientras que r igual a menos 0,20 indica una relación negativa débil."
+        },
+        {
+          "titulo": "Cálculo e interpretación de la correlación",
+          "contenido": "Para calcular r se aplica la fórmula r igual a n por la suma de XY menos la suma de X por la suma de Y, dividido entre la raíz cuadrada del producto de dos expresiones análogas para X y para Y. Luego se interpreta su signo y su magnitud: por encima de 0,7 se considera fuerte, entre 0,3 y 0,7 moderada y por debajo de 0,3 débil. Además, la correlación no debe interpretarse como prueba de causalidad."
+        },
+        {
+          "titulo": "Relación entre variables cualitativas y cuantitativas",
+          "contenido": "Cuando una variable es cualitativa y la otra cuantitativa, la relación se estudia comparando la distribución de la variable numérica entre las categorías del atributo. Herramientas como el gráfico de cajas, las medias por grupo o el análisis de varianza permiten evaluar si existen diferencias. Por ejemplo, se puede comparar el salario promedio de los empleados según su nivel de formación, técnico, licenciado o posgrado."
+        }
+      ]
+    },
+    {
+      "orden": 6,
+      "titulo": "Tema 3.6. Regresión lineal simple",
+      "subtemas": [
+        {
+          "titulo": "Concepto de regresión",
+          "contenido": "La regresión es una técnica estadística que modela la relación entre una variable explicativa y una variable respuesta mediante una función matemática, con el fin de describir o predecir. A diferencia de la correlación, que solo mide asociación, la regresión produce una ecuación que estima el valor de una variable a partir de la otra. Por ejemplo, permite estimar el precio de una vivienda a partir de su superficie en metros cuadrados."
+        },
+        {
+          "titulo": "Importancia de la regresión lineal",
+          "contenido": "La regresión lineal es importante porque ofrece un modelo sencillo e interpretable para cuantificar cómo cambia la variable dependiente ante variaciones de la independiente. Facilita pronósticos, la evaluación de políticas y la toma de decisiones basada en datos. Por ejemplo, una empresa puede estimar sus ventas mensuales futuras a partir del presupuesto destinado a publicidad, conociendo la ecuación ajustada."
+        },
+        {
+          "titulo": "Variable independiente",
+          "contenido": "La variable independiente, también llamada explicativa o regresora, es la que se utiliza para explicar o predecir el comportamiento de la otra y se representa con X. Sus valores se suponen conocidos o controlados por el investigador. Por ejemplo, en un estudio sobre el consumo de energía, las horas de uso diario del equipo actúan como variable independiente."
+        },
+        {
+          "titulo": "Variable dependiente",
+          "contenido": "La variable dependiente, o respuesta, es la que se desea explicar o predecir y se representa con Y. Se considera que sus valores dependen, en parte, del comportamiento de la variable independiente. Por ejemplo, en la relación entre horas de estudio y calificación, la calificación obtenida es la variable dependiente, pues se espera que dependa del tiempo dedicado al estudio."
+        },
+        {
+          "titulo": "Modelo de regresión lineal simple",
+          "contenido": "El modelo de regresión lineal simple se expresa como Y igual a a más b por X más el error, donde a es la ordenada al origen y b la pendiente de la recta. Supone que la relación entre ambas variables es lineal y que los errores tienen media cero y varianza constante. Por ejemplo, si a es 20 y b es 3, entonces por cada unidad adicional de X se espera un aumento de 3 unidades en Y."
+        },
+        {
+          "titulo": "Construcción de la ecuación de regresión",
+          "contenido": "La ecuación ajustada se obtiene por el método de mínimos cuadrados, que elige la recta que minimiza la suma de los cuadrados de las diferencias entre los valores observados y los estimados. La pendiente se calcula como b igual a la covarianza de X e Y dividida entre la varianza de X, y la ordenada como a igual a la media de Y menos b por la media de X. Por ejemplo, con esos coeficientes se escribe Y estimada igual a a más b por X."
+        },
+        {
+          "titulo": "Representación gráfica de la recta",
+          "contenido": "La recta de regresión se traza sobre el diagrama de dispersión y representa el valor esperado de Y para cada valor de X. Su pendiente indica cuánto cambia Y por unidad de X, y la ordenada al origen es el punto donde cruza el eje vertical. Por ejemplo, una recta ascendente y bien ajustada a la nube de puntos indica una relación lineal positiva y un buen ajuste del modelo."
+        },
+        {
+          "titulo": "Interpretación de resultados",
+          "contenido": "Interpretar una regresión implica explicar el signo y el valor de la pendiente, el significado de la ordenada al origen y la bondad del ajuste medida por el coeficiente de determinación R cuadrado. La pendiente indica el cambio esperado en Y por cada unidad de X, y R cuadrado la proporción de variabilidad explicada. Por ejemplo, un R cuadrado de 0,81 señala que el 81 por ciento de la variación de Y se explica por X."
+        },
+        {
+          "titulo": "Aplicaciones de la regresión",
+          "contenido": "La regresión lineal se aplica en economía, ingeniería, salud y tecnología para pronosticar, optimizar y evaluar relaciones entre variables. Permite estimar demandas, costos, rendimientos o riesgos a partir de datos históricos. Por ejemplo, un proveedor de servicios de internet puede predecir la satisfacción del cliente en función de la velocidad contratada y priorizar así sus inversiones en infraestructura."
+        }
+      ]
+    }
+  ],
+  "preguntas_jefe": [
+    {
+      "enunciado": "En una investigación se registra, para cada estudiante, el número de horas de estudio y la calificación obtenida. ¿Qué tipo de análisis se está realizando?",
+      "opcion_a": "Un análisis unidimensional, porque se calcula el promedio de horas.",
+      "opcion_b": "Un análisis bidimensional, porque se estudian dos variables en la misma unidad de observación.",
+      "opcion_c": "Un análisis de series de tiempo, porque las variables cambian con el tiempo.",
+      "opcion_d": "Un análisis de números índices, porque se comparan dos periodos.",
+      "opcion_correcta": "B",
+      "explicacion": "El análisis bidimensional estudia simultáneamente dos variables medidas sobre una misma unidad, en este caso horas de estudio y calificación. Cada estudiante aporta un par ordenado de valores."
+    },
+    {
+      "enunciado": "¿Cuál es la principal diferencia entre el análisis unidimensional y el bidimensional?",
+      "opcion_a": "El unidimensional describe una variable a la vez, mientras el bidimensional estudia la variación conjunta de dos variables.",
+      "opcion_b": "El unidimensional solo usa variables cualitativas y el bidimensional solo cuantitativas.",
+      "opcion_c": "El bidimensional no requiere organizar los datos en tablas.",
+      "opcion_d": "El unidimensional permite calcular correlaciones y el bidimensional no.",
+      "opcion_correcta": "A",
+      "explicacion": "El enfoque unidimensional resume una sola variable mediante frecuencias o promedios, y el bidimensional analiza cómo se comportan dos variables en conjunto."
+    },
+    {
+      "enunciado": "Una tabla de correlación cruza tramos de superficie de vivienda con tramos de precio. Si las frecuencias más altas se ubican desde la esquina superior izquierda hacia la inferior derecha, ¿qué se concluye?",
+      "opcion_a": "Que no existe relación entre las variables.",
+      "opcion_b": "Que la relación es positiva, pues ambas variables crecen juntas.",
+      "opcion_c": "Que la tabla está mal construida porque falta el total general.",
+      "opcion_d": "Que la relación es negativa, pues al aumentar una variable la otra disminuye.",
+      "opcion_correcta": "D",
+      "explicacion": "Cuando las mayores frecuencias descienden de izquierda a derecha, los valores altos de una variable se asocian con los bajos de la otra, lo que indica relación inversa."
+    },
+    {
+      "enunciado": "En una tabla de contingencia que cruza el canal de compra con la satisfacción del cliente, ¿qué representa la suma de una columna?",
+      "opcion_a": "Una frecuencia conjunta de dos categorías específicas.",
+      "opcion_b": "Una distribución condicional de la variable satisfacción.",
+      "opcion_c": "Una frecuencia marginal de la variable correspondiente a esa columna.",
+      "opcion_d": "El coeficiente de correlación entre ambas variables.",
+      "opcion_correcta": "C",
+      "explicacion": "Los totales de fila o columna constituyen las frecuencias marginales, que describen una variable sin considerar la otra. Las celdas interiores son las frecuencias conjuntas."
+    },
+    {
+      "enunciado": "Si el 80 por ciento de los compradores presenciales está satisfecho y solo el 40 por ciento de los compradores en línea lo está, ¿qué interpretación es correcta?",
+      "opcion_a": "Las variables son independientes, porque los porcentajes se calculan por separado.",
+      "opcion_b": "Existe asociación entre el canal de compra y la satisfacción, pues las distribuciones condicionales difieren.",
+      "opcion_c": "No puede interpretarse sin conocer el total de la muestra.",
+      "opcion_d": "La satisfacción causa el canal de compra elegido.",
+      "opcion_correcta": "B",
+      "explicacion": "Al comparar distribuciones condicionales se observa una diferencia notable entre los grupos, lo que evidencia asociación entre ambas variables cualitativas."
+    },
+    {
+      "enunciado": "¿Qué gráfico es más adecuado para representar dos variables cuantitativas y evaluar visualmente si su relación es lineal?",
+      "opcion_a": "Un gráfico circular de sectores.",
+      "opcion_b": "Un histograma de frecuencias acumuladas.",
+      "opcion_c": "Un diagrama de dispersión.",
+      "opcion_d": "Una ojiva de frecuencias relativas.",
+      "opcion_correcta": "C",
+      "explicacion": "El diagrama de dispersión ubica cada par de valores como un punto en el plano y permite apreciar la forma, dirección e intensidad de la relación."
+    },
+    {
+      "enunciado": "En un diagrama de dispersión la nube de puntos desciende de izquierda a derecha y está muy concentrada alrededor de una recta. ¿Qué coeficiente de correlación es coherente con esta situación?",
+      "opcion_a": "r igual a 0,95.",
+      "opcion_b": "r igual a 0,05.",
+      "opcion_c": "r igual a menos 0,10.",
+      "opcion_d": "r igual a menos 0,92.",
+      "opcion_correcta": "D",
+      "explicacion": "Una nube descendente y compacta indica relación lineal negativa fuerte, compatible con un valor cercano a menos uno, como menos 0,92."
+    },
+    {
+      "enunciado": "¿Cuál de las siguientes afirmaciones sobre el coeficiente de correlación de Pearson es correcta?",
+      "opcion_a": "Puede tomar cualquier valor real y su magnitud indica causalidad.",
+      "opcion_b": "Varía entre menos uno y uno, y su signo indica el sentido de la relación lineal.",
+      "opcion_c": "Solo puede calcularse cuando ambas variables son cualitativas.",
+      "opcion_d": "Un valor de cero demuestra que las variables son independientes en todo sentido.",
+      "opcion_correcta": "B",
+      "explicacion": "El coeficiente r se encuentra en el intervalo de menos uno a uno; el signo señala si la relación es directa o inversa y su valor absoluto la intensidad lineal."
+    },
+    {
+      "enunciado": "En el modelo de regresión lineal simple, ¿qué representa la pendiente b de la recta ajustada?",
+      "opcion_a": "El valor esperado de Y cuando X es igual a cero.",
+      "opcion_b": "La proporción de variabilidad de Y explicada por el modelo.",
+      "opcion_c": "El cambio esperado en Y por cada unidad adicional de X.",
+      "opcion_d": "La correlación entre los residuos del modelo.",
+      "opcion_correcta": "C",
+      "explicacion": "La pendiente cuantifica la variación media de la variable dependiente ante un incremento de una unidad en la variable independiente. La ordenada al origen corresponde al caso en que X es cero."
+    },
+    {
+      "enunciado": "Un modelo de regresión presenta un coeficiente de determinación R cuadrado igual a 0,81. ¿Cómo se interpreta este resultado?",
+      "opcion_a": "El 81 por ciento de la variación de la variable dependiente se explica por la variable independiente.",
+      "opcion_b": "La correlación entre ambas variables es de 0,81 en todos los casos.",
+      "opcion_c": "El modelo predice correctamente el 81 por ciento de las observaciones futuras.",
+      "opcion_d": "La pendiente de la recta es necesariamente igual a 0,81.",
+      "opcion_correcta": "A",
+      "explicacion": "R cuadrado mide la proporción de la variabilidad de Y explicada por el modelo. Su raíz cuadrada se relaciona con la correlación, pero no es equivalente en signo."
+    }
+  ]
+}

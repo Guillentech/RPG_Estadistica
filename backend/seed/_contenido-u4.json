@@ -1,0 +1,340 @@
+{
+  "unidad_numero": 4,
+  "objetivo": "Construir e interpretar indicadores y números índices para analizar información económica, social, ambiental y relacionada con las tecnologías de información y comunicación.",
+  "temas": [
+    {
+      "orden": 1,
+      "titulo": "Tema 4.1. Proporciones, razones, tasas e incrementos",
+      "subtemas": [
+        {
+          "titulo": "Concepto de proporción",
+          "contenido": "Una proporción es la relación entre una parte y el total del conjunto al que pertenece, expresada como el cociente entre la frecuencia observada y el número total de casos. Su valor indica qué fracción del total presenta una característica y suele multiplicarse por cien para leerlo como porcentaje. Por ejemplo, si 50 de 200 estudiantes usan transporte público, la proporción es 50/200 = 0,25, equivalente a 25 %."
+        },
+        {
+          "titulo": "Cálculo de proporciones",
+          "contenido": "La proporción se calcula con la fórmula p = a / N, donde a es el número de casos con la característica y N es el total de observaciones. El resultado siempre se encuentra entre 0 y 1, y la suma de las proporciones de todas las categorías mutuamente excluyentes es igual a 1. Para expresarla en porcentaje basta multiplicar por 100, como en 18/240 = 0,075, que corresponde a 7,5 %."
+        },
+        {
+          "titulo": "Concepto de razón",
+          "contenido": "Una razón compara dos cantidades de distinta naturaleza mediante un cociente y no exige que el numerador esté contenido en el denominador. Se escribe como a:b o a/b e indica cuántas unidades de la primera magnitud corresponden a una de la segunda. A diferencia de la proporción, una razón puede superar la unidad, por ejemplo una razón de 3 médicos por cada 1000 habitantes."
+        },
+        {
+          "titulo": "Cálculo de razones",
+          "contenido": "Para calcular una razón se divide la cantidad del primer grupo entre la del segundo y se expresa el resultado como cociente o como razón unitaria. Si una localidad tiene 480 nacimientos y 12 000 habitantes, la razón de nacimientos por habitante es 480/12 000 = 0,04, es decir, 4 nacimientos por cada 100 personas. La razón no requiere que ambos grupos sumen un total común."
+        },
+        {
+          "titulo": "Concepto de tasa",
+          "contenido": "Una tasa es una medida de frecuencia que relaciona el número de eventos ocurridos con la población expuesta y con un periodo de tiempo determinado. Se multiplica por una potencia de diez, como 1000 o 100 000, para obtener un valor legible por cada grupo de referencia. La tasa de natalidad, por ejemplo, expresa nacimientos por cada mil habitantes en un año."
+        },
+        {
+          "titulo": "Cálculo de tasas",
+          "contenido": "La tasa se obtiene con la expresión T = (a / P) x k, donde a es el número de eventos, P la población expuesta y k la constante de escala, generalmente 1000 o 100 000. Si en una ciudad de 250 000 habitantes se registran 5000 nacimientos en un año, la tasa de natalidad es (5000/250 000) x 1000 = 20 nacimientos por mil habitantes. La constante permite comparar poblaciones de distinto tamaño."
+        },
+        {
+          "titulo": "Incrementos absolutos",
+          "contenido": "El incremento absoluto es la diferencia aritmética entre el valor final y el valor inicial de una variable, medida en las mismas unidades de la serie. Se calcula como Δ = Vf - Vi y conserva el signo del cambio, por lo que un resultado negativo indica una disminución. Si una acción pasó de 40 a 46 dólares, el incremento absoluto fue de 6 dólares."
+        },
+        {
+          "titulo": "Incrementos relativos",
+          "contenido": "El incremento relativo expresa la variación como proporción del valor inicial y permite comparar cambios entre series con escalas distintas. Se calcula como (Vf - Vi) / Vi y se multiplica por 100 para obtener el porcentaje de variación. Si la producción pasó de 800 a 920 unidades, el incremento relativo es (920 - 800)/800 = 0,15, es decir, 15 %."
+        },
+        {
+          "titulo": "Interpretación de resultados",
+          "contenido": "Interpretar una proporción, razón o tasa exige identificar la base de comparación, la unidad de medida y el periodo al que se refiere el cálculo. Un mismo valor puede parecer alto o bajo según el total que lo origine, por lo que conviene acompañarlo con el numerador y el denominador. También debe distinguirse entre un cambio absoluto, que conserva unidades, y uno relativo, que se expresa en porcentaje."
+        },
+        {
+          "titulo": "Aplicaciones en datos biológicos y económicos",
+          "contenido": "En biología estas medidas describen prevalencia de enfermedades, mortalidad, natalidad y crecimiento de poblaciones, mientras que en economía permiten analizar inflación, desempleo, productividad y variación del producto. Por ejemplo, una tasa de mortalidad infantil o un incremento porcentual del PIB se interpretan con la misma lógica de relación entre eventos, población y tiempo. Su utilidad radica en que resumen fenómenos complejos en valores comparables."
+        }
+      ]
+    },
+    {
+      "orden": 2,
+      "titulo": "Tema 4.2. Introducción a los números índices",
+      "subtemas": [
+        {
+          "titulo": "Concepto de números índices",
+          "contenido": "Un número índice es una medida estadística que expresa el cambio relativo de una variable o de un conjunto de variables respecto a una situación de referencia llamada periodo base. La base se fija convencionalmente en 100, de modo que un índice de 125 indica un aumento del 25 % respecto de ella. Su fórmula general es I = (Xt / X0) x 100."
+        },
+        {
+          "titulo": "Importancia de los números índices",
+          "contenido": "Los números índices permiten comparar magnitudes que cambian en el tiempo o en el espacio y resumir el comportamiento de muchos bienes en un solo valor. Son la base para medir la inflación, ajustar salarios, deflactar series económicas y evaluar el poder adquisitivo. Sin ellos resultaría difícil distinguir si un aumento de ventas se debe a mayores precios o a mayores cantidades."
+        },
+        {
+          "titulo": "Características de los números índices",
+          "contenido": "Todo número índice se define por un periodo base, un periodo de comparación, una canasta de referencia y una fórmula de cálculo. Es una medida adimensional y relativa, pues no expresa niveles absolutos sino variaciones porcentuales. Además, debe ser comparable en el tiempo, representativo del fenómeno y construido con una metodología estable y documentada."
+        },
+        {
+          "titulo": "Propiedades de los números índices",
+          "contenido": "Entre las propiedades deseables están la identidad, que asigna 100 al periodo base; la proporcionalidad, que refleja cambios proporcionales en los precios; la reversibilidad, que permite invertir base y periodo; y la circularidad, que relaciona índices encadenados. En la práctica no todas se cumplen simultáneamente, por lo que la elección de la fórmula implica un compromiso metodológico."
+        },
+        {
+          "titulo": "Aplicaciones estadísticas y económicas",
+          "contenido": "En estadística los índices resumen series de tiempo y facilitan la comparación de tendencias; en economía se usan para el índice de precios al consumidor, el índice de precios al productor, la producción industrial y el comercio exterior. También sirven para actualizar valores monetarios, medir competitividad y evaluar políticas públicas. Su aplicación requiere elegir una base representativa y mantener la misma canasta durante la comparación."
+        },
+        {
+          "titulo": "Diferencias entre índices simples y compuestos",
+          "contenido": "Un índice simple describe la evolución de una sola variable, como el precio de un producto, mientras que un índice compuesto resume el comportamiento de varios elementos, como una canasta de bienes. El índice simple se obtiene con un solo cociente, en tanto que el compuesto requiere promedios o ponderaciones. Esta diferencia determina su complejidad de cálculo y su capacidad para representar fenómenos agregados."
+        }
+      ]
+    },
+    {
+      "orden": 3,
+      "titulo": "Tema 4.3. Índices simples",
+      "subtemas": [
+        {
+          "titulo": "Concepto de índice simple",
+          "contenido": "Un índice simple mide la variación de una única variable entre un periodo base y un periodo actual, sin considerar ponderaciones ni otros artículos. Se calcula como I = (Xt / X0) x 100, donde Xt es el valor del periodo comparado y X0 el del periodo base. Su resultado siempre se interpreta en relación con la base fijada en 100."
+        },
+        {
+          "titulo": "Índices simples de precios",
+          "contenido": "El índice simple de precios compara el precio de un artículo en un periodo con el precio del mismo artículo en la base, mediante Ip = (pt / p0) x 100. Si un producto costaba 50 y ahora cuesta 60, el índice es (60/50) x 100 = 120, lo que significa un encarecimiento del 20 %. Este cálculo aísla la variación de precios sin mezclarla con cambios en las cantidades."
+        },
+        {
+          "titulo": "Índices simples de cantidades",
+          "contenido": "El índice simple de cantidades mide la evolución del volumen producido, vendido o consumido de un bien respecto a la base, con Iq = (qt / q0) x 100. Si se vendían 300 unidades y se venden 345, el índice es 115, es decir, un aumento del 15 % en volumen. Se usa para analizar crecimiento productivo o demanda sin la influencia de los precios."
+        },
+        {
+          "titulo": "Índices de valor",
+          "contenido": "El índice de valor combina precio y cantidad para medir la evolución del valor monetario total de un bien, mediante Iv = (pt x qt) / (p0 x q0) x 100. También puede obtenerse como Iv = (Ip x Iq) / 100, lo que muestra que el valor depende de ambos componentes. Si precio y cantidad suben 20 % y 10 %, el valor se incrementa aproximadamente 32 %."
+        },
+        {
+          "titulo": "Cálculo de índices simples",
+          "contenido": "Para calcular un índice simple se identifica la variable, se elige un periodo base representativo, se aplica el cociente entre el valor actual y el de la base y se multiplica por 100. Conviene mantener la misma unidad de medida y la misma definición del artículo en todos los periodos. Un índice de 85 indica que el valor actual equivale al 85 % del valor de la base."
+        },
+        {
+          "titulo": "Interpretación de resultados",
+          "contenido": "Un índice igual a 100 señala que no hubo variación respecto de la base, uno mayor que 100 indica un aumento y uno menor que 100 refleja una disminución. La diferencia respecto de 100 expresa la variación porcentual, de modo que 130 corresponde a un alza del 30 % y 70 a una caída del 30 %. La interpretación siempre debe mencionar el periodo base y la variable medida."
+        }
+      ]
+    },
+    {
+      "orden": 4,
+      "titulo": "Tema 4.4. Índices compuestos",
+      "subtemas": [
+        {
+          "titulo": "Concepto de índices compuestos",
+          "contenido": "Un índice compuesto resume la evolución de varios artículos o variables en un solo valor, generalmente mediante promedios ponderados de índices simples. Se utiliza cuando interesa medir el comportamiento de una canasta, como los precios al consumidor o la producción industrial. Su construcción exige definir los elementos incluidos, sus ponderaciones y la fórmula de agregación."
+        },
+        {
+          "titulo": "Índices combinados de precios",
+          "contenido": "Los índices combinados de precios promedian los índices simples de varios productos para obtener una medida global de la variación de precios. Pueden calcularse como media aritmética simple de los índices individuales o como promedio ponderado según la importancia de cada bien. Este enfoque permite describir una canasta sin sumar precios de artículos con unidades distintas."
+        },
+        {
+          "titulo": "Índices de cantidades o cuánticos",
+          "contenido": "Los índices de cantidades o cuánticos miden la evolución conjunta del volumen de varios bienes respecto a una base. Se construyen promediando los índices simples de cantidad o agregando las cantidades ponderadas por precios. Su interpretación indica si la producción o el consumo físico de la canasta creció o disminuyó en términos relativos."
+        },
+        {
+          "titulo": "Índices agregativos",
+          "contenido": "Los índices agregativos suman precios o cantidades de varios artículos y comparan el total del periodo actual con el de la base. En precios, un ejemplo es el índice de Laspeyres, que pondera con cantidades de la base mediante (suma pt q0 / suma p0 q0) x 100. Estos índices requieren que los artículos compartan una unidad o una ponderación común."
+        },
+        {
+          "titulo": "Índices aditivos",
+          "contenido": "Los índices aditivos ponderan cada artículo por el valor que representa dentro del gasto total, de modo que los bienes más importantes influyen más en el resultado. Se calculan como la suma de valores actuales entre la suma de valores de la base, multiplicada por 100. Su ventaja es que reflejan la estructura real de consumo o de producción de la canasta."
+        },
+        {
+          "titulo": "Cálculo de índices compuestos",
+          "contenido": "El cálculo comienza por definir la canasta, el periodo base y las ponderaciones; luego se obtienen los índices o valores de cada componente y se agregan con la fórmula elegida. Es imprescindible conservar la misma composición de la canasta durante la comparación para que el índice mida solo el cambio deseado. Finalmente se multiplica por 100 y se interpreta respecto de la base."
+        },
+        {
+          "titulo": "Interpretación y comparación de índices",
+          "contenido": "Comparar índices compuestos exige verificar que compartan la misma base, la misma canasta y una metodología similar, pues de lo contrario las diferencias pueden deberse al diseño y no al fenómeno. Un índice de 140 frente a otro de 120 indica un crecimiento relativo mayor, pero no necesariamente un nivel absoluto más alto. La comparación debe acompañarse del contexto económico y del periodo analizado."
+        }
+      ]
+    },
+    {
+      "orden": 5,
+      "titulo": "Tema 4.5. Deflactación y cambio de base",
+      "subtemas": [
+        {
+          "titulo": "Concepto de deflactación",
+          "contenido": "La deflactación es el procedimiento que elimina el efecto de la inflación para expresar valores monetarios en unidades de poder adquisitivo constante. Se divide el valor nominal entre un índice de precios y se multiplica por 100, obteniendo el valor real referido al periodo base. Así, un ingreso que creció 10 % con una inflación de 15 % en realidad disminuyó en términos reales."
+        },
+        {
+          "titulo": "Deflactación de series económicas",
+          "contenido": "Deflactar una serie económica consiste en aplicar el cociente entre cada valor nominal y el índice de precios correspondiente al mismo periodo, multiplicado por 100. El resultado es una serie en moneda constante que permite comparar magnitudes a lo largo del tiempo sin distorsión inflacionaria. Es habitual usar el índice de precios al consumidor o un deflactor del producto como referencia."
+        },
+        {
+          "titulo": "Importancia de la deflactación",
+          "contenido": "La deflactación es indispensable para distinguir el crecimiento nominal del crecimiento real de una economía o de un ingreso. Sin ella, un aumento de precios podría confundirse con una mejora efectiva de la producción, del salario o de las ventas. También permite comparar cifras de distintos años, evaluar el poder adquisitivo y diseñar políticas económicas con información ajustada."
+        },
+        {
+          "titulo": "Cambio de base en números índices",
+          "contenido": "Cambiar la base de un número índice significa elegir un nuevo periodo de referencia y reexpresar toda la serie para que ese periodo tome el valor 100. La operación no altera la evolución relativa de la serie, solo modifica el punto de comparación. Es frecuente cuando la base original queda demasiado alejada o deja de ser representativa."
+        },
+        {
+          "titulo": "Procedimientos para cambiar la base",
+          "contenido": "Para cambiar la base se divide cada índice de la serie entre el índice del nuevo periodo base y se multiplica por 100, aplicando I_nuevo = (I_antiguo / I_base_nueva) x 100. Si el índice del nuevo base era 125 en la escala antigua, ese valor pasa a ser 100 y los demás se reescalan proporcionalmente. El procedimiento debe aplicarse a toda la serie para conservar la coherencia."
+        },
+        {
+          "titulo": "Interpretación de series económicas",
+          "contenido": "Interpretar una serie económica requiere distinguir si los valores son nominales o reales, identificar la base y reconocer la tendencia de fondo por encima de las fluctuaciones. Una serie deflactada refleja cambios en volumen o poder adquisitivo, mientras que una nominal incorpora la inflación. Comparar ambas permite detectar periodos en que el crecimiento aparente se explica solo por los precios."
+        }
+      ]
+    },
+    {
+      "orden": 6,
+      "titulo": "Tema 4.6. Construcción de indicadores estadísticos",
+      "subtemas": [
+        {
+          "titulo": "Concepto de indicador",
+          "contenido": "Un indicador es una variable o combinación de variables que resume cuantitativamente un fenómeno para facilitar su seguimiento y evaluación. Debe tener una definición clara, una unidad de medida, una fuente de datos y una forma de interpretación establecida. Por ejemplo, la tasa de desempleo o el porcentaje de hogares con internet son indicadores de realidades complejas."
+        },
+        {
+          "titulo": "Importancia de los indicadores",
+          "contenido": "Los indicadores permiten monitorear la evolución de un problema, comparar territorios o grupos y evaluar el impacto de políticas y proyectos. Al traducir conceptos abstractos en valores observables, facilitan la toma de decisiones basada en evidencia. Su valor aumenta cuando se construyen con criterios homogéneos y se actualizan periódicamente."
+        },
+        {
+          "titulo": "Indicadores socioeconómicos",
+          "contenido": "Los indicadores socioeconómicos describen condiciones de bienestar, producción y distribución, como el producto interno bruto per cápita, la tasa de pobreza, el nivel de empleo y la alfabetización. Suelen combinarse para construir índices de desarrollo humano o de calidad de vida. Permiten comparar países y orientar políticas sociales y económicas."
+        },
+        {
+          "titulo": "Indicadores ambientales",
+          "contenido": "Los indicadores ambientales miden el estado de los recursos naturales y la presión que las actividades humanas ejercen sobre ellos. Ejemplos son las emisiones de gases de efecto invernadero por habitante, la calidad del aire, el acceso a agua potable y la tasa de deforestación. Su seguimiento es clave para evaluar sostenibilidad y cumplir acuerdos ambientales."
+        },
+        {
+          "titulo": "Indicadores relacionados con las tecnologías de información y comunicación",
+          "contenido": "Los indicadores TIC cuantifican el acceso, el uso y las capacidades digitales de una población, como el porcentaje de hogares con internet, la penetración de banda ancha o el número de usuarios de telefonía móvil. También incluyen habilidades digitales y gasto en tecnología. Sirven para medir la brecha digital y evaluar el impacto de la digitalización."
+        },
+        {
+          "titulo": "Aplicaciones de indicadores en diferentes sectores",
+          "contenido": "En salud se usan tasas de mortalidad y cobertura; en educación, tasas de matrícula y conclusión; en agricultura, rendimientos por hectárea; y en el sector público, indicadores de gestión y transparencia. Cada sector adapta el indicador a su unidad de análisis y a sus objetivos. La comparación entre sectores exige revisar definiciones y metodologías para evitar conclusiones erróneas."
+        },
+        {
+          "titulo": "Análisis e interpretación de indicadores",
+          "contenido": "Analizar un indicador implica examinar su tendencia, compararlo con una meta o referencia y considerar el contexto que lo origina. Un mismo valor puede tener significados distintos según la población, el territorio y el periodo. Por ello conviene acompañarlo con otros indicadores, revisar la calidad de la fuente y evitar interpretaciones causales sin evidencia suficiente."
+        }
+      ]
+    },
+    {
+      "orden": 7,
+      "titulo": "Tema 4.7. Índice de Gini y curva de Lorenz",
+      "subtemas": [
+        {
+          "titulo": "Concepto de concentración económica",
+          "contenido": "La concentración económica describe cómo se distribuyen el ingreso o la riqueza entre los miembros de una población. Existe alta concentración cuando una pequeña proporción de personas acumula una gran parte del total, mientras que la equidistribución implica que todos reciben porciones similares. Este fenómeno se estudia con herramientas como la curva de Lorenz y el índice de Gini."
+        },
+        {
+          "titulo": "Distribuciones de frecuencias acumuladas",
+          "contenido": "Las distribuciones acumuladas ordenan la población de menor a mayor ingreso y suman progresivamente las proporciones de personas y de ingreso. Así se obtiene el porcentaje acumulado de población y el porcentaje acumulado del ingreso que le corresponde. Estas proporciones son la base para construir la curva de Lorenz y calcular el índice de Gini."
+        },
+        {
+          "titulo": "Concepto del índice de Gini",
+          "contenido": "El índice de Gini es una medida de desigualdad que resume la concentración de una distribución y toma valores entre 0 y 1. Un valor cercano a 0 indica igualdad perfecta y uno cercano a 1 representa concentración máxima. Se deriva del área entre la curva de Lorenz y la línea de equidistribución."
+        },
+        {
+          "titulo": "Construcción del índice de Gini",
+          "contenido": "El índice se calcula a partir de las proporciones acumuladas de población y de ingreso mediante G = 1 - suma de (p_i - p_i-1) por (L_i + L_i-1), donde p representa la población acumulada y L el ingreso acumulado. También equivale al cociente entre el área de concentración y el área total bajo la diagonal. El resultado se interpreta como proporción de la desigualdad observada."
+        },
+        {
+          "titulo": "Concepto de curva de Lorenz",
+          "contenido": "La curva de Lorenz es una representación gráfica de la distribución del ingreso que enfrenta el porcentaje acumulado de población, ordenado de menor a mayor ingreso, con el porcentaje acumulado de ingreso recibido. Si la distribución fuera perfectamente igualitaria, la curva coincidiría con la diagonal de 45 grados. Cuanto más se aleja de esa diagonal, mayor es la concentración."
+        },
+        {
+          "titulo": "Construcción gráfica de la curva de Lorenz",
+          "contenido": "Para construirla se ordenan los individuos o grupos de menor a mayor ingreso, se calculan los porcentajes acumulados de población y de ingreso y se grafican esos pares de puntos unidos por una curva. Se añade la línea diagonal de equidistribución como referencia visual. La superficie entre ambas curvas refleja el grado de desigualdad de la distribución."
+        },
+        {
+          "titulo": "Interpretación del índice de Gini",
+          "contenido": "Un índice de Gini de 0 expresa igualdad total y uno de 1 expresa que una sola persona concentra todo el ingreso. Valores intermedios indican distintos grados de desigualdad, por lo que debe compararse con cautela entre países o periodos con metodologías similares. El indicador resume la concentración, pero no describe por sí solo las causas ni la estructura de la desigualdad."
+        },
+        {
+          "titulo": "Aplicaciones en el análisis de desigualdad",
+          "contenido": "El índice de Gini y la curva de Lorenz se aplican al estudio de la distribución del ingreso, la riqueza, el consumo, la tierra y el acceso a servicios como educación o salud. Permiten comparar regiones, evaluar el efecto redistributivo de políticas fiscales y dar seguimiento a objetivos de desarrollo. Su uso combinado con otros indicadores ofrece una lectura más completa de la equidad social."
+        }
+      ]
+    }
+  ],
+  "preguntas_jefe": [
+    {
+      "enunciado": "En un grupo de 250 estudiantes, 75 participan en un taller de programación. ¿Cuál es la proporción de estudiantes que participa en el taller?",
+      "opcion_a": "0,75",
+      "opcion_b": "0,30",
+      "opcion_c": "3,33",
+      "opcion_d": "0,33",
+      "opcion_correcta": "B",
+      "explicacion": "La proporción se obtiene dividiendo 75 entre 250, lo que da 0,30. Expresada en porcentaje corresponde al 30 % del grupo."
+    },
+    {
+      "enunciado": "Una ciudad registra 6000 nacimientos en un año y tiene 300 000 habitantes. ¿Cuál es su tasa de natalidad por cada mil habitantes?",
+      "opcion_a": "2 por mil",
+      "opcion_b": "50 por mil",
+      "opcion_c": "20 por mil",
+      "opcion_d": "200 por mil",
+      "opcion_correcta": "C",
+      "explicacion": "La tasa se calcula como (6000 / 300 000) x 1000, que equivale a 20 nacimientos por cada mil habitantes. La constante 1000 permite expresar la frecuencia en una base legible."
+    },
+    {
+      "enunciado": "Si el precio de un artículo era 80 y en el periodo actual es 100, ¿cómo se interpreta su índice simple de precios con base en el primer periodo?",
+      "opcion_a": "El índice es 125, lo que indica un aumento del 25 % respecto de la base.",
+      "opcion_b": "El índice es 80, lo que indica una caída del 20 % respecto de la base.",
+      "opcion_c": "El índice es 20, lo que indica un aumento del 20 % respecto de la base.",
+      "opcion_d": "El índice es 100, lo que indica que el precio no varió.",
+      "opcion_correcta": "A",
+      "explicacion": "El índice se obtiene como (100 / 80) x 100 = 125. Al superar 100 en 25 unidades, refleja un incremento del 25 % respecto del periodo base."
+    },
+    {
+      "enunciado": "Un producto tenía un precio de 40 y una cantidad vendida de 500; ahora su precio es 50 y la cantidad vendida es 600. ¿Cuál es el índice de valor con base en la primera situación?",
+      "opcion_a": "125",
+      "opcion_b": "120",
+      "opcion_c": "110",
+      "opcion_d": "150",
+      "opcion_correcta": "D",
+      "explicacion": "El valor inicial es 40 x 500 = 20 000 y el actual es 50 x 600 = 30 000. El índice es (30 000 / 20 000) x 100 = 150, es decir, un aumento del 50 %."
+    },
+    {
+      "enunciado": "En un índice de precios agregativo tipo Laspeyres, ¿qué se utiliza como ponderación de los precios del periodo actual?",
+      "opcion_a": "Las cantidades del periodo actual.",
+      "opcion_b": "Las cantidades del periodo base.",
+      "opcion_c": "Los precios del periodo base.",
+      "opcion_d": "El promedio simple de los precios.",
+      "opcion_correcta": "B",
+      "explicacion": "El índice de Laspeyres mantiene fijas las cantidades de la canasta del periodo base para aislar el efecto de los precios. Por eso pondera los precios actuales con las cantidades base."
+    },
+    {
+      "enunciado": "Un salario nominal aumentó de 1000 a 1100, mientras que el índice de precios pasó de 100 a 115. ¿Qué ocurrió con el salario real?",
+      "opcion_a": "Aumentó un 15 % en términos reales.",
+      "opcion_b": "Se mantuvo constante en términos reales.",
+      "opcion_c": "Disminuyó aproximadamente un 4,3 % en términos reales.",
+      "opcion_d": "Aumentó un 10 % en términos reales.",
+      "opcion_correcta": "C",
+      "explicacion": "El salario real se obtiene como (1100 / 115) x 100 = 956,5, frente a 1000 iniciales. La caída es de aproximadamente 4,3 %, porque los precios crecieron más que el salario nominal."
+    },
+    {
+      "enunciado": "¿Cuál de los siguientes es un indicador típico del acceso a las tecnologías de información y comunicación en una población?",
+      "opcion_a": "El porcentaje de hogares con conexión a internet.",
+      "opcion_b": "La tasa de mortalidad infantil.",
+      "opcion_c": "El índice de precios al consumidor.",
+      "opcion_d": "La tasa de deforestación anual.",
+      "opcion_correcta": "A",
+      "explicacion": "El porcentaje de hogares con internet mide directamente el acceso a las TIC. Los otros valores corresponden a indicadores sociales, económicos o ambientales."
+    },
+    {
+      "enunciado": "Si el índice de Gini de un país es 0,45 y el de otro es 0,28, ¿cuál es la interpretación correcta?",
+      "opcion_a": "El segundo país tiene mayor concentración del ingreso.",
+      "opcion_b": "Ambos países presentan igualdad perfecta.",
+      "opcion_c": "El primer país tiene menor desigualdad que el segundo.",
+      "opcion_d": "El primer país presenta mayor desigualdad en la distribución del ingreso.",
+      "opcion_correcta": "D",
+      "explicacion": "Cuanto más cercano a 1 es el índice de Gini, mayor es la concentración del ingreso. Por ello, 0,45 refleja más desigualdad que 0,28."
+    },
+    {
+      "enunciado": "Una serie de índices tiene base 2010 = 100 y se desea cambiar la base a 2015, cuyo índice en la escala antigua es 140. ¿Qué valor debe tomar 2015 en la nueva serie?",
+      "opcion_a": "140",
+      "opcion_b": "100",
+      "opcion_c": "40",
+      "opcion_d": "240",
+      "opcion_correcta": "B",
+      "explicacion": "Al cambiar la base, el periodo elegido como nueva referencia siempre adopta el valor 100. Los demás índices se reescalan dividiendo entre 140 y multiplicando por 100."
+    },
+    {
+      "enunciado": "En la curva de Lorenz, ¿qué representa el área comprendida entre la diagonal de equidistribución y la curva observada?",
+      "opcion_a": "El nivel absoluto de ingreso de la población.",
+      "opcion_b": "La tasa de crecimiento de la economía.",
+      "opcion_c": "El grado de concentración del ingreso, base del índice de Gini.",
+      "opcion_d": "El porcentaje de población que vive en pobreza extrema.",
+      "opcion_correcta": "C",
+      "explicacion": "Cuanto mayor es el área entre la diagonal y la curva de Lorenz, mayor es la concentración del ingreso. El índice de Gini se obtiene relacionando esa área con el área total bajo la diagonal."
+    }
+  ]
+}
