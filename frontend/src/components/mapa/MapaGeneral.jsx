@@ -88,7 +88,7 @@ export default function MapaGeneral({
             onClick={() => onEntrarUnidad?.(unidad, { x: col, y: fila })}
             className="map-node map-node--ciudadela"
             style={tileAPorcentaje(col, fila)}
-            title={`${unidad.nombre} (Col ${col}, Fila ${fila})`}
+            title={[unidad.nombre, unidad.objetivo, `Col ${col}, Fila ${fila}`].filter(Boolean).join(' — ')}
             aria-label={`Entrar a ${unidad.nombre}`}
           >
             <span className="mapa-ciudadela__progreso">

@@ -86,6 +86,19 @@
 
 html {
   image-rendering: pixelated;
+  /* El fondo vive en <body>, pero el "canvas" del navegador usa el de <html>.
+     Sin esto, el rebote de scroll en Android/Edge descubre blanco puro. */
+  background-color: var(--ink);
+  color-scheme: dark;
+  /* Sin rebote elástico ni "pull to refresh" encima del HUD. */
+  overscroll-behavior: none;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+}
+html[data-theme="light"] {
+  background-color: var(--app-pattern-a);
 }
 
 body {
@@ -930,6 +943,13 @@ h4 { font-size: 10px; }
 p, li, td, th, label { overflow-wrap: break-word; }
 
 /* Contraste de acentos sobre fondos de color (los dos temas) */
+/*
+  NOTA sobre `btn-pro-primary` (21 usos en JSX): no tiene regla CSS propia.
+  No es un bug visual: `.btn-pro` base ya pinta el botón de azul, así que se
+  distingue del secundario (`--outline`) sin necesidad de esa clase. Se deja
+  como está a propósito; si algún día se quiere un "primary" distinto del
+  base, hay que definir `.btn-pro-primary` o borrar la clase del JSX.
+*/
 .btn,
 .btn-pro,
 .btn-retroceso,
@@ -946,6 +966,7 @@ p, li, td, th, label { overflow-wrap: break-word; }
 .text-teacher { color: var(--teacher); }
 .text-gold { color: var(--gold); }
 .text-xp { color: var(--xp); }
+.text-magenta { color: var(--magenta); }
 .text-danger { color: var(--hp); }
 .text-muted { color: var(--text-muted); }
 .text-strong { color: var(--text-main); }
@@ -1618,6 +1639,38 @@ p, li, td, th, label { overflow-wrap: break-word; }
   box-shadow: 0 4px 0 0 var(--edge), inset 0 -4px 0 0 var(--student);
 }
 
+.unidad-objetivo {
+  max-width: 760px;
+  margin: 0 auto 0.85rem;
+  padding: 0.55rem 0.85rem;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--text-muted);
+  border-left: 4px solid var(--student);
+  background: color-mix(in srgb, var(--student) 10%, transparent);
+}
+
+.unidad-objetivo--mapa {
+  position: absolute;
+  top: 34px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  width: min(760px, calc(100% - 140px));
+  margin: 0;
+  padding: 0.35rem 0.7rem;
+  font-size: 11px;
+  line-height: 1.4;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-main);
+  border-left: none;
+  border-top: 2px solid var(--student);
+  background: color-mix(in srgb, var(--bg-panel, #10131f) 85%, transparent);
+}
+
 .map-region {
   position: absolute;
   top: 10px;
@@ -1789,19 +1842,66 @@ p, li, td, th, label { overflow-wrap: break-word; }
 
 /* Diálogo del mentor */
 .ai-dialogue {
-  flex: 1 1 auto;
-  min-height: 120px;
+  flex: 1 1 0;
+  min-height: 0;
   margin: 0.8rem 0;
   padding: 0.8rem;
   overflow-y: auto;
+  overscroll-behavior: contain;
   font-size: 20px;
   line-height: 1.3;
   color: var(--text-main);
   background: var(--panel);
   box-shadow: inset 0 0 0 2px var(--student);
 }
-.ai-ask { display: flex; gap: 0.5rem; align-items: stretch; flex-wrap: wrap; }
+.ai-ask { display: flex; gap: 0.5rem; align-items: stretch; flex-wrap: wrap; flex: 0 0 auto; }
 .ai-ask .input-pro { flex: 1 1 180px; width: auto; margin: 0; }
+
+/* Variante chat: sólo scrollea la respuesta, la pregunta queda siempre visible */
+.rpg-modal__body--chat { overflow: hidden; padding-bottom: 0.8rem; }
+
+/* Markdown de las respuestas del Sabio Alquimista */
+.md-lite > *:first-child { margin-top: 0; }
+.md-lite > *:last-child { margin-bottom: 0; }
+.md-lite p { margin: 0 0 0.6rem; }
+.md-lite h3,
+.md-lite h4,
+.md-lite h5,
+.md-lite h6 {
+  margin: 0.9rem 0 0.4rem;
+  font-family: var(--font-px);
+  line-height: 1.6;
+  color: var(--gold);
+}
+/* `###` es el encabezado que más usa el modelo, así que no puede quedar en
+   9px (parecía una etiqueta). Se mantiene por debajo del título del modal. */
+.md-lite h3 { font-size: 13px; }
+.md-lite h4 { font-size: 12px; }
+.md-lite h5,
+.md-lite h6 { font-size: 11px; }
+.md-lite ul,
+.md-lite ol { margin: 0 0 0.6rem; padding-left: 1.4rem; }
+.md-lite li { margin-bottom: 0.25rem; }
+.md-lite li::marker { color: var(--student-hi); }
+.md-lite hr {
+  height: 0;
+  margin: 0.8rem 0;
+  border: 0;
+  box-shadow: 0 0 0 1px var(--edge-soft);
+}
+.md-lite blockquote {
+  margin: 0 0 0.6rem;
+  padding: 0.4rem 0.7rem;
+  color: var(--text-muted);
+  box-shadow: inset 3px 0 0 0 var(--student);
+}
+.md-lite code {
+  padding: 0 3px;
+  font-family: var(--font-body);
+  color: var(--cyan);
+  background: var(--panel-lo);
+}
+.md-lite strong { color: var(--bone); }
 
 /* ---------------------------------------------------------------------
    Inventario / misiones / logros
@@ -2122,10 +2222,36 @@ svg[shapeRendering='crispEdges'] { shape-rendering: crispEdges; }
     flex-wrap: nowrap;
     overflow-x: auto;
     max-width: 100%;
-    scrollbar-width: thin;
+    scroll-snap-type: x proximity;
+    overscroll-behavior-x: contain;
   }
-  .rpg-hotbar-slot { flex: 0 0 78px; }
+  /* En Edge/Chrome móvil la barra nativa es "overlay" y se oculta sola. Un
+     estilo propio al menos la pinta con los colores del juego mientras se
+     desliza; la pista fija es el 4.º slot asomando y el scroll-snap. */
+  .rpg-hotbar::-webkit-scrollbar { height: 6px; }
+  .rpg-hotbar::-webkit-scrollbar-track { background: var(--panel-lo); }
+  .rpg-hotbar::-webkit-scrollbar-thumb { background: var(--violet); }
+  .rpg-hotbar-slot { flex: 0 0 78px; scroll-snap-align: start; }
   .rpg-hotbar-slot span { font-size: 8px; }
+
+  /* Modales: en el mapa viven dentro de `.mapa-wrapper` (position:absolute),
+     así que su alto dependía del alto del mapa y en el teléfono se abrían a
+     media pantalla. En móvil pasan a hoja a pantalla completa por encima de
+     la hotbar (z-index 60) y del botón de música; el header (100) queda arriba. */
+  .rpg-modal {
+    position: fixed;
+    inset: 8px;
+    /* Por encima del header (100): si el modal quedaba debajo, el botón
+       «Cerrar» caía justo bajo el botón «Salir» y no se podía tocar. */
+    z-index: 120;
+    max-height: none;
+    /* A pantalla completa el fondo translúcido dejaba ver el mapa por
+       debajo (texto fantasma). Sólido mientras el modal es una hoja. */
+    background: var(--ink);
+  }
+  /* Objetivo táctil: el «Cerrar» de .btn-sm medía 23px de alto. */
+  .rpg-modal__head .btn-danger { min-height: 40px; padding: 8px 12px; font-size: 9px; }
+  body:has(.rpg-modal) { overflow: hidden; }
 
   .rpg-tabbar { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; }
   .rpg-tab { flex: 0 0 auto; font-size: 17px; }
@@ -2136,7 +2262,11 @@ svg[shapeRendering='crispEdges'] { shape-rendering: crispEdges; }
   .map-legend { display: none; }
   .map-nameplate { max-width: 92px; font-size: 8px; padding: 2px 4px; }
   .map-hito__label { font-size: 15px; }
-  .alchemist-bubble { left: 10px; right: 10px; bottom: 10px; width: auto; max-width: none; }
+  .alchemist-bubble { left: 10px; right: 10px; bottom: 84px; width: auto; max-width: none; }
+  /* En pantallas móviles altas (ej. 412x915) el hotbar y el bubble competían por el fondo. */
+  @media (max-width: 500px) {
+    .alchemist-bubble.alchemist-bubble--compact { bottom: 82px; z-index: 65; }
+  }
   .alchemist-bubble__text { font-size: 17px; }
   .alchemist-bubble__sprite svg { width: 44px; height: 46px; }
   .rpg-modal__title { font-size: 10px; }
@@ -2431,6 +2561,13 @@ svg[shapeRendering='crispEdges'] { shape-rendering: crispEdges; }
 @media (max-width: 640px) {
   .bgm-player { right: 10px; bottom: 10px; }
   .bgm-player__panel { width: min(232px, calc(100vw - 20px)); }
+
+  /* En el mapa y el panel del alumno la hotbar ocupa el borde inferior:
+     el botón de música flotaba encima del slot "Gremio" (medido a 375px).
+     Sólo se eleva cuando la hotbar existe en la página. */
+  body:has(.rpg-hotbar) .bgm-player {
+    bottom: calc(8px + 70px + 10px);
+  }
 }
 
 /* =====================================================================
@@ -3109,7 +3246,182 @@ body.home-active .header-pro {
   .portal-shell__sparks { display: none; }
   .neon-star { opacity: 0.6; }
 }
+
+/* =====================================================================
+   FONDOS DE PÁGINA — paneles no-portada (sutil, por variante)
+   ===================================================================== */
+.page-backdrop {
+  --backdrop-sky-1: var(--night);
+  --backdrop-sky-2: var(--panel-lo);
+  --backdrop-accent: var(--violet);
+  --backdrop-accent-2: var(--cyan);
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.34;
+}
+
+.page-backdrop--immersive { opacity: 0.58; }
+
+.page-backdrop__sky {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, var(--backdrop-sky-1) 0 46%, var(--backdrop-sky-2) 46% 100%);
+}
+
+.page-backdrop__grid {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 48px, rgba(255, 255, 255, 0.045) 48px 49px),
+    repeating-linear-gradient(180deg, transparent 0 48px, rgba(255, 255, 255, 0.045) 48px 49px);
+  opacity: 0.7;
+}
+
+.page-backdrop__glow {
+  position: absolute;
+  width: 46vw;
+  height: 46vw;
+  background: radial-gradient(circle at center, var(--backdrop-accent) 0%, transparent 62%);
+  opacity: 0.16;
+}
+
+.page-backdrop__glow--a { top: -14%; left: -12%; }
+.page-backdrop__glow--b { bottom: -18%; right: -12%; background: radial-gradient(circle at center, var(--backdrop-accent-2) 0%, transparent 62%); opacity: 0.12; }
+
+.page-backdrop__silhouette {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 52%;
+  opacity: 0.42;
+  image-rendering: pixelated;
+}
+
+/* Variantes */
+.page-backdrop--teacher {
+  --backdrop-sky-1: #0d0a24;
+  --backdrop-sky-2: #1a1340;
+  --backdrop-accent: #ffd23f;
+  --backdrop-accent-2: #2b7fd9;
+}
+.page-backdrop--student {
+  --backdrop-sky-1: #0b0722;
+  --backdrop-sky-2: #123a4a;
+  --backdrop-accent: #3ddc84;
+  --backdrop-accent-2: #4cc9f0;
+}
+.page-backdrop--combat {
+  --backdrop-sky-1: #1a0a10;
+  --backdrop-sky-2: #2b1018;
+  --backdrop-accent: #ff7a6b;
+  --backdrop-accent-2: #ff8a3d;
+}
+.page-backdrop--auth-student {
+  --backdrop-sky-1: #0b0722;
+  --backdrop-sky-2: #123a4a;
+  --backdrop-accent: #4cc9f0;
+  --backdrop-accent-2: #6ff7ff;
+}
+.page-backdrop--auth-teacher {
+  --backdrop-sky-1: #0d0a24;
+  --backdrop-sky-2: #1a1340;
+  --backdrop-accent: #ffd23f;
+  --backdrop-accent-2: #c4a7ff;
+}
+.page-backdrop--neutral {
+  --backdrop-sky-1: var(--night);
+  --backdrop-sky-2: var(--panel-lo);
+  --backdrop-accent: var(--violet);
+  --backdrop-accent-2: var(--cyan);
+}
+
+/* Body activo por panel: fondo + header translúcido */
+body.teacher-active { background: #0d0a24; }
+body.student-panel-active { background: #0b0722; }
+body.combat-active { background: #1a0a10; }
+body.auth-student-active { background: #0b0722; }
+body.auth-teacher-active { background: #0d0a24; }
+
+body.teacher-active .header-pro,
+body.student-panel-active .header-pro,
+body.combat-active .header-pro,
+body.auth-student-active .header-pro,
+body.auth-teacher-active .header-pro {
+  background: rgba(23, 15, 61, 0.82);
+}
+
+[data-theme="light"] body.teacher-active { background: #e4d8f5; }
+[data-theme="light"] body.student-panel-active { background: #dcd0f0; }
+[data-theme="light"] body.combat-active { background: #f0dcd8; }
+[data-theme="light"] body.auth-student-active { background: #dcd0f0; }
+[data-theme="light"] body.auth-teacher-active { background: #e4d8f5; }
+
+[data-theme="light"] body.teacher-active .header-pro,
+[data-theme="light"] body.student-panel-active .header-pro,
+[data-theme="light"] body.combat-active .header-pro,
+[data-theme="light"] body.auth-student-active .header-pro,
+[data-theme="light"] body.auth-teacher-active .header-pro {
+  background: rgba(184, 168, 216, 0.9);
+}
+
+/* Light: cielos más claros y opacidad reducida */
+[data-theme="light"] .page-backdrop { opacity: 0.24; }
+[data-theme="light"] .page-backdrop--teacher { --backdrop-sky-1: #e4d8f5; --backdrop-sky-2: #cdbde6; --backdrop-accent: #b45309; --backdrop-accent-2: #2563eb; }
+[data-theme="light"] .page-backdrop--student { --backdrop-sky-1: #dcd0f0; --backdrop-sky-2: #c9b8e8; --backdrop-accent: #16a34a; --backdrop-accent-2: #0891b2; }
+[data-theme="light"] .page-backdrop--combat { --backdrop-sky-1: #f0dcd8; --backdrop-sky-2: #e4c4be; --backdrop-accent: #dc2626; --backdrop-accent-2: #c2410c; }
+[data-theme="light"] .page-backdrop--auth-student { --backdrop-sky-1: #dcd0f0; --backdrop-sky-2: #c9b8e8; --backdrop-accent: #0891b2; --backdrop-accent-2: #2563eb; }
+[data-theme="light"] .page-backdrop--auth-teacher { --backdrop-sky-1: #e4d8f5; --backdrop-sky-2: #cdbde6; --backdrop-accent: #b45309; --backdrop-accent-2: #7c3aed; }
+[data-theme="light"] .page-backdrop--neutral { --backdrop-sky-1: var(--night); --backdrop-sky-2: var(--panel-lo); }
+
+/* Contenedores de página con backdrop */
+.panel-page {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  min-height: calc(100vh - 84px);
+  padding-bottom: 1rem;
+}
+.panel-page > .page-backdrop { position: fixed; inset: 0; }
+.panel-page > .container,
+.panel-page > .auth-shell {
+  position: relative;
+  z-index: 2;
+}
+
+.auth-shell { position: relative; }
+
+/* Responsive */
+@media (max-width: 640px) {
+  .page-backdrop__silhouette { display: none; }
+  .page-backdrop__grid { opacity: 0.35; }
+  .page-backdrop { opacity: 0.26; }
+  [data-theme="light"] .page-backdrop { opacity: 0.18; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .page-backdrop__glow { animation: none !important; }
+}
    @media (max-width: 640px) {
+     /* El acceso al Sabio Alquimista también en móvil: antes se ocultaba y la
+        función desaparecía del teléfono. Se ancla arriba de la hotbar, a la
+        izquierda, para no chocar con el botón de música (que va a la derecha). */
+     .alchemist-bubble.alchemist-bubble--compact {
+       position: fixed;
+       left: 10px;
+       right: auto;
+       bottom: calc(8px + 70px + 10px);
+       width: 52px;
+       height: 56px;
+       padding: 0;
+       max-width: none;
+     }
      .alchemist-bubble {
        left: auto;
        right: 8px;
@@ -3416,4 +3728,260 @@ body.home-active .header-pro {
   .header-pro--movil .brand-title { font-size: 9px; }
   .perfil-grid { grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); }
   .perfil-preview { width: 72px; height: 72px; flex-basis: 72px; }
+}
+
+/* =====================================================================
+   🏆 LOGROS Y MEDALLAS
+   ===================================================================== */
+.logros-panel__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.logros-panel__sub { margin-top: 0.35rem; max-width: 60ch; }
+
+.logros-panel__marcador {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  padding: 0.45rem 0.7rem;
+  background: var(--panel-lo);
+  box-shadow: 0 0 0 2px var(--gold), inset 0 0 0 2px var(--ink);
+  font-family: var(--font-px);
+}
+
+.logros-panel__marcador strong { font-size: 12px; color: var(--gold); }
+.logros-panel__marcador span { font-size: 8px; color: var(--mute); }
+
+.logros-panel__barra {
+  height: 14px;
+  margin: 0.7rem 0;
+  background: var(--ink);
+  box-shadow: inset 0 0 0 2px var(--panel-hi);
+}
+
+.logros-panel__barra-fill {
+  height: 100%;
+  background: repeating-linear-gradient(90deg, var(--gold) 0 6px, var(--orange) 6px 8px);
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.25);
+}
+
+.logros-panel__xp {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 17px;
+  color: var(--gold);
+  margin-bottom: 0.5rem;
+}
+
+.logros-panel__filtros {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin: 0.6rem 0 0.8rem;
+}
+
+.logros-filtro {
+  font-family: var(--font-px);
+  font-size: 8px;
+  padding: 0.5rem 0.7rem;
+  color: var(--mute);
+  background: var(--panel-lo);
+  box-shadow: 0 0 0 2px var(--panel-hi), inset 2px 2px 0 0 rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+}
+
+.logros-filtro.is-active {
+  color: var(--ink);
+  background: var(--gold);
+  box-shadow: 0 0 0 2px var(--ink), inset 2px 2px 0 0 rgba(255, 255, 255, 0.45);
+}
+
+.logros-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 0.6rem;
+}
+
+.logro-card {
+  display: flex;
+  gap: 0.6rem;
+  padding: 0.65rem;
+  background: var(--panel-lo);
+  box-shadow: 0 0 0 2px var(--panel-hi);
+}
+
+.logro-card.is-unlocked {
+  background: var(--panel);
+  box-shadow: 0 0 0 3px var(--gold), inset 0 0 0 2px var(--panel-lo);
+}
+
+.logro-card.is-locked { opacity: 0.82; }
+
+.logro-card__icono {
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  font-size: 24px;
+  background: var(--ink);
+  box-shadow: 0 0 0 2px var(--panel-hi);
+}
+
+.logro-card.is-unlocked .logro-card__icono {
+  box-shadow: 0 0 0 2px var(--gold);
+}
+
+.logro-card__cuerpo { min-width: 0; flex: 1; }
+
+.logro-card__nombre {
+  font-family: var(--font-px);
+  font-size: 9px;
+  line-height: 1.5;
+  color: var(--bone);
+}
+
+.logro-card.is-unlocked .logro-card__nombre { color: var(--gold); }
+
+.logro-card__desc {
+  margin: 0.3rem 0 0.45rem;
+  font-size: 16px;
+  line-height: 1.15;
+  color: var(--mute);
+}
+
+.logro-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  font-size: 15px;
+  color: var(--green);
+}
+
+.logro-card__xp {
+  padding: 0.1rem 0.3rem;
+  font-family: var(--font-px);
+  font-size: 7px;
+  color: var(--ink);
+  background: var(--gold);
+}
+
+.logro-card__progreso {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 15px;
+  color: var(--mute);
+}
+
+.logro-card__progreso-track {
+  flex: 1;
+  height: 8px;
+  background: var(--ink);
+  box-shadow: inset 0 0 0 2px var(--panel-hi);
+}
+
+.logro-card__progreso-fill {
+  height: 100%;
+  background: repeating-linear-gradient(90deg, var(--violet) 0 4px, var(--violet-lo) 4px 6px);
+}
+
+/* ---------------------------------------------------------------------
+   Toast de medalla desbloqueada
+   --------------------------------------------------------------------- */
+.toast-logros {
+  position: fixed;
+  top: 0.9rem;
+  right: 0.9rem;
+  z-index: 60;
+  width: min(380px, calc(100vw - 1.8rem));
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  animation: toast-logros-in 180ms steps(3) both;
+}
+
+@keyframes toast-logros-in {
+  from { transform: translateY(-12px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.toast-logros__titulo {
+  padding: 0.6rem 0.7rem;
+  font-family: var(--font-px);
+  font-size: 10px;
+  text-align: center;
+  color: var(--ink);
+  background: var(--gold);
+  box-shadow: 0 0 0 3px var(--ink), inset 0 0 0 2px rgba(255, 255, 255, 0.5);
+}
+
+.toast-logro {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.65rem;
+  background: var(--panel);
+  box-shadow: 0 0 0 3px var(--gold), 0 0 0 6px var(--ink);
+}
+
+.toast-logro__icono {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  font-size: 24px;
+  background: var(--ink);
+  box-shadow: 0 0 0 2px var(--gold);
+}
+
+.toast-logro__texto { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
+.toast-logro__texto strong { font-family: var(--font-px); font-size: 8px; line-height: 1.5; color: var(--gold); }
+.toast-logro__texto span { font-size: 16px; line-height: 1.1; color: var(--bone); }
+.toast-logro__texto em { font-size: 15px; font-style: normal; color: var(--green); }
+
+/* ---------------------------------------------------------------------
+   Medallas en la pantalla de resultado del combate
+   --------------------------------------------------------------------- */
+.result-logros {
+  margin: 0.9rem 0;
+  padding: 0.75rem;
+  background: var(--panel-lo);
+  box-shadow: inset 0 0 0 3px var(--gold);
+}
+
+.result-logros__titulo {
+  font-family: var(--font-px);
+  font-size: 10px;
+  line-height: 1.6;
+  color: var(--gold);
+  margin-bottom: 0.5rem;
+}
+
+.result-logro {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.5rem 0;
+  box-shadow: inset 0 -2px 0 0 var(--panel-hi);
+}
+
+.result-logro:last-child { box-shadow: none; }
+.result-logro__icono { font-size: 24px; flex: 0 0 auto; }
+.result-logro div { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
+.result-logro strong { font-family: var(--font-px); font-size: 8px; line-height: 1.5; color: var(--gold); }
+.result-logro span { font-size: 16px; line-height: 1.1; color: var(--bone); }
+.result-logro__xp { margin-left: auto; font-size: 15px; font-style: normal; color: var(--green); white-space: nowrap; }
+
+@media (max-width: 640px) {
+  .logros-grid { grid-template-columns: 1fr; }
+  .logros-panel__marcador { margin-left: auto; }
+  .toast-logros { top: 0.5rem; right: 0.5rem; width: calc(100vw - 1rem); }
 }

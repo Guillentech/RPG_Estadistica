@@ -118,6 +118,27 @@ db.exec(`
     rol TEXT NOT NULL,
     creado_en DATETIME DEFAULT CURRENT_TIMESTAMP
   );
+
+  -- 🏆 Catálogo de logros y medallas del Gremio
+  CREATE TABLE IF NOT EXISTS logros (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    codigo TEXT UNIQUE NOT NULL,
+    nombre TEXT NOT NULL,
+    descripcion TEXT NOT NULL,
+    icono TEXT DEFAULT '🏅',
+    xp_bonus INTEGER DEFAULT 0,
+    orden INTEGER DEFAULT 0
+  );
+
+  -- 🏆 Medallas desbloqueadas por cada héroe
+  CREATE TABLE IF NOT EXISTS estudiante_logros (
+    estudiante_id INTEGER NOT NULL,
+    logro_id INTEGER NOT NULL,
+    fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (estudiante_id, logro_id),
+    FOREIGN KEY (estudiante_id) REFERENCES estudiantes(id) ON DELETE CASCADE,
+    FOREIGN KEY (logro_id) REFERENCES logros(id) ON DELETE CASCADE
+  );
 `);
 
 // 2. Migraciones automáticas seguras para agregar columnas RPG sin perder datos existentes
@@ -140,6 +161,9 @@ asegurarColumna('estudiantes', 'avatar', "TEXT DEFAULT 'mago'");
 asegurarColumna('temas', 'bioma', "TEXT DEFAULT 'mazmorra'");
 asegurarColumna('temas', 'coord_x', 'INTEGER DEFAULT 50');
 asegurarColumna('temas', 'coord_y', 'INTEGER DEFAULT 50');
+
+// 🎯 Objetivo de aprendizaje de cada Unidad (tomado del sílabo oficial)
+asegurarColumna('unidades', 'objetivo', "TEXT DEFAULT ''");
 
 // 🗺️ Agrupación dinámica por Unidad y posiciones en tiles (0..29 × 0..16)
 asegurarColumna('temas', 'unidad_id', 'INTEGER REFERENCES unidades(id) ON DELETE SET NULL');
@@ -202,6 +226,38 @@ if (totalEstudiantes < 3) {
   insertarCompanero.run('Leo', 'EST-LEO1', 1450, 8, 92, 'Paladín de Datos', 'guerrero');
   insertarCompanero.run('Sofía', 'EST-SOF2', 2100, 11, 98, 'Arquera Lógica', 'arquera');
   insertarCompanero.run('Ana', 'EST-ANA3', 1820, 10, 88, 'Alquimista SQL', 'mago');
+}
+
+// 6. Catálogo de logros del Gremio (idempotente: actualiza textos y recompensas)
+const LOGROS_SEMILLA = [
+  ['primer_jefe', 'Primer Sangre', 'Enfréntate a tu primer Jefe Final.', '🗡️', 50, 1],
+  ['jefe_aprobado', 'Jefe Derrotado', 'Aprueba una evaluación con 60% o más.', '⚔️', 75, 2],
+  ['nota_perfecta', 'Conjuro Perfecto', 'Obtén un 100% en una evaluación.', '💯', 150, 3],
+  ['veterano_jefes', 'Veterano de Mazmorras', 'Aprueba 3 Jefes Finales.', '🛡️', 100, 4],
+  ['primera_mision', 'Aprendiz de Laboratorio', 'Entrega tu primera misión de laboratorio.', '🎒', 40, 5],
+  ['misiones_3', 'Manos a la Obra', 'Completa 3 misiones calificadas.', '🧪', 100, 6],
+  ['misiones_seguidas', 'Racha de Laboratorio', 'Aprueba 3 misiones consecutivas con 60% o más.', '🔥', 120, 7],
+  ['nota_alta', 'Éxito Académico', 'Alcanza 80 puntos o más en la materia.', '🌟', 150, 8],
+  ['nivel_5', 'Mago de Código', 'Alcanza el nivel 5 de héroe.', '🧙', 100, 9],
+  ['nivel_10', 'Hechicero Senior', 'Alcanza el nivel 10 de héroe.', '🔮', 200, 10],
+  ['racha_7', 'Racha de 7 Días', 'Registra actividad en 7 días consecutivos.', '📅', 200, 11],
+  ['xp_2000', 'Leyenda del Gremio', 'Acumula 2000 XP de héroe.', '✨', 150, 12],
+  ['coleccionista', 'Coleccionista de Medallas', 'Desbloquea 6 logros del Gremio.', '🏆', 250, 13],
+  ['archimago', 'Archimago de Sistemas', 'Alcanza el nivel 12 de héroe.', '👑', 300, 14]
+];
+
+const insertarLogro = db.prepare(`
+  INSERT INTO logros (codigo, nombre, descripcion, icono, xp_bonus, orden)
+  VALUES (?, ?, ?, ?, ?, ?)
+  ON CONFLICT(codigo) DO UPDATE SET
+    nombre = excluded.nombre,
+    descripcion = excluded.descripcion,
+    icono = excluded.icono,
+    xp_bonus = excluded.xp_bonus,
+    orden = excluded.orden
+`);
+for (const logro of LOGROS_SEMILLA) {
+  insertarLogro.run(...logro);
 }
 
 export default db;

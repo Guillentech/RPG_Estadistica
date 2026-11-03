@@ -4,13 +4,16 @@ import { useNavigate } from 'react-router-dom';
 import {
   Backpack, Scroll, Users, Trophy, CloudLightning, Send, GraduationCap, UserRound, FileText
 } from 'lucide-react';
-import { StatBar } from '../components/rpg';
+import { StatBar, MarkdownLite, PageBackdrop } from '../components/rpg';
 import MapaGeneral from '../components/mapa/MapaGeneral';
 import MapaUnidad from '../components/mapa/MapaUnidad';
 import ModalTema from '../components/mapa/ModalTema';
 import ModalEntrega from '../components/mapa/ModalEntrega';
 import PerfilEstudiante from '../components/perfil/PerfilEstudiante';
-import { urlArchivo } from '../config';
+import LogrosPanel from '../components/perfil/LogrosPanel';
+import ToastLogros from '../components/rpg/ToastLogros';
+import { urlArchivo, API_URL } from '../config';
+import { detectarLogrosNuevos } from '../utils/logros';
 import { AlchemistWizard16Bit, AvatarHero16Bit } from '../components/mapa/Sprites';
 import { TERRENOS, terrenoDeUnidad, ANCHO_LOGICO } from '../game/terreno';
 import { esTileTransitable, puntoInicio } from '../game/mapa';
@@ -25,6 +28,11 @@ export default function PanelEstudiante() {
   const navigate = useNavigate();
   const wrapperMapaRef = useRef(null);  // Contenedor para medir la escala entera
   const esMovil = useMediaQuery('(max-width: 640px)');
+
+  useEffect(() => {
+    document.body.classList.add('student-panel-active');
+    return () => document.body.classList.remove('student-panel-active');
+  }, []);
 
   // 💡 Estados para la navegación de la barra inferior (Hotbar)
   const [vistaHotbar, setVistaHotbar] = useState('mapa');
@@ -41,6 +49,7 @@ export default function PanelEstudiante() {
   const [misEntregas, setMisEntregas] = useState([]);
   const [gremio, setGremio] = useState([]);
   const [boleta, setBoleta] = useState(null); // 📚 Boleta académica (nota 0-100 puntos)
+  const [logrosNuevos, setLogrosNuevos] = useState([]); // 🏆 Medallas recién desbloqueadas (toast)
 
   // 💡 Estados del Motor de Mapa 2D por Tiles y Ciudadelas
   const [heroPos, setHeroPos] = useState({ x: 15, y: 8 });
@@ -56,6 +65,31 @@ export default function PanelEstudiante() {
   const [preguntaAlquimista, setPreguntaAlquimista] = useState('');
   const [respuestaAlquimista, setRespuestaAlquimista] = useState('');
   const [cargandoAlquimista, setCargandoAlquimista] = useState(false);
+  const dialogoAlquimistaRef = useRef(null);
+
+  // Cada respuesta nueva sustituye a la anterior dentro del mismo panel:
+  // si el alumno había bajado en la respuesta vieja, la nueva empezaría a
+  // media lectura. Se vuelve arriba al llegar.
+  useEffect(() => {
+    if (respuestaAlquimista && dialogoAlquimistaRef.current) {
+      dialogoAlquimistaRef.current.scrollTop = 0;
+    }
+  }, [respuestaAlquimista]);
+
+  // 🏆 Revisa medallas nuevas (p. ej. si el Game Master calificó una misión)
+  const revisarLogrosNuevos = async () => {
+    if (!user?.id) return;
+    try {
+      const res = await fetch(`${API_URL}/api/estudiantes/${user.id}/logros`);
+      if (!res.ok) return;
+      const data = await res.json();
+      const nuevos = detectarLogrosNuevos(user.id, data.logros || []);
+      if (nuevos.length > 0) setLogrosNuevos(nuevos);
+      if (data.nuevos?.length > 0) refrescarEstudiante();
+    } catch {
+      // Si el servidor no responde, el héroe puede seguir usando el panel.
+    }
+  };
 
   // 💡 FUNCIÓN: Cargar toda la data de la base de datos al inicio
   const cargarDatos = () => {
@@ -82,6 +116,8 @@ export default function PanelEstudiante() {
       fetch(`http://localhost:4000/api/entregas/estudiante/${user.id}`)
         .then(r => r.json())
         .then(setMisEntregas);
+
+      revisarLogrosNuevos();
     }
   };
 
@@ -253,7 +289,9 @@ export default function PanelEstudiante() {
   const hayTormenta = examenesPendientes.length > 0 || tareasPendientes.length > 0;
 
   return (
-    <div className="container page-shell" style={{ maxWidth: '1220px' }}>
+    <div className="panel-page panel-page--student">
+      <PageBackdrop variant="student" />
+      <div className="container page-shell" style={{ maxWidth: '1220px' }}>
       
       {/* =====================================================================
           1. TOP HUD 16-BIT (AVATAR IZQ | BARRAS XP Y ENERGÍA CENTRO | CLIMA DER)
@@ -334,7 +372,7 @@ export default function PanelEstudiante() {
             />
           )}
 
-          {!unidadActiva && !esMovil && (
+          {!unidadActiva && (
             <button
               type="button"
               onClick={() => setDialogoAlquimistaAbierto(true)}
@@ -372,13 +410,28 @@ export default function PanelEstudiante() {
                 <button onClick={() => setDialogoAlquimistaAbierto(false)} className="btn-danger btn-sm">✕ Cerrar</button>
               </div>
 
-              <div className="rpg-modal__body rpg-modal__body--column">
-                <div className="ai-dialogue">
-                  {respuestaAlquimista || `🧙‍♂️ "¡Saludos, ${user?.nombre || 'Aventurero'}! Escribe cualquier duda sobre Cálculo, Programación o Estadística y te guiaré antes de que cruces la puerta de la mazmorra."`}
+              <div className="rpg-modal__body rpg-modal__body--column rpg-modal__body--chat">
+                <div className="ai-dialogue" aria-live="polite" ref={dialogoAlquimistaRef}>
+                  {respuestaAlquimista ? (
+                    <MarkdownLite>{respuestaAlquimista}</MarkdownLite>
+                  ) : (
+                    <p>
+                      🧙‍♂️ &quot;¡Saludos, {user?.nombre || 'Aventurero'}! Escribe cualquier duda sobre
+                      Cálculo, Programación o Estadística y te guiaré antes de que cruces la puerta de
+                      la mazmorra.&quot;
+                    </p>
+                  )}
                 </div>
 
                 <form onSubmit={consultarSabioAlquimista} className="ai-ask">
-                  <input type="text" className="input-pro" placeholder="Pregúntale al Sabio Alquimista..." value={preguntaAlquimista} onChange={(e) => setPreguntaAlquimista(e.target.value)} />
+                  <input
+                    type="text"
+                    className="input-pro"
+                    placeholder="Pregúntale al Sabio Alquimista..."
+                    value={preguntaAlquimista}
+                    onChange={(e) => setPreguntaAlquimista(e.target.value)}
+                    aria-label="Tu pregunta para el Sabio Alquimista"
+                  />
                   <button type="submit" disabled={cargandoAlquimista} className="btn-pro btn-pro-ai">
                     <Send size={16} /> {cargandoAlquimista ? 'Consultando...' : 'Consultar'}
                   </button>
@@ -593,28 +646,34 @@ export default function PanelEstudiante() {
       )}
 
       {vistaHotbar === 'logros' && (
-        <div className="card-pro">
-          <h3 className="pixel-font section-title section-title--gold">🏆 LOGROS Y RESULTADOS</h3>
-          <p className="section-sub">
-            📚 Escala de la materia: 0 a {NOTA_MAX} puntos. Tu nota actual es <strong>{boleta?.nota_materia ?? 0} / {NOTA_MAX} pts</strong>.
-            La XP y el nivel no afectan la nota.
-          </p>
-          {calificaciones.length === 0 && (
-            <p className="rpg-empty">Todavía no has librado ningún combate. ¡Entra a un bioma y desafía a su Jefe!</p>
-          )}
-          {calificaciones.map(cal => (
-            <div key={cal.id} className="achievement-row">
-              <div>
-                <strong className="achievement-row__title">{cal.evaluacion_titulo}</strong>
-                <span className="achievement-row__meta">
-                  Tema: {cal.tema_titulo || '—'} • +{cal.xp_ganada || 150} XP • {cal.aciertos}/{cal.total_preguntas} aciertos • 📚 {cal.puntos_ganados ?? '—'}/{cal.puntos_max ?? '—'} pts
-                </span>
+        <>
+          <LogrosPanel estudianteId={user?.id} />
+
+          <div className="card-pro">
+            <h3 className="pixel-font section-title section-title--gold">📜 HISTORIAL DE COMBATES</h3>
+            <p className="section-sub">
+              📚 Escala de la materia: 0 a {NOTA_MAX} puntos. Tu nota actual es <strong>{boleta?.nota_materia ?? 0} / {NOTA_MAX} pts</strong>.
+              La XP y el nivel no afectan la nota.
+            </p>
+            {calificaciones.length === 0 && (
+              <p className="rpg-empty">Todavía no has librado ningún combate. ¡Entra a un bioma y desafía a su Jefe!</p>
+            )}
+            {calificaciones.map(cal => (
+              <div key={cal.id} className="achievement-row">
+                <div>
+                  <strong className="achievement-row__title">{cal.evaluacion_titulo}</strong>
+                  <span className="achievement-row__meta">
+                    Tema: {cal.tema_titulo || '—'} • +{cal.xp_ganada || 150} XP • {cal.aciertos}/{cal.total_preguntas} aciertos • 📚 {cal.puntos_ganados ?? '—'}/{cal.puntos_max ?? '—'} pts
+                  </span>
+                </div>
+                <span className={`achievement-score ${cal.puntaje >= 60 ? 'is-pass' : 'is-fail'}`}>{cal.puntaje}%</span>
               </div>
-              <span className={`achievement-score ${cal.puntaje >= 60 ? 'is-pass' : 'is-fail'}`}>{cal.puntaje}%</span>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        </>
       )}
+
+      <ToastLogros logros={logrosNuevos} onClose={() => setLogrosNuevos([])} />
 
       {tareaEnEntrega && (
         <ModalEntrega
@@ -662,6 +721,7 @@ export default function PanelEstudiante() {
           <span className="pixel-font">Perfil</span>
         </button>
       </div>
+    </div>
     </div>
   );
 }

@@ -11,7 +11,7 @@ import {
   ClipboardList, Eye, Copy, PlusCircle,
   Swords, Map, UserCog, Save, UploadCloud, FileText, ImagePlus
 } from 'lucide-react';
-import { StatBar } from '../components/rpg';
+import { StatBar, PageBackdrop } from '../components/rpg';
 import { GameMasterAvatar16Bit } from '../components/mapa/Sprites';
 import { urlArchivo } from '../config';
 
@@ -43,6 +43,11 @@ const BossDragonSprite16Bit = () => (
 // 💡 COMPONENTE PRINCIPAL: PANEL DEL PROFESOR (CONSOLA GAME MASTER)
 // ============================================================================
 export default function PanelProfesor() {
+  // Fondo de consola del Game Master
+  useEffect(() => {
+    document.body.classList.add('teacher-active');
+    return () => document.body.classList.remove('teacher-active');
+  }, []);
   // Extraemos el usuario actual y la función para actualizar la foto en toda la app
   const { user, actualizarAvatar } = useAuth();
 
@@ -107,6 +112,7 @@ export default function PanelProfesor() {
   const [unidadNumero, setUnidadNumero] = useState('');
   const [unidadNombre, setUnidadNombre] = useState('');
   const [unidadDesc, setUnidadDesc] = useState('');
+  const [unidadObjetivo, setUnidadObjetivo] = useState('');
   const [unidadBioma, setUnidadBioma] = useState('pradera');
 
   const [ejTemaId, setEjTemaId] = useState('');
@@ -288,6 +294,7 @@ export default function PanelProfesor() {
         numero: Number(unidadNumero) || unidades.length + 1,
         nombre: unidadNombre.trim(),
         descripcion: unidadDesc.trim(),
+        objetivo: unidadObjetivo.trim(),
         bioma: unidadBioma
       })
     });
@@ -295,6 +302,7 @@ export default function PanelProfesor() {
       setUnidadNumero('');
       setUnidadNombre('');
       setUnidadDesc('');
+      setUnidadObjetivo('');
       cargarDatos();
       alert('¡Ciudadela levantada en el Mapa Continental!');
     } else {
@@ -502,13 +510,17 @@ export default function PanelProfesor() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ calificacion: notaNum, retroalimentacion: feedback })
     });
+    const data = await res.json().catch(() => ({}));
     if (res.ok) {
-      alert('¡Calificación guardada! El estudiante ha recibido su XP.');
+      const logros = data.logros_desbloqueados || [];
+      const detalleLogros = logros.length
+        ? `\n\n🏆 Logros desbloqueados: ${logros.map((logro) => logro.nombre).join(', ')}`
+        : '';
+      alert(`¡Calificación guardada! El estudiante ha recibido su XP.${detalleLogros}`);
       verEntregasDeTarea(tareaSeleccionada);
       cargarDatos();
     } else {
-      const err = await res.json().catch(() => ({}));
-      alert(err.error || 'Error al guardar la calificación.');
+      alert(data.error || 'Error al guardar la calificación.');
     }
   };
 
@@ -567,7 +579,9 @@ export default function PanelProfesor() {
   // 🖥️ RENDERIZADO DE LA INTERFAZ DEL GAME MASTER
   // ==========================================================================
   return (
-    <div className="container page-shell" style={{ maxWidth: '1220px' }}>
+    <div className="panel-page panel-page--teacher">
+      <PageBackdrop variant="teacher" />
+      <div className="container page-shell" style={{ maxWidth: '1220px' }}>
       
       {/* 1. TOP HUD DEL GAME MASTER */}
       <div className="hud-panel hud-panel--teacher">
@@ -865,6 +879,10 @@ export default function PanelProfesor() {
                 <div className="input-group">
                   <textarea className="input-pro" placeholder="Descripción de la Unidad..." value={unidadDesc} onChange={(e) => setUnidadDesc(e.target.value)} rows="2" />
                 </div>
+                <div className="input-group">
+                  <label className="input-label">Objetivo de aprendizaje:</label>
+                  <textarea className="input-pro" placeholder="Ej: Identificar conceptos, clasificar variables y reconocer escalas de medición." value={unidadObjetivo} onChange={(e) => setUnidadObjetivo(e.target.value)} rows="2" />
+                </div>
                 <button type="submit" className="btn-pro btn-pro-primary btn-block">Levantar Ciudadela</button>
               </form>
             </div>
@@ -933,6 +951,7 @@ export default function PanelProfesor() {
               {[...unidades.map(u => ({
                 clave: `u-${u.id}`,
                 titulo: `UNIDAD ${u.numero} · ${u.nombre}`,
+                objetivo: u.objetivo,
                 temas: temas.filter(t => t.unidad_id === u.id)
               })), {
                 clave: 'sin-unidad',
@@ -943,6 +962,9 @@ export default function PanelProfesor() {
                   <h4 className="pixel-font" style={{ fontSize: '11px', color: 'var(--gold)', margin: '0.5rem 0 0.4rem' }}>
                     {grupo.titulo} ({grupo.temas.length})
                   </h4>
+                  {grupo.objetivo && (
+                    <p className="roster-meta" style={{ margin: '0 0 0.5rem' }}>🎯 {grupo.objetivo}</p>
+                  )}
                   {grupo.temas.map(t => (
                     <div key={t.id} className="roster-item roster-item--teacher">
                       <div className="roster-item__id">
@@ -1355,6 +1377,7 @@ export default function PanelProfesor() {
         </div>
       )}
 
+    </div>
     </div>
   );
 }

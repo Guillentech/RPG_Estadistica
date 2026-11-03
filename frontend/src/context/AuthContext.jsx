@@ -43,18 +43,63 @@ export const AuthProvider = ({ children }) => {
     }
   }, [user]);
 
-  // 💡 NUEVO: Función para guardar el Avatar (Foto de perfil) en tiempo real
-  const actualizarAvatar = (avatarBase64) => {
-    if (user) {
-      const updatedUser = { ...user, avatar: avatarBase64 };
-      setUser(updatedUser);
-      localStorage.setItem('usuario_lms', JSON.stringify(updatedUser));
-      // Guardarlo de forma permanente para el profesor
-      if (user.rol === 'profesor') {
-        localStorage.setItem('avatar_lms_profesor', avatarBase64);
+// 💡 NUEVO: Función para guardar el Avatar comprimido
+const actualizarAvatar = (file) => {
+  if (!user || !file) return;
+
+  const reader = new FileReader();
+  reader.onloadend = () => {
+    const img = new Image();
+    img.onload = () => {
+      // Crear canvas para comprimir
+      const canvas = document.createElement('canvas');
+      const MAX_SIZE = 200; // tamaño para avatar es más que suficiente
+      
+      let width = img.width;
+      let height = img.height;
+
+      if (width > height) {
+        if (width > MAX_SIZE) {
+          height *= MAX_SIZE / width;
+          width = MAX_SIZE;
+        }
+      } else {
+        if (height > MAX_SIZE) {
+          width *= MAX_SIZE / height;
+          height = MAX_SIZE;
+        }
       }
-    }
+
+      canvas.width = width;
+      canvas.height = height;
+      
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+
+      // Convertir a JPG comprimido (no PNG)
+      const avatarBase64Comprimido = canvas.toDataURL('image/jpeg', 0.7);
+
+      const updatedUser = { ...user, avatar: avatarBase64Comprimido };
+      setUser(updatedUser);
+      
+      try {
+        localStorage.setItem('usuario_lms', JSON.stringify(updatedUser));
+        
+        // Ya no necesitas guardar 2 veces lo mismo
+        // Si lo necesitas separado, guarda el comprimido
+        if (user.rol === 'profesor') {
+          localStorage.setItem('avatar_lms_profesor', avatarBase64Comprimido);
+        }
+      } catch (e) {
+        console.error("Sigue excediendo la cuota", e);
+        // Plan B: no guardes el avatar en localStorage, solo en memoria
+        // o usa IndexedDB
+      }
+    };
+    img.src = reader.result;
   };
+  reader.readAsDataURL(file);
+};
 
   // 🛡️ Avatar del estudiante: persiste en SQLite para sobrevivir al cierre de sesión.
   const actualizarAvatarEstudiante = async (avatar) => {

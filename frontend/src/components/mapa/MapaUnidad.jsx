@@ -52,6 +52,9 @@ export default function MapaUnidad({
           <button type="button" className="btn-pro btn-sm" onClick={onVolver}>← Continental</button>
         </div>
         <p className="section-sub">{unidad.descripcion}</p>
+        {unidad.objetivo && (
+          <p className="unidad-objetivo"><strong>🎯 Objetivo:</strong> {unidad.objetivo}</p>
+        )}
         <div className="sendero-movil">
           {posiciones.map(({ tema }, indice) => {
             const estado = estadoTema(tema, { evaluaciones, tareas, calificaciones, entregas });
@@ -108,6 +111,11 @@ export default function MapaUnidad({
       <div className="map-banner">
         <span>{tituloUnidad}</span>
       </div>
+      {unidad.objetivo && (
+        <div className="unidad-objetivo unidad-objetivo--mapa" title={unidad.objetivo}>
+          🎯 {unidad.objetivo}
+        </div>
+      )}
       <button type="button" className="mapa-volver" onClick={onVolver}>
         ← MAPA CONTINENTAL
       </button>

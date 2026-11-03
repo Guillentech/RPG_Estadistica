@@ -7,6 +7,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import multer from 'multer';
 import db from './db.js';
+import { evaluarLogros, listarLogrosEstudiante } from './logros.js';
 
 dotenv.config();
 
@@ -142,9 +143,15 @@ const puntosAsignadosTotales = () => {
 const sincronizarProgresoEstudiante = (estudianteId) => {
   const examenes = db.prepare('SELECT COALESCE(SUM(xp_ganada), 0) as xp_eval FROM calificaciones WHERE estudiante_id = ?').get(estudianteId);
   const tareas = db.prepare('SELECT COALESCE(SUM(calificacion * 2), 0) as xp_tar FROM entregas WHERE estudiante_id = ? AND calificacion IS NOT NULL').get(estudianteId);
+  const logros = db.prepare(`
+    SELECT COALESCE(SUM(l.xp_bonus), 0) as xp_logros
+    FROM estudiante_logros el
+    JOIN logros l ON l.id = el.logro_id
+    WHERE el.estudiante_id = ?
+  `).get(estudianteId);
   
   const xpBase = 150; // XP inicial de bienvenida al gremio
-  const xpTotal = Math.round(xpBase + (examenes?.xp_eval || 0) + (tareas?.xp_tar || 0));
+  const xpTotal = Math.round(xpBase + (examenes?.xp_eval || 0) + (tareas?.xp_tar || 0) + (logros?.xp_logros || 0));
   const nuevoNivel = calcularNivel(xpTotal);
 
   const estActual = db.prepare('SELECT clase_rpg FROM estudiantes WHERE id = ?').get(estudianteId);
@@ -232,9 +239,26 @@ app.post('/api/auth/logout', (req, res) => {
 
 // Obtener datos actualizados de un estudiante (XP, Nivel, HP)
 app.get('/api/estudiantes/:id/perfil', (req, res) => {
+  evaluarLogros(req.params.id); // 🏆 Sincroniza medallas retroactivas antes de devolver el perfil
   const est = sincronizarProgresoEstudiante(req.params.id);
   if (!est) return res.status(404).json({ error: 'Estudiante no encontrado' });
   res.json(est);
+});
+
+// 🏆 LOGROS Y MEDALLAS DEL HÉROE: catálogo completo con estado y progreso
+app.get('/api/estudiantes/:id/logros', (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id) || id < 1) {
+    return res.status(400).json({ error: 'El identificador del estudiante no es válido.' });
+  }
+
+  const estudiante = db.prepare('SELECT id FROM estudiantes WHERE id = ?').get(id);
+  if (!estudiante) return res.status(404).json({ error: 'Estudiante no encontrado' });
+
+  const nuevos = evaluarLogros(id); // Desbloquea medallas pendientes y devuelve las recién ganadas
+  if (nuevos.length > 0) sincronizarProgresoEstudiante(id);
+
+  res.json({ ...listarLogrosEstudiante(id), nuevos });
 });
 
 // 🛡️ Avatar del héroe: acepta un sprite preset o una imagen Base64 (máx. 2 MB).
@@ -261,6 +285,7 @@ app.patch('/api/estudiantes/:id/avatar', (req, res) => {
 // 📚 BOLETA ACADÉMICA: desglose de la nota (0-100 puntos) por actividad con su tema de origen
 app.get('/api/estudiantes/:id/boleta', (req, res) => {
   const estudianteId = req.params.id;
+  evaluarLogros(estudianteId);
   const estudiante = sincronizarProgresoEstudiante(estudianteId);
   if (!estudiante) return res.status(404).json({ error: 'Estudiante no encontrado' });
 
@@ -372,7 +397,7 @@ app.get('/api/unidades', (req, res) => {
 });
 
 app.post('/api/unidades', (req, res) => {
-  const { numero, nombre, descripcion, bioma, pos_col, pos_fila, orden } = req.body;
+  const { numero, nombre, descripcion, objetivo, bioma, pos_col, pos_fila, orden } = req.body;
   const numeroUnidad = Math.round(Number(numero));
   if (!Number.isFinite(numeroUnidad) || numeroUnidad < 1) {
     return res.status(400).json({ error: 'El número de la Unidad debe ser un entero mayor o igual a 1.' });
@@ -387,12 +412,13 @@ app.post('/api/unidades', (req, res) => {
   }
 
   const info = db.prepare(`
-    INSERT INTO unidades (numero, nombre, descripcion, bioma, pos_col, pos_fila, orden)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO unidades (numero, nombre, descripcion, objetivo, bioma, pos_col, pos_fila, orden)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     numeroUnidad,
     nombre.trim(),
     descripcion?.trim() || '',
+    objetivo?.trim() || '',
     bioma || 'pradera',
     Number.isInteger(pos_col) ? pos_col : null,
     Number.isInteger(pos_fila) ? pos_fila : null,
@@ -406,17 +432,18 @@ app.patch('/api/unidades/:id', (req, res) => {
   const actual = db.prepare('SELECT * FROM unidades WHERE id = ?').get(req.params.id);
   if (!actual) return res.status(404).json({ error: 'La Ciudadela no existe.' });
 
-  const { nombre, descripcion, bioma, pos_col, pos_fila, orden, activa } = req.body;
+  const { nombre, descripcion, objetivo, bioma, pos_col, pos_fila, orden, activa } = req.body;
   const nuevoNombre = nombre?.trim() || actual.nombre;
   if (!nuevoNombre) return res.status(400).json({ error: 'El nombre de la Ciudadela no puede quedar vacío.' });
 
   db.prepare(`
     UPDATE unidades
-    SET nombre = ?, descripcion = ?, bioma = ?, pos_col = ?, pos_fila = ?, orden = ?, activa = ?
+    SET nombre = ?, descripcion = ?, objetivo = ?, bioma = ?, pos_col = ?, pos_fila = ?, orden = ?, activa = ?
     WHERE id = ?
   `).run(
     nuevoNombre,
     descripcion ?? actual.descripcion,
+    objetivo ?? actual.objetivo,
     bioma ?? actual.bioma,
     Number.isInteger(pos_col) ? pos_col : actual.pos_col,
     Number.isInteger(pos_fila) ? pos_fila : actual.pos_fila,
@@ -679,6 +706,7 @@ app.post('/api/evaluaciones/:id/calificar', (req, res) => {
     retroGeneral
   );
 
+  const logrosDesbloqueados = evaluarLogros(estudiante_id);
   const perfilActualizado = sincronizarProgresoEstudiante(estudiante_id);
 
   // 📚 Puntos académicos ganados en esta actividad (sobre los 100 de la materia)
@@ -696,6 +724,7 @@ app.post('/api/evaluaciones/:id/calificar', (req, res) => {
     nota_materia: perfilActualizado?.nota_materia,
     retroalimentacion: retroGeneral,
     desglose,
+    logros_desbloqueados: logrosDesbloqueados,
     estudiante: perfilActualizado
   });
 });
@@ -905,19 +934,24 @@ app.put('/api/entregas/:id/calificar', (req, res) => {
     return res.status(400).json({ error: 'La calificación debe ser un número entre 0 y 100.' });
   }
 
+  const entrega = db.prepare('SELECT estudiante_id FROM entregas WHERE id = ?').get(req.params.id);
+  if (!entrega) return res.status(404).json({ error: 'Entrega no encontrada' });
+
   db.prepare(`
     UPDATE entregas 
     SET calificacion = ?, retroalimentacion = ? 
     WHERE id = ?
   `).run(nota, retroalimentacion?.trim() || '', req.params.id);
 
-  // Actualizar XP y Nivel del estudiante al recibir nota de tarea
-  const entrega = db.prepare('SELECT estudiante_id FROM entregas WHERE id = ?').get(req.params.id);
-  if (entrega) {
-    sincronizarProgresoEstudiante(entrega.estudiante_id);
-  }
+  // 🏆 Evalúa medallas nuevas y actualiza XP/Nivel del estudiante al recibir la nota
+  const logrosDesbloqueados = evaluarLogros(entrega.estudiante_id);
+  const perfilActualizado = sincronizarProgresoEstudiante(entrega.estudiante_id);
 
-  res.json({ success: true });
+  res.json({
+    success: true,
+    logros_desbloqueados: logrosDesbloqueados,
+    estudiante: perfilActualizado
+  });
 });
 // --- COPILOTO DE IA BLINDADO (CON AUTO-FALLBACK Y MULTI-MODELO) ---
 const generarRespuestaRespaldo = (mensaje, modo) => {

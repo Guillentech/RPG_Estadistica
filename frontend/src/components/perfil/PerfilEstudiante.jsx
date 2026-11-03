@@ -3,6 +3,7 @@ import { Check, ImagePlus, Save } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { AvatarPreset } from './Avatares';
 import { AVATARES_PRESET, esAvatarImagen } from './avataresConfig';
+import LogrosPanel from './LogrosPanel';
 
 const MAX_AVATAR_BYTES = 2 * 1024 * 1024;
 const TIPOS_IMAGEN = ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];
@@ -71,6 +72,7 @@ export default function PerfilEstudiante() {
   };
 
   return (
+    <>
     <div className="card-pro">
       <div className="profile-head">
         <div className="perfil-preview">
@@ -138,5 +140,8 @@ export default function PerfilEstudiante() {
         </p>
       )}
     </div>
+
+    <LogrosPanel estudianteId={user?.id} compacto />
+    </>
   );
 }
