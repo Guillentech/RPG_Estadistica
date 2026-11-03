@@ -84,6 +84,28 @@ const validarSilabo = (silabo) => {
         throw new Error(`El jefe del tema "${tema.titulo}" debe valer al menos 1 punto.`);
       }
       puntosJefes += puntos;
+
+      if (tema.jefe.preguntas != null) {
+        if (!Array.isArray(tema.jefe.preguntas)) {
+          throw new Error(`Las preguntas del jefe del tema "${tema.titulo}" deben ser un arreglo.`);
+        }
+        for (const [indice, pregunta] of tema.jefe.preguntas.entries()) {
+          const etiqueta = `Jefe del tema "${tema.titulo}", pregunta ${indice + 1}`;
+          const texto = (valor) => String(valor ?? '').trim();
+          if (!texto(pregunta.enunciado)) {
+            throw new Error(`${etiqueta}: falta el enunciado.`);
+          }
+          for (const opcion of ['opcion_a', 'opcion_b', 'opcion_c', 'opcion_d']) {
+            if (!texto(pregunta[opcion])) {
+              throw new Error(`${etiqueta}: falta "${opcion}".`);
+            }
+          }
+          const correcta = texto(pregunta.opcion_correcta).toUpperCase();
+          if (!['A', 'B', 'C', 'D'].includes(correcta)) {
+            throw new Error(`${etiqueta}: "opcion_correcta" debe ser A, B, C o D.`);
+          }
+        }
+      }
     }
   }
 
@@ -103,11 +125,12 @@ const insertarOActualizarUnidad = (unidad) => {
   if (existente) {
     db.prepare(`
       UPDATE unidades
-      SET nombre = ?, descripcion = ?, bioma = ?, pos_col = ?, pos_fila = ?, orden = ?, activa = 1
+      SET nombre = ?, descripcion = ?, objetivo = ?, bioma = ?, pos_col = ?, pos_fila = ?, orden = ?, activa = 1
       WHERE id = ?
     `).run(
       unidad.nombre,
       unidad.descripcion || '',
+      unidad.objetivo || existente.objetivo || '',
       unidad.bioma || existente.bioma || 'pradera',
       Number.isInteger(unidad.pos_col) ? unidad.pos_col : existente.pos_col,
       Number.isInteger(unidad.pos_fila) ? unidad.pos_fila : existente.pos_fila,
@@ -118,12 +141,13 @@ const insertarOActualizarUnidad = (unidad) => {
   }
 
   const info = db.prepare(`
-    INSERT INTO unidades (numero, nombre, descripcion, bioma, pos_col, pos_fila, orden)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO unidades (numero, nombre, descripcion, objetivo, bioma, pos_col, pos_fila, orden)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     unidad.numero,
     unidad.nombre,
     unidad.descripcion || '',
+    unidad.objetivo || '',
     unidad.bioma || 'pradera',
     Number.isInteger(unidad.pos_col) ? unidad.pos_col : null,
     Number.isInteger(unidad.pos_fila) ? unidad.pos_fila : null,
@@ -207,18 +231,64 @@ const sincronizarActividad = (temaId, actividad) => {
     .run(temaId, actividad.titulo, actividad.descripcion || '', actividad.fecha_limite || 'Viernes 23:59 hrs', actividad.puntos_max);
 };
 
+const sincronizarPreguntas = (evaluacionId, preguntas = []) => {
+  const existentes = db.prepare('SELECT * FROM preguntas WHERE evaluacion_id = ? ORDER BY id').all(evaluacionId);
+  const conservadas = new Set();
+
+  for (const pregunta of preguntas) {
+    const datos = {
+      enunciado: String(pregunta.enunciado).trim(),
+      opcion_a: String(pregunta.opcion_a).trim(),
+      opcion_b: String(pregunta.opcion_b).trim(),
+      opcion_c: String(pregunta.opcion_c).trim(),
+      opcion_d: String(pregunta.opcion_d).trim(),
+      opcion_correcta: String(pregunta.opcion_correcta).trim().toUpperCase(),
+      explicacion: String(pregunta.explicacion ?? '').trim() || 'Revisa los pergaminos del tema para reforzar este concepto.'
+    };
+    const actual = existentes.find(p => !conservadas.has(p.id) && p.enunciado === datos.enunciado);
+    if (actual) {
+      db.prepare(`
+        UPDATE preguntas
+        SET opcion_a = ?, opcion_b = ?, opcion_c = ?, opcion_d = ?, opcion_correcta = ?, explicacion = ?
+        WHERE id = ?
+      `).run(datos.opcion_a, datos.opcion_b, datos.opcion_c, datos.opcion_d, datos.opcion_correcta, datos.explicacion, actual.id);
+      conservadas.add(actual.id);
+    } else {
+      const info = db.prepare(`
+        INSERT INTO preguntas (evaluacion_id, enunciado, opcion_a, opcion_b, opcion_c, opcion_d, opcion_correcta, explicacion)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(evaluacionId, datos.enunciado, datos.opcion_a, datos.opcion_b, datos.opcion_c, datos.opcion_d, datos.opcion_correcta, datos.explicacion);
+      conservadas.add(Number(info.lastInsertRowid));
+    }
+  }
+
+  // Elimina preguntas que ya no forman parte del banco oficial (solo las no conservadas).
+  for (const actual of existentes) {
+    if (!conservadas.has(actual.id)) {
+      db.prepare('DELETE FROM preguntas WHERE id = ?').run(actual.id);
+    }
+  }
+};
+
 const sincronizarJefe = (temaId, jefe) => {
   if (!jefe) return;
   const existente = db.prepare('SELECT * FROM evaluaciones WHERE tema_id = ? AND titulo = ?').get(temaId, jefe.titulo);
+  let evaluacionId;
   if (existente) {
     db.prepare('UPDATE evaluaciones SET nombre_jefe = ?, puntos_max = ?, xp_recompensa = ? WHERE id = ?')
       .run(jefe.nombre_jefe || existente.nombre_jefe, jefe.puntos_max, jefe.xp_recompensa || existente.xp_recompensa, existente.id);
-    return;
+    evaluacionId = existente.id;
+  } else {
+    const info = db.prepare(`
+      INSERT INTO evaluaciones (tema_id, titulo, nombre_jefe, puntos_max, xp_recompensa, es_jefe_final, fecha_limite)
+      VALUES (?, ?, ?, ?, ?, 1, '24h')
+    `).run(temaId, jefe.titulo, jefe.nombre_jefe || jefe.titulo, jefe.puntos_max, jefe.xp_recompensa || 300);
+    evaluacionId = Number(info.lastInsertRowid);
   }
-  db.prepare(`
-    INSERT INTO evaluaciones (tema_id, titulo, nombre_jefe, puntos_max, xp_recompensa, es_jefe_final, fecha_limite)
-    VALUES (?, ?, ?, ?, ?, 1, '24h')
-  `).run(temaId, jefe.titulo, jefe.nombre_jefe || jefe.titulo, jefe.puntos_max, jefe.xp_recompensa || 300);
+
+  if (Array.isArray(jefe.preguntas)) {
+    sincronizarPreguntas(evaluacionId, jefe.preguntas);
+  }
 };
 
 const ejecutarImportacion = (silabo, resumen) => {
@@ -257,6 +327,7 @@ try {
   console.log(`🗺️  Unidades: ${silabo.unidades.length} · Temas: ${silabo.temas.length}`);
   console.log(`📜 Subtemas: ${silabo.temas.reduce((total, t) => total + (t.subtemas?.length || 0), 0)}`);
   console.log(`🎒 Actividades: ${silabo.temas.filter(t => t.actividad).length} · ⚔️ Jefes: ${silabo.temas.filter(t => t.jefe).length}`);
+  console.log(`❓ Preguntas de jefe: ${silabo.temas.reduce((total, t) => total + (t.jefe?.preguntas?.length || 0), 0)}`);
   console.log(`📚 Presupuesto: ${resumen.puntosTareas} + ${resumen.puntosJefes} = ${resumen.total}/${NOTA_MAX} puntos.`);
 
   if (dryRun) {

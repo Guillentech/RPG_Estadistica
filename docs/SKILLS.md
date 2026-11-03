@@ -21,18 +21,121 @@ las necesita**, así que no consumen contexto de forma permanente.
 | `frontend-design` | anthropics/skills | Dirección visual intencional; evita el "AI slop". |
 | `security-review` | affaan-m/ECC | Checklist de secretos, auth, input, endpoints y pagos. |
 | `skill-creator` | anthropics/skills | Crear/editar/medir skills propias del proyecto. |
+| `ui-ux-pro-max` | nextlevelbuilder/ui-ux-pro-max-skill | Jerarquía visual, paletas, tipografías, guías UX y recomendaciones por stack. Trae un buscador local en Python. |
+| `ui-styling` | nextlevelbuilder (mismo paquete) | shadcn/ui + Tailwind 4, temas, dark mode, componentes accesibles. |
+| `design-system` | nextlevelbuilder (mismo paquete) | Tokens en tres capas (primitive → semantic → component) y especificación de componentes. |
+| `design` | nextlevelbuilder (mismo paquete) | Logo, identidad corporativa, iconos, banners y social photos. |
+| `brand` | nextlevelbuilder (mismo paquete) | Voz de marca, identidad visual y consistencia de assets. |
+| `banner-design` | nextlevelbuilder (mismo paquete) | Banners por plataforma y formato (web, social, print). |
+| `slides` | nextlevelbuilder (mismo paquete) | Presentaciones HTML con Chart.js y tokens de diseño. |
 
 ## Cuándo usar cada una
 
 - **Antes de implementar**: `grilling` → `tdd`.
 - **Al terminar**: `code-review` → `verification-before-completion`.
 - **Algo se rompe**: `systematic-debugging`.
-- **UI/UX**: `frontend-design` (dirección) + `web-design-guidelines` (auditoría) + `vercel-react-best-practices` (rendimiento).
+- **UI/UX**: `ui-ux-pro-max` (dirección y datos) + `frontend-design` (evitar el "AI slop") + `ui-styling` (Tailwind/shadcn) + `web-design-guidelines` (auditoría) + `vercel-react-best-practices` (rendimiento).
+- **Tokens o tema nuevo**: `design-system`.
 - **Auth, XP, endpoints de alumno/profesor**: `security-review`.
 - **Sesión larga**: `handoff`.
 - **Skill nueva del dominio (ej. motor de corrección RPG)**: `skill-creator`.
 
 Se pueden invocar explícitamente con `@id` en el prompt (por ejemplo `@tdd`).
+
+### `ui-ux-pro-max`: buscador local
+
+La skill trae una base de datos local y un script de búsqueda. **En Windows el comando es `python`, no `python3`** (Python 3.15 está instalado y verificado en esta máquina):
+
+```powershell
+# Sistema de diseño completo (patrón + estilo + colores + tipografía + anti-patrones)
+python "$env:USERPROFILE\.config\opencode\skills\ui-ux-pro-max\scripts\search.py" "gamified LMS dashboard" --design-system -p "Saga Academica"
+
+# Consultas puntuales
+python "$env:USERPROFILE\.config\opencode\skills\ui-ux-pro-max\scripts\search.py" "pixel art retro" --domain style
+python "$env:USERPROFILE\.config\opencode\skills\ui-ux-pro-max\scripts\search.py" "badge overflow nowrap" --domain ux
+python "$env:USERPROFILE\.config\opencode\skills\ui-ux-pro-max\scripts\search.py" "responsive layout" --stack react
+```
+
+Salida real para este proyecto (`"gamified LMS academic RPG dashboard"`):
+
+- Estilo: **Flat Design** (2D, minimalista, icon-heavy) — coherente con el mapa de sprites.
+- Colores: primario `#0D9488`, acento `#D97706`, fondo `#F0FDFA`, texto `#134E4A`.
+- Tipografía: **Crimson Pro / Atkinson Hyperlegible** (académica y legible).
+
+Es orientativo, no una orden: el HUD del juego manda sobre la estética y las tablas académicas mandan sobre el contraste.
+
+> Las otras seis skills del paquete (`ui-styling`, `design-system`, `design`, `brand`, `banner-design`, `slides`) se instalaron junto con `ui-ux-pro-max`. Algunas asumen la versión premium del proyecto (branding, logos, banners) y pueden pedir APIs externas; si no las usas, bórralas de `~/.config/opencode/skills/`.
+
+## Servidores MCP
+
+Configuración global en `~/.config/opencode/opencode.jsonc`, bajo `mcp.servers`.
+OpenCode recarga la configuración al guardar; no hace falta reiniciar.
+
+| Servidor | Estado | Para qué sirve |
+| --- | --- | --- |
+| `playwright` | **Activo, verificado** | Abrir `localhost`, hacer clic, tomar capturas y detectar si el HUD o un cuadro de diálogo se desborda. |
+| `figma` | **Inactivo** (falta clave) | Lee nodos, medidas y estilos de un archivo de Figma y los traduce a componentes. |
+| `21st` | **Inactivo** (falta clave) | Busca e instala componentes React del catálogo de 21st.dev (antes "Magic"). |
+
+Verificación hecha en esta máquina: `mcp connected server=playwright tools=33` en
+`~/.local/share/opencode/log/opencode.log`, más una navegación real
+(`playwright_navigate` → `playwright_get_visible_text` → `playwright_close`).
+
+### Por qué no se usa `npx` en tiempo de ejecución
+
+La primera versión lanzaba los servidores con `npx -y ...`. Falló: cada sesión y cada
+directorio de OpenCode arrancan su propia instancia, y varias instalaciones simultáneas
+en la misma carpeta de caché de npm se pisan (`ENOTEMPTY`, `EPERM`, `Request timed out`).
+
+Solución aplicada: los paquetes están preinstalados una sola vez y el servidor se lanza
+con `node` sobre su entrypoint.
+
+```text
+~/.config/opencode/mcp/
+├── playwright/   # @executeautomation/playwright-mcp-server → dist/index.js
+└── figma/        # figma-developer-mcp → dist/bin.js
+```
+
+Para reinstalar o actualizar:
+
+```powershell
+$base = "$env:USERPROFILE\.config\opencode\mcp"
+npm --prefix "$base\playwright" install @executeautomation/playwright-mcp-server@latest
+node "$base\playwright\node_modules\playwright\cli.js" install chromium
+npm --prefix "$base\figma" install figma-developer-mcp@latest
+```
+
+### Activar Figma y 21st.dev
+
+`@21st-dev/magic` ya **no** es el paquete recomendado: npm lo publica solo como proxy de
+compatibilidad para configuraciones viejas. El servidor actual es remoto
+(`https://21st.dev/api/mcp`) y se autentica con la cabecera `x-api-key`; eso es lo que
+está configurado.
+
+Las claves nunca se escriben en el archivo: se leen de variables de entorno.
+
+```powershell
+setx FIGMA_API_KEY "figd_..."   # https://help.figma.com/hc/en-us/articles/8085703771159
+setx 21ST_API_KEY "..."         # https://21st.dev/mcp
+```
+
+Cierra y vuelve a abrir la terminal, y luego quita `"disabled": true` del servidor
+correspondiente en `opencode.jsonc`. Comprueba el estado con `/mcps` dentro de OpenCode.
+
+### Detalles de Windows
+
+- El `--stdio` de `figma-developer-mcp` es obligatorio.
+- `figma-developer-mcp` lee `FIGMA_API_KEY` del entorno; sin ella aborta con
+  *"Either FIGMA_API_KEY or FIGMA_OAUTH_TOKEN is required"*.
+- Los navegadores de Playwright quedan en `%LOCALAPPDATA%\ms-playwright` (Chromium,
+  Firefox y WebKit ya descargados).
+- `node` se resuelve como `node.exe`; `npx` no, porque es `npx.cmd` y necesita `cmd /c`.
+
+### Solapamiento con el navegador integrado
+
+OpenCode ya trae herramientas de navegador (abrir pestañas, capturas, consola, red).
+`playwright` añade control más fino y grabación de tests, pero ocupa contexto: si no lo
+usas, ponlo en `"disabled": true` o bórralo del archivo.
 
 ## Comandos globales
 
@@ -88,9 +191,26 @@ la plantilla del prompt y `$ARGUMENTS` se sustituye por lo que escribas tras el 
 | vercel-labs/agent-skills | MIT (declarada en el frontmatter de cada skill) |
 | anthropics/skills | Apache 2.0 (los `LICENSE.txt` se conservan junto a cada skill) |
 | affaan-m/ECC | MIT |
+| nextlevelbuilder/ui-ux-pro-max-skill | MIT |
 
 Los archivos se copiaron sin modificar, salvo `grill-me` y `handoff`, a los que se les quitó
 `disable-model-invocation: true` para que OpenCode pueda anunciarlas al modelo.
+
+Del paquete `ui-ux-pro-max` solo se cambió una cosa: las rutas internas de `SKILL.md`
+apuntaban a `~/.opencode/skills/`, que **no** es una carpeta que OpenCode descubra. El
+instalador deja ahí las skills, así que hay que moverlas a `~/.config/opencode/skills/`
+y reescribir esas rutas:
+
+```powershell
+npx -y ui-ux-pro-max-cli@latest init --ai opencode --global
+$dst = "$env:USERPROFILE\.config\opencode\skills"
+Get-ChildItem "$env:USERPROFILE\.opencode\skills" -Directory | ForEach-Object {
+  Move-Item $_.FullName "$dst\$($_.Name)" -Force
+}
+Remove-Item "$env:USERPROFILE\.opencode" -Recurse -Force
+$f = "$dst\ui-ux-pro-max\SKILL.md"
+(Get-Content -Raw $f) -replace '~/\.opencode/skills/', '~/.config/opencode/skills/' | Set-Content -NoNewline $f
+```
 
 ## Actualizar
 

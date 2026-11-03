@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { AlertCircle, KeyRound, Sparkles } from 'lucide-react';
+import { PageBackdrop } from '../components/rpg';
 
 // 💡 Sprite Pixel Art 16-bit: El Grimorio del Game Master
 const GrimoireSprite = () => (
@@ -25,6 +26,11 @@ export default function LoginProfesor() {
 
   const { user, loginProfesor } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.body.classList.add('auth-teacher-active');
+    return () => document.body.classList.remove('auth-teacher-active');
+  }, []);
 
   useEffect(() => {
     if (user && user.rol === 'profesor') navigate('/panel-profesor');
@@ -59,6 +65,7 @@ export default function LoginProfesor() {
 
   return (
     <div className="auth-shell">
+      <PageBackdrop variant="auth-teacher" />
       <div className="auth-panel auth-panel--teacher">
 
         <div className="auth-head">

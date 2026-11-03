@@ -6,7 +6,8 @@
       "descripcion": "UNIDAD I. Tipos de variables y niveles de medición",
       "bioma": "pradera",
       "pos_col": 7,
-      "pos_fila": 4
+      "pos_fila": 4,
+      "objetivo": "Identificar los conceptos fundamentales de la estadística, clasificar los tipos de variables y reconocer las escalas de medición utilizadas en la recopilación y organización de información."
     },
     {
       "numero": 2,
@@ -14,7 +15,8 @@
       "descripcion": "UNIDAD II. Distribuciones de frecuencias unidimensionales",
       "bioma": "valle",
       "pos_col": 22,
-      "pos_fila": 4
+      "pos_fila": 4,
+      "objetivo": "Organizar, resumir y representar información estadística mediante tablas de distribución de frecuencias, gráficos y medidas descriptivas."
     },
     {
       "numero": 3,
@@ -22,7 +24,8 @@
       "descripcion": "UNIDAD III. Distribuciones de frecuencias bidimensionales",
       "bioma": "bosque",
       "pos_col": 7,
-      "pos_fila": 12
+      "pos_fila": 12,
+      "objetivo": "Analizar la relación existente entre dos variables estadísticas mediante tablas de contingencia, distribuciones conjuntas, gráficos, correlación y regresión lineal simple."
     },
     {
       "numero": 4,
@@ -30,7 +33,8 @@
       "descripcion": "UNIDAD IV. Indicadores y números índices",
       "bioma": "ciudadela",
       "pos_col": 22,
-      "pos_fila": 12
+      "pos_fila": 12,
+      "objetivo": "Construir e interpretar indicadores y números índices para analizar información económica, social, ambiental y relacionada con las tecnologías de información y comunicación."
     }
   ],
   "temas": [
@@ -39,220 +43,1535 @@
       "orden": 1,
       "titulo": "Tema 1.1. Introducción a la estadística",
       "descripcion": "Concepto, importancia, contexto histórico y aplicaciones de la estadística en la sociedad (economía, ciencias sociales, informática). Estadística descriptiva e inferencial.",
-      "subtemas": ["Concepto e importancia", "Contexto histórico", "Aplicaciones en informática y sociedad", "Descriptiva vs Inferencial"],
-      "actividad": { "titulo": "Actividad 1.1: Glosario Estadístico", "descripcion": "Elaborar un glosario con los conceptos estadísticos fundamentales discutidos en clase.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+      "subtemas": [
+        {
+          "titulo": "Concepto de estadística",
+          "contenido": "La estadística es la disciplina que se ocupa de recolectar, organizar, presentar y analizar datos para obtener conclusiones y apoyar la toma de decisiones. Trabaja con información numérica o categórica obtenida de la realidad y la transforma en conocimiento útil. Por ejemplo, calcular el promedio de calificaciones de un curso es una aplicación básica de esta ciencia."
+        },
+        {
+          "titulo": "Importancia de la estadística",
+          "contenido": "La estadística es importante porque permite resumir grandes volúmenes de información y detectar patrones que no se ven a simple vista. Sustenta decisiones en salud, educación, economía y tecnología con evidencia y no con intuición. Además, facilita comparar situaciones, evaluar resultados y comunicar hallazgos de forma clara mediante tablas y gráficos."
+        },
+        {
+          "titulo": "Contexto histórico de la estadística",
+          "contenido": "La estadística nace vinculada al recuento de población y bienes en antiguas civilizaciones como Egipto, China y Roma. Su desarrollo moderno se asocia a los censos del siglo XVII y a los trabajos de Pascal, Laplace y Gauss sobre probabilidad. En el siglo XX, Pearson, Fisher y otros consolidaron la inferencia y el diseño experimental, dando forma a la estadística actual."
+        },
+        {
+          "titulo": "Aplicaciones de la estadística en la sociedad",
+          "contenido": "La estadística se aplica en casi todos los ámbitos de la vida social: encuestas de opinión, campañas de salud pública, planificación urbana y evaluación de políticas. Los medios usan tasas y porcentajes para describir fenómenos como el desempleo o la inflación. También permite detectar desigualdades y medir el impacto de programas sociales con datos verificables."
+        },
+        {
+          "titulo": "Aplicaciones en la economía, ciencias sociales, ciencias naturales e informática",
+          "contenido": "En economía la estadística mide inflación, producto interno bruto y desempleo; en ciencias sociales analiza encuestas y comportamientos; en ciencias naturales apoya experimentos y estudios de población; y en informática sustenta la minería de datos, el aprendizaje automático y la evaluación de sistemas. Un ejemplo es usar la media y la desviación estándar para comparar el rendimiento de dos algoritmos."
+        },
+        {
+          "titulo": "Estadística descriptiva y análisis inferencial",
+          "contenido": "La estadística descriptiva organiza, resume y representa los datos de una muestra o población mediante tablas, gráficos y medidas como la media. La estadística inferencial, en cambio, usa los resultados de una muestra para estimar o probar hipótesis sobre la población, apoyándose en la probabilidad. Por ejemplo, describir las edades de un grupo es descriptivo; estimar la edad media de toda una ciudad es inferencial."
+        }
+      ],
+      "actividad": {
+        "titulo": "Actividad 1.1: Glosario Estadístico",
+        "descripcion": "Elaborar un glosario con los conceptos estadísticos fundamentales discutidos en clase.",
+        "puntos_max": 2,
+        "fecha_limite": "Viernes 23:59 hrs"
+      }
     },
     {
       "unidad_numero": 1,
       "orden": 2,
       "titulo": "Tema 1.2. Conceptos básicos de estadística",
       "descripcion": "Estudio de poblaciones, muestras, unidades estadísticas, individuos, datos, variables, atributos y conjuntos de datos.",
-      "subtemas": ["Población y Muestra", "Unidad estadística e Individuo", "Dato y Variable", "Atributos y características"],
-      "actividad": { "titulo": "Actividad 1.2: Análisis de Base de Datos", "descripcion": "Identificar las variables presentes dentro de una base de datos real proporcionada.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+      "subtemas": [
+        {
+          "titulo": "Población",
+          "contenido": "Población es el conjunto completo de individuos, objetos o elementos que presentan una característica común y sobre el cual se desea obtener información. Puede ser finita, como los estudiantes de una carrera, o infinita, como los resultados posibles de un proceso. Se representa con la letra N cuando se refiere al tamaño total de la población."
+        },
+        {
+          "titulo": "Muestra",
+          "contenido": "La muestra es un subconjunto representativo de la población, seleccionado para estudiarlo y generalizar los resultados. Se denota con la letra n y debe elegirse con técnicas de muestreo adecuadas para evitar sesgos. Por ejemplo, encuestar a 200 de los 5000 estudiantes de una universidad para conocer sus hábitos de estudio."
+        },
+        {
+          "titulo": "Unidad estadística",
+          "contenido": "La unidad estadística es el elemento individual sobre el cual se recogen los datos y que se somete a observación. Puede ser una persona, una empresa, una familia, una máquina o un registro. Por ejemplo, en un estudio sobre ventas tecnológicas, cada tienda de la cadena puede constituir una unidad estadística."
+        },
+        {
+          "titulo": "Individuo o elemento de estudio",
+          "contenido": "El individuo o elemento de estudio es cada uno de los componentes que forman la población o la muestra. Es la entidad concreta de la que se obtiene la información y suele coincidir con la unidad estadística. En un censo escolar, cada estudiante matriculado es un individuo de la población estudiada."
+        },
+        {
+          "titulo": "Dato estadístico",
+          "contenido": "El dato estadístico es el valor o registro que se obtiene al observar una característica en una unidad de estudio. Puede ser numérico o categórico y por sí solo dice poco; adquiere sentido cuando se agrupa y procesa. Por ejemplo, la edad de 20 años de un estudiante es un dato dentro de una encuesta."
+        },
+        {
+          "titulo": "Variable estadística",
+          "contenido": "Una variable estadística es la característica que se observa o mide en las unidades de estudio y que puede tomar distintos valores. Se simboliza con letras como X, Y o Z y puede ser cualitativa o cuantitativa. Por ejemplo, el nivel de estudios, la estatura o el número de hijos son variables de una encuesta."
+        },
+        {
+          "titulo": "Atributos y características",
+          "contenido": "Los atributos son las propiedades cualitativas que distinguen a los elementos de una población, como el sexo, la profesión o el estado civil. Las características abarcan tanto atributos como rasgos cuantificables, por ejemplo el peso o el ingreso. En la práctica, el atributo se describe con palabras y la característica cuantitativa se mide con números."
+        },
+        {
+          "titulo": "Conjuntos de datos",
+          "contenido": "Un conjunto de datos es la agrupación organizada de los valores obtenidos para una o varias variables en un grupo de unidades. Suele presentarse en tablas o matrices donde las filas son individuos y las columnas son variables. Por ejemplo, una base con las notas, edades y carreras de 500 estudiantes forma un conjunto de datos."
+        }
+      ],
+      "actividad": {
+        "titulo": "Actividad 1.2: Análisis de Base de Datos",
+        "descripcion": "Identificar las variables presentes dentro de una base de datos real proporcionada.",
+        "puntos_max": 2,
+        "fecha_limite": "Viernes 23:59 hrs"
+      }
     },
     {
       "unidad_numero": 1,
       "orden": 3,
       "titulo": "Tema 1.3. Tipos de datos y variables estadísticas",
       "descripcion": "Clasificación de variables cualitativas y cuantitativas (discretas y continuas). Diferencias e identificación en entornos reales.",
-      "subtemas": ["Variables cualitativas", "Variables cuantitativas", "Discretas y continuas", "Casos de la vida real"],
-      "actividad": { "titulo": "Actividad 1.3: Clasificación de Variables", "descripcion": "Clasificar un listado de variables según su naturaleza y nivel de medición.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+      "subtemas": [
+        {
+          "titulo": "Concepto de variable",
+          "contenido": "Una variable es una característica de la población o muestra que puede asumir diferentes valores o categorías. Su variación es lo que permite comparar y analizar los elementos estudiados. Por ejemplo, la variable temperatura de un servidor puede tomar valores distintos en cada hora de medición."
+        },
+        {
+          "titulo": "Variables cualitativas",
+          "contenido": "Las variables cualitativas describen atributos o cualidades que no se expresan con números, sino con categorías o etiquetas. Pueden ser nominales, si no hay orden, u ordinales, si existe jerarquía. Por ejemplo, el tipo de sistema operativo o el nivel de satisfacción de un usuario son variables cualitativas."
+        },
+        {
+          "titulo": "Variables cuantitativas",
+          "contenido": "Las variables cuantitativas expresan cantidades numéricas sobre las que se pueden realizar operaciones aritméticas. Se dividen en discretas, cuando surgen de un conteo, y continuas, cuando provienen de una medición. Por ejemplo, el número de equipos de una oficina es cuantitativa discreta y el consumo de energía en kilovatios es continua."
+        },
+        {
+          "titulo": "Variables discretas",
+          "contenido": "Las variables discretas solo admiten valores enteros o separados entre sí, generalmente producto de un conteo. No tienen sentido las fracciones entre dos valores consecutivos. Por ejemplo, el número de hijos por familia, de empleados por empresa o de computadoras por laboratorio son variables discretas."
+        },
+        {
+          "titulo": "Variables continuas",
+          "contenido": "Las variables continuas pueden tomar cualquier valor dentro de un intervalo, incluidos los decimales, porque provienen de una medición. Entre dos valores siempre es posible encontrar otro valor intermedio. Por ejemplo, la estatura en metros, el peso en kilogramos o la latencia de una red en milisegundos son variables continuas."
+        },
+        {
+          "titulo": "Diferencias entre datos cualitativos y cuantitativos",
+          "contenido": "Los datos cualitativos describen categorías y se analizan con frecuencias y porcentajes, mientras que los cuantitativos se expresan con números y admiten medidas como la media. La diferencia clave está en que solo los datos cuantitativos permiten operaciones aritméticas con sentido. Por ejemplo, se puede promediar la edad, pero no el estado civil."
+        },
+        {
+          "titulo": "Identificación de variables en situaciones reales",
+          "contenido": "Identificar variables en situaciones reales exige observar qué se mide y cómo se expresa el resultado. Si la respuesta es una categoría, la variable es cualitativa; si es un número contable, es discreta; si surge de un instrumento de medición, es continua. Por ejemplo, en un hospital se registran el grupo sanguíneo, el número de visitas y la temperatura del paciente."
+        }
+      ],
+      "actividad": {
+        "titulo": "Actividad 1.3: Clasificación de Variables",
+        "descripcion": "Clasificar un listado de variables según su naturaleza y nivel de medición.",
+        "puntos_max": 2,
+        "fecha_limite": "Viernes 23:59 hrs"
+      }
     },
     {
       "unidad_numero": 1,
       "orden": 4,
       "titulo": "Tema 1.4. Niveles o escalas de medición",
       "descripcion": "Estudio detallado de las escalas nominal, ordinal, de intervalo y de razón. Características y diferencias prácticas.",
-      "subtemas": ["Escala nominal y ordinal", "Escala de intervalo y razón", "Diferencias clave", "Ejemplos prácticos"],
-      "actividad": { "titulo": "Actividad 1.4: Taller de Escalas", "descripcion": "Resolver la guía práctica sobre emparejamiento de variables con sus respectivos niveles de medición.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+      "subtemas": [
+        {
+          "titulo": "Escala nominal",
+          "contenido": "La escala nominal clasifica los elementos en categorías sin orden ni jerarquía, y solo permite distinguir igualdad o diferencia. Los valores son etiquetas y no admiten operaciones aritméticas. Por ejemplo, el sexo, el estado civil o el tipo de sangre son variables medidas en escala nominal."
+        },
+        {
+          "titulo": "Escala ordinal",
+          "contenido": "La escala ordinal ordena las categorías según una jerarquía, aunque no garantiza que las distancias entre niveles sean iguales. Permite comparar mayor o menor, pero no sumar ni restar los valores. Por ejemplo, el nivel de satisfacción bajo, medio y alto, o el grado académico alcanzado, se miden en escala ordinal."
+        },
+        {
+          "titulo": "Escala de intervalo",
+          "contenido": "La escala de intervalo tiene categorías ordenadas y distancias iguales entre valores, pero su cero es arbitrario y no indica ausencia de la característica. Permite sumar y restar, mas no multiplicar o dividir con sentido. Por ejemplo, la temperatura en grados Celsius, donde 0 °C no significa ausencia de calor."
+        },
+        {
+          "titulo": "Escala de razón",
+          "contenido": "La escala de razón posee orden, distancias iguales y un cero absoluto que representa la ausencia real de la característica. Por ello admite todas las operaciones aritméticas, incluidas razones y proporciones. Por ejemplo, el peso, la estatura, el ingreso y el tiempo en segundos se miden en escala de razón."
+        },
+        {
+          "titulo": "Características de cada escala",
+          "contenido": "Cada escala se distingue por las propiedades que conserva: identidad en la nominal, orden en la ordinal, distancia en la de intervalo y cero absoluto en la de razón. A mayor nivel de medición, más operaciones estadísticas son válidas. Por ejemplo, solo con escala de razón se puede afirmar que 80 kg es el doble de 40 kg."
+        },
+        {
+          "titulo": "Diferencias entre los niveles de medición",
+          "contenido": "La diferencia principal entre los niveles de medición radica en las operaciones permitidas y en la naturaleza del cero. La nominal solo agrupa, la ordinal ordena, la de intervalo mide distancias y la de razón permite proporciones. Elegir mal la escala lleva a interpretaciones erróneas, como promediar códigos postales o afirmar que 30 °C es el doble de 15 °C."
+        },
+        {
+          "titulo": "Ejemplos prácticos de aplicación",
+          "contenido": "En un mismo estudio conviven varias escalas: el tipo de conexión es nominal, la calidad del servicio es ordinal, la temperatura del equipo es de intervalo y el tiempo de descarga es de razón. Reconocerlas orienta el análisis descriptivo adecuado. Por ejemplo, para el tipo de conexión se usan frecuencias y para el tiempo de descarga se puede calcular la media."
+        }
+      ],
+      "actividad": {
+        "titulo": "Actividad 1.4: Taller de Escalas",
+        "descripcion": "Resolver la guía práctica sobre emparejamiento de variables con sus respectivos niveles de medición.",
+        "puntos_max": 2,
+        "fecha_limite": "Viernes 23:59 hrs"
+      }
     },
     {
       "unidad_numero": 1,
       "orden": 5,
       "titulo": "Tema 1.5. Técnicas de adquisición de datos",
       "descripcion": "Concepto de recolección, fuentes de información primarias y secundarias. Organización inicial de la información.",
-      "subtemas": ["Fuentes primarias y secundarias", "Técnicas de adquisición", "Organización de información", "Selección de variables"],
-      "actividad": { "titulo": "Actividad 1.5: Selección de Variables", "descripcion": "Definir y seleccionar las variables idóneas para iniciar una investigación estadística.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+      "subtemas": [
+        {
+          "titulo": "Concepto de recolección de datos",
+          "contenido": "La recolección de datos es el proceso sistemático de obtener información de las unidades de estudio mediante instrumentos y procedimientos definidos. Debe ser confiable, ordenada y coherente con los objetivos de la investigación. Por ejemplo, aplicar una encuesta estandarizada a los usuarios de una plataforma para medir su satisfacción."
+        },
+        {
+          "titulo": "Fuentes de información",
+          "contenido": "Las fuentes de información son los lugares o medios de donde provienen los datos. Pueden ser primarias, cuando el investigador las genera directamente, o secundarias, cuando reutiliza información ya recopilada por otros. Por ejemplo, una encuesta propia es fuente primaria y un anuario estadístico oficial es fuente secundaria."
+        },
+        {
+          "titulo": "Técnicas de adquisición de datos",
+          "contenido": "Las técnicas de adquisición de datos son los métodos empleados para obtener información, como la encuesta, la entrevista, la observación, el experimento y la revisión documental. Cada técnica se elige según el objetivo, el tipo de variable y los recursos disponibles. Por ejemplo, la observación directa sirve para registrar el uso de equipos en un laboratorio."
+        },
+        {
+          "titulo": "Recolección de información primaria y secundaria",
+          "contenido": "La recolección primaria obtiene datos nuevos directamente de la realidad mediante instrumentos diseñados para el estudio. La secundaria trabaja con datos ya publicados o registrados por otras instituciones, como censos, informes o bases de datos. Por ejemplo, aplicar un cuestionario es recolección primaria, mientras consultar registros del INE es secundaria."
+        },
+        {
+          "titulo": "Organización de información estadística",
+          "contenido": "La organización de la información estadística consiste en clasificar, codificar y ordenar los datos obtenidos para que puedan analizarse con claridad. Incluye la depuración de errores, la asignación de códigos y la construcción de tablas iniciales. Por ejemplo, convertir las respuestas de una encuesta en una matriz con una fila por participante y una columna por variable."
+        },
+        {
+          "titulo": "Selección de variables para una investigación",
+          "contenido": "Seleccionar variables para una investigación implica definir cuáles responden al problema planteado y pueden medirse de forma confiable. Deben ser pertinentes, suficientes y operacionalizables en indicadores concretos. Por ejemplo, para estudiar la brecha digital se eligen el acceso a internet, el tipo de dispositivo y la frecuencia de uso."
+        }
+      ],
+      "actividad": {
+        "titulo": "Actividad 1.5: Selección de Variables",
+        "descripcion": "Definir y seleccionar las variables idóneas para iniciar una investigación estadística.",
+        "puntos_max": 2,
+        "fecha_limite": "Viernes 23:59 hrs"
+      }
     },
     {
       "unidad_numero": 1,
       "orden": 6,
       "titulo": "Tema 1.6. Elaboración de cuestionarios",
       "descripcion": "Diseño de instrumentos, tipos de preguntas (abiertas/cerradas), organización, estructura y métodos de validación.",
-      "subtemas": ["Concepto y características", "Preguntas abiertas y cerradas", "Diseño de instrumentos", "Validación"],
-      "actividad": { "titulo": "Actividad 1.6: Diseño de Instrumento", "descripcion": "Diseñar un cuestionario estructurado para recopilar información y presentar el informe del instrumento.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" },
-      "jefe": { "titulo": "Jefe de la Unidad I", "nombre_jefe": "Guardián de las Variables", "puntos_max": 10, "xp_recompensa": 300 }
+      "subtemas": [
+        {
+          "titulo": "Concepto de cuestionario",
+          "contenido": "Un cuestionario es un instrumento formado por un conjunto ordenado de preguntas que se aplica a las unidades de estudio para recoger información de manera uniforme. Permite estandarizar las respuestas y facilitar su posterior tabulación. Por ejemplo, el formulario que completa un cliente para evaluar un servicio técnico es un cuestionario."
+        },
+        {
+          "titulo": "Características de un cuestionario",
+          "contenido": "Un cuestionario debe ser claro, breve, ordenado y pertinente al objetivo del estudio. Sus preguntas tienen que ser comprensibles, no ambiguas ni tendenciosas, y el lenguaje debe adaptarse al público. Por ejemplo, conviene evitar términos técnicos innecesarios y probar el instrumento antes de aplicarlo a toda la muestra."
+        },
+        {
+          "titulo": "Tipos de preguntas",
+          "contenido": "Los cuestionarios pueden incluir preguntas abiertas, cerradas, de opción múltiple, dicotómicas o mixtas, según el grado de libertad que se dé al encuestado. Cada tipo produce datos con distintos niveles de medición y análisis. Por ejemplo, preguntar la edad en años es una pregunta abierta cuantitativa y elegir un rango de edad es cerrada."
+        },
+        {
+          "titulo": "Preguntas abiertas y cerradas",
+          "contenido": "Las preguntas abiertas permiten responder libremente y aportan información rica, pero son difíciles de codificar. Las cerradas ofrecen alternativas predefinidas, facilitan el análisis y reducen la ambigüedad. Por ejemplo, ¿qué opina del servicio? es abierta, mientras ¿cómo califica el servicio: bueno, regular o malo? es cerrada."
+        },
+        {
+          "titulo": "Diseño de instrumentos de recolección",
+          "contenido": "El diseño de un instrumento de recolección parte de los objetivos y variables del estudio y define preguntas, escalas de respuesta y formato de aplicación. Debe cuidar la secuencia lógica, la extensión y la presentación visual. Por ejemplo, se inicia con datos generales, se continúa con el tema central y se cierra con preguntas de opinión."
+        },
+        {
+          "titulo": "Organización de preguntas",
+          "contenido": "Organizar las preguntas significa ordenarlas de lo general a lo específico, agruparlas por temas y evitar saltos que confundan al encuestado. Las preguntas sensibles se ubican al final y las de control se distribuyen estratégicamente. Por ejemplo, en una encuesta académica se presentan primero los datos personales y luego los hábitos de estudio."
+        },
+        {
+          "titulo": "Validación del instrumento",
+          "contenido": "La validación del instrumento verifica que mida realmente lo que pretende medir y que sea confiable y comprensible. Se realiza mediante juicio de expertos, pruebas piloto y análisis de consistencia. Por ejemplo, aplicar el cuestionario a un grupo pequeño permite detectar preguntas ambiguas y ajustarlas antes de la aplicación definitiva."
+        }
+      ],
+      "actividad": {
+        "titulo": "Actividad 1.6: Diseño de Instrumento",
+        "descripcion": "Diseñar un cuestionario estructurado para recopilar información y presentar el informe del instrumento.",
+        "puntos_max": 2,
+        "fecha_limite": "Viernes 23:59 hrs"
+      },
+      "jefe": {
+        "titulo": "Jefe de la Unidad I",
+        "nombre_jefe": "Guardián de las Variables",
+        "puntos_max": 10,
+        "xp_recompensa": 300,
+        "preguntas": [
+          {
+            "enunciado": "La estadística descriptiva se caracteriza principalmente por:",
+            "opcion_a": "Organizar, resumir y representar los datos de una muestra o población",
+            "opcion_b": "Estimar parámetros poblacionales a partir de una muestra",
+            "opcion_c": "Probar hipótesis sobre la población usando probabilidad",
+            "opcion_d": "Seleccionar aleatoriamente las unidades de estudio",
+            "opcion_correcta": "A",
+            "explicacion": "La estadística descriptiva se limita a describir y resumir el conjunto de datos observado. Estimar parámetros y probar hipótesis corresponde a la estadística inferencial."
+          },
+          {
+            "enunciado": "En un estudio sobre los estudiantes de una universidad se encuesta a 150 de ellos. El conjunto total de estudiantes corresponde a:",
+            "opcion_a": "La muestra",
+            "opcion_b": "La población",
+            "opcion_c": "La unidad estadística",
+            "opcion_d": "La variable",
+            "opcion_correcta": "B",
+            "explicacion": "La población es el conjunto completo de elementos con la característica de interés, en este caso todos los estudiantes. Los 150 encuestados forman la muestra."
+          },
+          {
+            "enunciado": "El número de computadoras por laboratorio en una universidad es una variable:",
+            "opcion_a": "Cualitativa nominal",
+            "opcion_b": "Cualitativa ordinal",
+            "opcion_c": "Cuantitativa discreta",
+            "opcion_d": "Cuantitativa continua",
+            "opcion_correcta": "C",
+            "explicacion": "Se trata de un conteo que solo admite valores enteros, por lo que es cuantitativa discreta. No proviene de una medición con decimales ni describe una categoría."
+          },
+          {
+            "enunciado": "La temperatura medida en grados Celsius constituye un ejemplo de escala:",
+            "opcion_a": "Nominal",
+            "opcion_b": "Ordinal",
+            "opcion_c": "De razón",
+            "opcion_d": "De intervalo",
+            "opcion_correcta": "D",
+            "explicacion": "La escala de intervalo tiene distancias iguales, pero su cero es arbitrario: 0 °C no implica ausencia de temperatura. Por eso no puede afirmarse que 30 °C sea el doble de 15 °C."
+          },
+          {
+            "enunciado": "¿Cuál de las siguientes variables es cualitativa?",
+            "opcion_a": "El tipo de sangre de un paciente",
+            "opcion_b": "El peso en kilogramos de un paciente",
+            "opcion_c": "El número de hijos de una familia",
+            "opcion_d": "El tiempo de conexión a internet en minutos",
+            "opcion_correcta": "A",
+            "explicacion": "El tipo de sangre expresa una categoría sin orden jerárquico, por lo que es cualitativa nominal. Las demás opciones son cantidades numéricas medibles o contables."
+          },
+          {
+            "enunciado": "El valor 20 años registrado para un estudiante en una encuesta se denomina:",
+            "opcion_a": "Variable",
+            "opcion_b": "Dato estadístico",
+            "opcion_c": "Unidad estadística",
+            "opcion_d": "Población",
+            "opcion_correcta": "B",
+            "explicacion": "El dato estadístico es el valor concreto obtenido al observar una característica en una unidad de estudio. La variable sería la edad en general, no el valor 20."
+          },
+          {
+            "enunciado": "Consultar el último anuario estadístico publicado por una institución oficial corresponde a una fuente de información:",
+            "opcion_a": "Primaria",
+            "opcion_b": "Experimental",
+            "opcion_c": "Secundaria",
+            "opcion_d": "Directa",
+            "opcion_correcta": "C",
+            "explicacion": "La fuente secundaria reutiliza datos ya recopilados y publicados por otras instituciones. La fuente primaria sería generar los datos directamente mediante un instrumento propio."
+          },
+          {
+            "enunciado": "Antes de analizar una encuesta, el investigador convierte las respuestas en una matriz con una fila por participante. Esta acción corresponde a:",
+            "opcion_a": "La validación del instrumento",
+            "opcion_b": "El muestreo aleatorio",
+            "opcion_c": "La definición de la población",
+            "opcion_d": "La organización de la información estadística",
+            "opcion_correcta": "D",
+            "explicacion": "Organizar la información implica clasificar, codificar y ordenar los datos para facilitar su análisis. La matriz es una forma típica de estructurar los datos recolectados."
+          },
+          {
+            "enunciado": "El nivel de satisfacción de un cliente clasificado como bajo, medio o alto se mide en escala:",
+            "opcion_a": "Nominal",
+            "opcion_b": "Ordinal",
+            "opcion_c": "De intervalo",
+            "opcion_d": "De razón",
+            "opcion_correcta": "B",
+            "explicacion": "Existe un orden entre las categorías, pero no puede asegurarse que las distancias sean iguales. Por ello la escala adecuada es la ordinal."
+          },
+          {
+            "enunciado": "La aplicación de un cuestionario a un grupo pequeño para detectar preguntas ambiguas antes de su aplicación definitiva se denomina:",
+            "opcion_a": "Prueba piloto",
+            "opcion_b": "Muestreo estratificado",
+            "opcion_c": "Codificación",
+            "opcion_d": "Observación directa",
+            "opcion_correcta": "A",
+            "explicacion": "La prueba piloto permite ensayar el instrumento y ajustar su redacción, orden y opciones de respuesta. Forma parte del proceso de validación del cuestionario."
+          }
+        ]
+      }
     },
     {
       "unidad_numero": 2,
       "orden": 1,
       "titulo": "Tema 2.1. Organización y reducción de datos",
       "descripcion": "Ordenamiento, clasificación y tabulación de datos estadísticos. Diferencias entre datos agrupados y no agrupados.",
-      "subtemas": ["Clasificación de información", "Ordenamiento de datos", "Datos agrupados y no agrupados", "Importancia de la tabulación"],
-      "actividad": { "titulo": "Actividad 2.1: Tabulación de Datos", "descripcion": "Clasificar y ordenar un conjunto de datos brutos del sector informático.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+      "subtemas": [
+        {
+          "titulo": "Concepto de organización de datos",
+          "contenido": "La organización de datos es el proceso de reunir, clasificar y estructurar la información recogida para que pueda analizarse con claridad. Consiste en convertir datos dispersos en un conjunto ordenado según criterios definidos, como la variable medida o el rango de valores. Por ejemplo, registrar las edades de treinta estudiantes y agruparlas por intervalos permite observar patrones que el listado original oculta."
+        },
+        {
+          "titulo": "Clasificación de información estadística",
+          "contenido": "Clasificar la información consiste en separar los datos en grupos o clases mutuamente excluyentes de acuerdo con una característica común. La clasificación puede ser cualitativa, cuando agrupa por atributos como el sexo o la carrera, o cuantitativa, cuando agrupa por valores numéricos como la estatura. Una buena clasificación debe ser exhaustiva, de modo que ningún dato quede fuera de las categorías definidas."
+        },
+        {
+          "titulo": "Ordenamiento de datos",
+          "contenido": "El ordenamiento de datos es la disposición de las observaciones en una secuencia lógica, generalmente ascendente o descendente. Suele realizarse tomando como criterio la variable de interés, lo que facilita localizar valores extremos, detectar repeticiones y calcular medidas de posición. Por ejemplo, ordenar de menor a mayor los tiempos de respuesta de un servidor permite identificar de inmediato el más rápido y el más lento."
+        },
+        {
+          "titulo": "Datos agrupados",
+          "contenido": "Los datos agrupados son aquellos que se resumen en intervalos o clases, perdiendo el detalle individual pero ganando claridad global. Se emplean cuando el número de observaciones es grande o cuando la variable es continua y conviene presentarla por rangos. Por ejemplo, en lugar de listar cien salarios, se agrupan en intervalos como de 500 a 999 y de 1000 a 1499."
+        },
+        {
+          "titulo": "Datos no agrupados",
+          "contenido": "Los datos no agrupados son los valores originales de cada observación, presentados uno por uno y sin intervalos de clase. Conservan toda la información individual y se utilizan cuando el conjunto es pequeño o cuando se requiere precisión exacta. Por ejemplo, las calificaciones 15, 17, 12, 19 y 14 obtenidas por cinco alumnos constituyen datos no agrupados."
+        },
+        {
+          "titulo": "Organización de conjuntos de datos",
+          "contenido": "Organizar un conjunto de datos implica definir las variables, depurar los registros incompletos o erróneos y disponer la información en una estructura tabular coherente. Este paso previo garantiza que los cálculos posteriores sean confiables y reproducibles. Por ejemplo, una matriz con una fila por estudiante y columnas para edad, sexo y nota final constituye un conjunto de datos organizado."
+        },
+        {
+          "titulo": "Importancia de la tabulación de información",
+          "contenido": "La tabulación consiste en presentar los datos ordenados en filas y columnas con encabezados claros, lo que permite comparar categorías y detectar tendencias con rapidez. Su importancia radica en que reduce el volumen de información sin perder contenido sustantivo y facilita el cálculo de frecuencias y porcentajes. Una tabla bien elaborada debe indicar la fuente, las unidades y el total de las observaciones."
+        }
+      ],
+      "actividad": {
+        "titulo": "Actividad 2.1: Tabulación de Datos",
+        "descripcion": "Clasificar y ordenar un conjunto de datos brutos del sector informático.",
+        "puntos_max": 2,
+        "fecha_limite": "Viernes 23:59 hrs"
+      }
     },
     {
       "unidad_numero": 2,
       "orden": 2,
       "titulo": "Tema 2.2. Distribuciones de frecuencias",
       "descripcion": "Construcción e interpretación de tablas de frecuencias absolutas, relativas, acumuladas y relativas acumuladas.",
-      "subtemas": ["Frecuencia absoluta y relativa", "Frecuencias acumuladas", "Tablas para datos agrupados", "Interpretación estadística"],
-      "actividad": { "titulo": "Actividad 2.2: Tabla de Frecuencias", "descripcion": "Resolver ejercicios prácticos de construcción de tablas de distribución de frecuencias.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+      "subtemas": [
+        {
+          "titulo": "Concepto de distribución de frecuencias",
+          "contenido": "Una distribución de frecuencias es una tabla que muestra cada valor o clase de la variable junto con el número de veces que aparece en el conjunto de datos. Resume la información y revela dónde se concentran las observaciones. Por ejemplo, si 12 de 40 estudiantes obtuvieron la nota 16, ese valor tendrá frecuencia absoluta 12 dentro de la distribución."
+        },
+        {
+          "titulo": "Frecuencia absoluta",
+          "contenido": "La frecuencia absoluta, denotada f sub i, es el número de observaciones que pertenecen a un valor o intervalo de la variable. Su suma en toda la distribución es igual al tamaño de la muestra n. Por ejemplo, si en un grupo de 30 alumnos 8 usan laptop, la frecuencia absoluta de la categoría laptop es 8."
+        },
+        {
+          "titulo": "Frecuencia relativa",
+          "contenido": "La frecuencia relativa, denotada h sub i, se obtiene dividiendo la frecuencia absoluta entre el total de observaciones, es decir h sub i igual a f sub i entre n. Expresa la proporción del total que representa cada valor y su suma es igual a 1. Multiplicada por 100 se convierte en porcentaje; por ejemplo, 8 de 30 equivale a 0,267 o 26,7 por ciento."
+        },
+        {
+          "titulo": "Frecuencia acumulada",
+          "contenido": "La frecuencia acumulada, denotada F sub i, resulta de sumar sucesivamente las frecuencias absolutas hasta el valor o clase considerado. Indica cuántas observaciones son menores o iguales a ese valor. Por ejemplo, si las frecuencias son 5, 8 y 7, la frecuencia acumulada del segundo valor es 5 más 8, es decir 13."
+        },
+        {
+          "titulo": "Frecuencia relativa acumulada",
+          "contenido": "La frecuencia relativa acumulada, denotada H sub i, se obtiene sumando las frecuencias relativas hasta la clase considerada, o bien dividiendo la frecuencia acumulada entre n. Representa la proporción de datos iguales o inferiores a ese valor y culmina en 1. Por ejemplo, H sub 3 igual a 0,75 significa que el 75 por ciento de las observaciones no supera el tercer valor."
+        },
+        {
+          "titulo": "Distribución de frecuencias para datos no agrupados",
+          "contenido": "Cuando los datos no están agrupados, la tabla lista cada valor distinto de la variable con su frecuencia correspondiente. Es apropiada para variables discretas con pocos valores diferentes o para muestras pequeñas. Por ejemplo, para el número de hijos por familia se puede construir una fila por cada valor: 0, 1, 2, 3 y así sucesivamente."
+        },
+        {
+          "titulo": "Distribución de frecuencias para datos agrupados",
+          "contenido": "Para datos agrupados la tabla se construye con intervalos de clase, generalmente de igual amplitud, y registra cuántas observaciones caen en cada uno. Se requiere calcular el rango, elegir el número de clases y definir los límites. Por ejemplo, con datos de 20 a 80 años se podrían usar clases de 20 a 29, de 30 a 39 y así hasta 70 a 79."
+        },
+        {
+          "titulo": "Construcción de tablas de frecuencias",
+          "contenido": "Construir una tabla de frecuencias implica ordenar los datos, determinar los valores o intervalos, contar las observaciones y calcular las frecuencias relativas y acumuladas. En datos agrupados se aplica la regla de Sturges, k igual a 1 más 3,322 por el logaritmo de n, para fijar el número de clases. El resultado debe incluir encabezados, totales y unidades claramente indicadas."
+        },
+        {
+          "titulo": "Interpretación de tablas estadísticas",
+          "contenido": "Interpretar una tabla estadística consiste en leer las frecuencias y los porcentajes para describir el comportamiento de la variable, identificando los valores más frecuentes y los extremos. Se debe distinguir entre frecuencia absoluta y relativa para no confundir volumen con proporción. Por ejemplo, una clase con 20 casos en una muestra de 200 representa solo el 10 por ciento del total."
+        }
+      ],
+      "actividad": {
+        "titulo": "Actividad 2.2: Tabla de Frecuencias",
+        "descripcion": "Resolver ejercicios prácticos de construcción de tablas de distribución de frecuencias.",
+        "puntos_max": 2,
+        "fecha_limite": "Viernes 23:59 hrs"
+      }
     },
     {
       "unidad_numero": 2,
       "orden": 3,
       "titulo": "Tema 2.3. Representación gráfica de datos",
       "descripcion": "Uso de gráficos circulares, de barras, histogramas, polígonos de frecuencias y ojivas para variables cualitativas y cuantitativas.",
-      "subtemas": ["Gráficos cualitativos", "Histograma y Polígono", "La Ojiva acumulada", "Interpretación gráfica"],
-      "actividad": { "titulo": "Actividad 2.3: Laboratorio en Excel", "descripcion": "Construir e interpretar gráficos estadísticos e histogramas utilizando Excel con datos reales.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+      "subtemas": [
+        {
+          "titulo": "Importancia de la representación gráfica",
+          "contenido": "La representación gráfica permite visualizar la distribución de los datos de forma inmediata, destacando la forma, la concentración y los valores atípicos. Un gráfico bien elegido comunica en segundos lo que una tabla exige comparar fila por fila. Su importancia radica en que facilita la interpretación y la comunicación de resultados a públicos no especializados."
+        },
+        {
+          "titulo": "Gráficos para variables cualitativas",
+          "contenido": "Las variables cualitativas se representan mediante gráficos que comparan categorías, como las barras o los sectores circulares, donde la altura o el ángulo refleja la frecuencia. No deben usarse histogramas ni polígonos, pues estas categorías no tienen continuidad numérica. Por ejemplo, las carreras profesionales de un grupo se muestran adecuadamente con un gráfico de barras por carrera."
+        },
+        {
+          "titulo": "Gráficos para variables cuantitativas",
+          "contenido": "Las variables cuantitativas admiten gráficos que respetan el orden y la continuidad de los valores, como el histograma, el polígono de frecuencias y la ojiva. También pueden emplearse diagramas de caja o de tallo y hojas. Por ejemplo, la distribución de estaturas de un curso se representa naturalmente con un histograma de intervalos contiguos."
+        },
+        {
+          "titulo": "Gráfico de barras",
+          "contenido": "El gráfico de barras representa cada categoría con un rectángulo cuya altura o longitud es proporcional a su frecuencia. Las barras se separan entre sí para indicar que las categorías son independientes. Por ejemplo, un gráfico de barras puede comparar el número de usuarios de cuatro sistemas operativos distintos."
+        },
+        {
+          "titulo": "Gráfico circular",
+          "contenido": "El gráfico circular, o de sectores, divide un círculo en porciones cuyo ángulo es proporcional a la frecuencia relativa de cada categoría. Es útil para mostrar la composición de un total, preferentemente con pocas categorías. Por ejemplo, si una categoría representa el 25 por ciento, su sector abarca 90 grados del círculo."
+        },
+        {
+          "titulo": "Histograma",
+          "contenido": "El histograma representa datos agrupados mediante barras contiguas cuyas bases son los intervalos de clase y cuyas alturas corresponden a las frecuencias. La ausencia de separación refleja la continuidad de la variable cuantitativa. Por ejemplo, un histograma de edades con clases de cinco años muestra de inmediato en qué rango se concentra la población."
+        },
+        {
+          "titulo": "Polígono de frecuencias",
+          "contenido": "El polígono de frecuencias se construye uniendo con segmentos los puntos que representan la marca de clase y su frecuencia. A diferencia del histograma, permite comparar varias distribuciones en un mismo plano. Por ejemplo, superponer dos polígonos de notas permite contrastar el rendimiento de dos paralelos de un mismo curso."
+        },
+        {
+          "titulo": "Ojiva o curva de frecuencias acumuladas",
+          "contenido": "La ojiva es la gráfica de las frecuencias acumuladas, donde cada punto indica cuántas observaciones son menores o iguales a un valor determinado. Su forma creciente permite localizar cuartiles y percentiles de manera aproximada. Por ejemplo, la ojiva de notas muestra qué porcentaje de estudiantes queda por debajo de una calificación dada."
+        },
+        {
+          "titulo": "Interpretación de representaciones gráficas",
+          "contenido": "Interpretar un gráfico exige identificar los ejes, las unidades, la escala y la fuente antes de describir su forma. Se debe observar dónde se concentran los datos, si existen simetrías, picos o valores atípicos y qué implican para el fenómeno estudiado. Por ejemplo, un histograma con dos picos sugiere la mezcla de dos poblaciones distintas."
+        }
+      ],
+      "actividad": {
+        "titulo": "Actividad 2.3: Laboratorio en Excel",
+        "descripcion": "Construir e interpretar gráficos estadísticos e histogramas utilizando Excel con datos reales.",
+        "puntos_max": 2,
+        "fecha_limite": "Viernes 23:59 hrs"
+      },
+      "nota": "Los tipos particulares de gráficos anteriores constituyen una propuesta de desarrollo de las representaciones gráficas contempladas en el programa."
     },
     {
       "unidad_numero": 2,
       "orden": 4,
       "titulo": "Tema 2.4. Medidas de posición central",
       "descripcion": "Cálculo, propiedades e interpretación de la media aritmética, la mediana y la moda para datos agrupados y no agrupados.",
-      "subtemas": ["Media aritmética", "La Mediana", "La Moda", "Cálculo e interpretación"],
-      "actividad": { "titulo": "Actividad 2.4: Cálculo de Tendencia Central", "descripcion": "Calcular e interpretar las medidas de posición central para un conjunto de datos no agrupados.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+      "subtemas": [
+        {
+          "titulo": "Concepto de medidas de tendencia central",
+          "contenido": "Las medidas de tendencia central son valores que resumen un conjunto de datos indicando alrededor de qué punto se concentran las observaciones. Las principales son la media aritmética, la mediana y la moda, cada una con propiedades y usos propios. Por ejemplo, la media de las notas de un curso resume el rendimiento global en un solo número."
+        },
+        {
+          "titulo": "Media aritmética",
+          "contenido": "La media aritmética es la suma de todos los valores dividida entre el número de observaciones. Se calcula como la suma de las x sub i dividida entre n, utiliza toda la información disponible y es sensible a los valores extremos. Por ejemplo, la media de 4, 6, 8 y 10 es 28 entre 4, es decir 7."
+        },
+        {
+          "titulo": "Mediana",
+          "contenido": "La mediana es el valor central de un conjunto ordenado, que deja igual número de observaciones por debajo y por encima. Si n es par, se promedian los dos valores centrales. Es resistente a los valores atípicos; por ejemplo, en la serie 2, 4, 6 y 100 la mediana es 5, muy distinta de la media, que es 28."
+        },
+        {
+          "titulo": "Moda",
+          "contenido": "La moda es el valor que aparece con mayor frecuencia en el conjunto de datos. Puede no existir, ser única o haber varias modas, y es la única medida de tendencia central aplicable a variables cualitativas. Por ejemplo, en la serie 3, 5, 5, 7 y 9 la moda es 5 por repetirse dos veces."
+        },
+        {
+          "titulo": "Cálculo de medidas centrales para datos agrupados",
+          "contenido": "En datos agrupados la media se calcula con la marca de clase, multiplicando cada frecuencia por su marca y dividiendo entre n. La mediana y la moda se obtienen por interpolación dentro del intervalo que las contiene, usando sus fórmulas específicas. Por ejemplo, con clases de 10 a 20 y marca 15, la media pondera esa marca por su frecuencia."
+        },
+        {
+          "titulo": "Cálculo de medidas centrales para datos no agrupados",
+          "contenido": "Con datos no agrupados la media se obtiene sumando los valores y dividiendo entre n, mientras la mediana requiere ordenar y ubicar la posición n más 1 entre 2. La moda se identifica contando repeticiones. Por ejemplo, en la serie 7, 8, 8, 9 y 11 la mediana es 8 y la moda también es 8."
+        },
+        {
+          "titulo": "Interpretación de resultados",
+          "contenido": "Interpretar las medidas centrales implica traducir el número al contexto del fenómeno y comparar las tres medidas para detectar asimetrías. Si la media supera a la mediana, ello sugiere la presencia de valores altos extremos. Por ejemplo, un salario medio muy superior al salario mediano indica fuerte concentración de ingresos en pocas personas."
+        }
+      ],
+      "actividad": {
+        "titulo": "Actividad 2.4: Cálculo de Tendencia Central",
+        "descripcion": "Calcular e interpretar las medidas de posición central para un conjunto de datos no agrupados.",
+        "puntos_max": 2,
+        "fecha_limite": "Viernes 23:59 hrs"
+      }
     },
     {
       "unidad_numero": 2,
       "orden": 5,
       "titulo": "Tema 2.5. Medidas de posición no central",
       "descripcion": "Concepto, algoritmos de cálculo e interpretación de resultados de los cuartiles, deciles y percentiles.",
-      "subtemas": ["Los Cuartiles", "Los Deciles", "Los Percentiles", "Interpretación de posición"],
-      "actividad": { "titulo": "Actividad 2.5: Guía de Cuartiles y Percentiles", "descripcion": "Resolver problemas de localización de medidas de posición no central sobre rendimiento académico.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+      "subtemas": [
+        {
+          "titulo": "Concepto de medidas de posición",
+          "contenido": "Las medidas de posición, o cuantiles, dividen el conjunto ordenado de datos en partes que contienen igual proporción de observaciones. Permiten ubicar un valor respecto del resto de la distribución. A diferencia de la tendencia central, no buscan el centro sino puntos de referencia como el 25, el 50 o el 90 por ciento."
+        },
+        {
+          "titulo": "Cuartiles",
+          "contenido": "Los cuartiles son tres valores que dividen los datos ordenados en cuatro partes iguales: Q1, Q2 y Q3. El segundo cuartil coincide con la mediana y entre Q1 y Q3 se encuentra el 50 por ciento central de las observaciones. Por ejemplo, Q1 igual a 12 indica que el 25 por ciento de los datos es menor o igual a 12."
+        },
+        {
+          "titulo": "Deciles",
+          "contenido": "Los deciles son nueve valores que dividen la distribución en diez partes iguales, denotados desde D1 hasta D9. Cada decil acumula el 10 por ciento de las observaciones, de modo que D5 equivale a la mediana. Por ejemplo, D7 igual a 45 significa que el 70 por ciento de los datos no supera 45."
+        },
+        {
+          "titulo": "Percentiles",
+          "contenido": "Los percentiles son noventa y nueve valores que dividen los datos en cien partes iguales, denotados desde P1 hasta P99. Cada uno indica el porcentaje de observaciones que queda por debajo. Por ejemplo, un estudiante ubicado en el percentil 85 superó aproximadamente al 85 por ciento de sus compañeros."
+        },
+        {
+          "titulo": "Cálculo de medidas de posición",
+          "contenido": "Para datos no agrupados se ordena la serie y se localiza la posición multiplicando k por n y dividiendo entre 100 para percentiles, o entre 4 para cuartiles, interpolando si el resultado no es entero. En datos agrupados se aplica interpolación dentro de la clase correspondiente. Por ejemplo, P50 con n igual a 40 se ubica en la posición 20."
+        },
+        {
+          "titulo": "Interpretación de resultados",
+          "contenido": "Interpretar un cuantil consiste en expresar qué proporción de la población queda por debajo del valor hallado y compararlo con el contexto del estudio. Estas medidas son resistentes a los valores extremos y muy útiles en educación, salud y economía. Por ejemplo, ubicarse sobre el P90 indica un desempeño superior al 90 por ciento del grupo."
+        }
+      ],
+      "actividad": {
+        "titulo": "Actividad 2.5: Guía de Cuartiles y Percentiles",
+        "descripcion": "Resolver problemas de localización de medidas de posición no central sobre rendimiento académico.",
+        "puntos_max": 2,
+        "fecha_limite": "Viernes 23:59 hrs"
+      }
     },
     {
       "unidad_numero": 2,
       "orden": 6,
       "titulo": "Tema 2.6. Medidas de dispersión",
       "descripcion": "Estudio de la variabilidad: rango, varianza, desviación estándar y coeficiente de variación. Comparación de muestras.",
-      "subtemas": ["Rango o recorrido", "La Varianza", "Desviación estándar", "Coeficiente de variación"],
-      "actividad": { "titulo": "Actividad 2.6: Análisis de Variabilidad", "descripcion": "Calcular la varianza y desviación estándar para determinar la dispersión de dos conjuntos de datos.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+      "subtemas": [
+        {
+          "titulo": "Concepto de dispersión",
+          "contenido": "Las medidas de dispersión cuantifican cuán alejados están los datos respecto de su centro, complementando la información de la tendencia central. Dos conjuntos pueden tener la misma media y comportamientos muy distintos. Por ejemplo, medias iguales a 7 en los conjuntos 6, 7 y 8 y en los conjuntos 1, 7 y 13 describen realidades totalmente diferentes."
+        },
+        {
+          "titulo": "Rango o recorrido",
+          "contenido": "El rango es la diferencia entre el valor máximo y el mínimo del conjunto, es decir, el máximo menos el mínimo. Es la medida de dispersión más simple y fácil de calcular, pero solo usa dos observaciones y es muy sensible a los extremos. Por ejemplo, en los datos 5, 9, 12 y 20 el rango es 20 menos 5, es decir 15."
+        },
+        {
+          "titulo": "Varianza",
+          "contenido": "La varianza es el promedio de las desviaciones al cuadrado respecto de la media, dividiendo la suma de esos cuadrados entre n menos 1 en el caso de una muestra. Al elevar al cuadrado se evita la cancelación de desviaciones positivas y negativas. Por ejemplo, datos muy alejados de la media producen una varianza grande."
+        },
+        {
+          "titulo": "Desviación estándar",
+          "contenido": "La desviación estándar es la raíz cuadrada de la varianza y se expresa en las mismas unidades que la variable. Indica la distancia típica de las observaciones respecto de la media. Por ejemplo, si la desviación es de 3 años, las edades suelen apartarse unas tres unidades del promedio del grupo."
+        },
+        {
+          "titulo": "Coeficiente de variación",
+          "contenido": "El coeficiente de variación relaciona la desviación estándar con la media y se expresa en porcentaje, multiplicando ese cociente por 100. Al carecer de unidades permite comparar la variabilidad de variables distintas o de escalas diferentes. Por ejemplo, un coeficiente de 5 por ciento indica alta homogeneidad, mientras uno de 40 por ciento señala gran dispersión."
+        },
+        {
+          "titulo": "Interpretación de las medidas de dispersión",
+          "contenido": "Interpretar la dispersión consiste en determinar si los datos son homogéneos o heterogéneos respecto del promedio. Valores bajos indican concentración alrededor de la media y valores altos, alta variabilidad. Por ejemplo, dos cursos con media 15 pero desviaciones de 1 y de 4 evidencian que el primero es mucho más uniforme que el segundo."
+        },
+        {
+          "titulo": "Comparación de conjuntos de datos",
+          "contenido": "Comparar conjuntos requiere contrastar simultáneamente el centro y la dispersión, pues una media sola puede resultar engañosa. Cuando las unidades o las escalas difieren, el coeficiente de variación es el criterio adecuado. Por ejemplo, entre dos proveedores con tiempos medios parecidos se prefiere el de menor desviación por ser más predecible."
+        }
+      ],
+      "actividad": {
+        "titulo": "Actividad 2.6: Análisis de Variabilidad",
+        "descripcion": "Calcular la varianza y desviación estándar para determinar la dispersión de dos conjuntos de datos.",
+        "puntos_max": 2,
+        "fecha_limite": "Viernes 23:59 hrs"
+      }
     },
     {
       "unidad_numero": 2,
       "orden": 7,
       "titulo": "Tema 2.7. Medidas de concentración y forma",
       "descripcion": "Análisis del perfil de la distribución a través del estudio de la asimetría y el grado de curtosis.",
-      "subtemas": ["Concentración estadística", "Modelos de forma", "Asimetría", "Curtosis"],
-      "actividad": { "titulo": "Actividad 2.7: Estudio de Forma", "descripcion": "Identificar el tipo de asimetría y curtosis que presentan las curvas de frecuencias provistas.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+      "subtemas": [
+        {
+          "titulo": "Concepto de concentración estadística",
+          "contenido": "La concentración estadística estudia cómo se reparte el total de una variable entre las unidades observadas, distinguiendo si el reparto es equitativo o está sesgado hacia pocos individuos. Se aplica especialmente a ingresos, riqueza o ventas. Por ejemplo, si el 20 por ciento de los clientes genera el 80 por ciento de las ventas, existe alta concentración."
+        },
+        {
+          "titulo": "Análisis de concentración de datos",
+          "contenido": "El análisis de concentración se apoya en la curva de Lorenz y en el índice de Gini para medir la desigualdad del reparto. La curva compara la proporción acumulada de unidades con la proporción acumulada del total. Por ejemplo, una curva de Lorenz muy alejada de la diagonal indica una distribución muy desigual."
+        },
+        {
+          "titulo": "Medidas de forma de una distribución",
+          "contenido": "Las medidas de forma describen la silueta de la distribución sin atender a su centro ni a su dispersión. Las principales son la asimetría, que mide la falta de simetría, y la curtosis, que mide el apuntamiento o la concentración en las colas. Por ejemplo, una campana de Gauss perfecta tiene asimetría cero y curtosis estándar."
+        },
+        {
+          "titulo": "Asimetría",
+          "contenido": "La asimetría indica hacia qué lado se extiende la cola de la distribución respecto de su centro. Es positiva cuando la cola se alarga hacia la derecha y negativa cuando se alarga hacia la izquierda. Por ejemplo, los ingresos suelen presentar asimetría positiva, con pocos valores muy altos que estiran la cola derecha."
+        },
+        {
+          "titulo": "Curtosis",
+          "contenido": "La curtosis mide el grado de apuntamiento de la distribución y el peso de sus colas en comparación con la distribución normal. Se distingue entre distribuciones leptocúrticas, mesocúrticas y platicúrticas. Por ejemplo, una distribución leptocúrtica tiene un pico alto y colas pesadas, lo que implica mayor presencia de valores extremos."
+        },
+        {
+          "titulo": "Interpretación de distribuciones estadísticas",
+          "contenido": "Interpretar una distribución implica combinar centro, dispersión, asimetría y curtosis para describir su comportamiento completo. La forma orienta sobre la idoneidad de ciertas medidas y sobre la presencia de valores atípicos. Por ejemplo, ante una fuerte asimetría conviene preferir la mediana como medida central representativa."
+        }
+      ],
+      "actividad": {
+        "titulo": "Actividad 2.7: Estudio de Forma",
+        "descripcion": "Identificar el tipo de asimetría y curtosis que presentan las curvas de frecuencias provistas.",
+        "puntos_max": 2,
+        "fecha_limite": "Viernes 23:59 hrs"
+      }
     },
     {
       "unidad_numero": 2,
       "orden": 8,
       "titulo": "Tema 2.8. Análisis e interpretación de información estadística",
       "descripcion": "Integración de resultados mediante tablas de resumen, gráficos e informes descriptivos finales.",
-      "subtemas": ["Tablas de resumen", "Integración de descriptores", "Elaboración de informes", "Presentación de resultados"],
-      "actividad": { "titulo": "Actividad 2.8: Informe Estadístico Final", "descripcion": "Elaborar y exponer un informe estadístico descriptivo completo con un set de datos de libre elección.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" },
-      "jefe": { "titulo": "Jefe de la Unidad II", "nombre_jefe": "Señor de las Frecuencias", "puntos_max": 10, "xp_recompensa": 300 }
+      "subtemas": [
+        {
+          "titulo": "Organización de resultados",
+          "contenido": "Organizar los resultados consiste en reunir y ordenar los cálculos obtenidos durante el análisis para presentarlos de manera coherente y trazable. Se agrupan por variable u objetivo, conservando las unidades y el tamaño de la muestra. Por ejemplo, un analista reúne medias, desviaciones y frecuencias de cada variable antes de redactar el informe."
+        },
+        {
+          "titulo": "Elaboración de tablas de resumen",
+          "contenido": "Las tablas de resumen concentran los descriptores más relevantes de cada variable en un formato compacto y comparable. Deben incluir título, unidades, tamaño de muestra y medidas seleccionadas con criterio. Por ejemplo, una tabla con n, media, mediana, desviación estándar y coeficiente de variación por grupo sintetiza todo el análisis descriptivo."
+        },
+        {
+          "titulo": "Elaboración de gráficos estadísticos",
+          "contenido": "Elaborar gráficos estadísticos implica elegir la representación adecuada al tipo de variable y cuidar las escalas, las etiquetas y los títulos. El gráfico debe apoyar el mensaje del análisis y no distorsionarlo. Por ejemplo, para comparar la evolución mensual de ventas se usa un gráfico de líneas con eje temporal claramente rotulado."
+        },
+        {
+          "titulo": "Interpretación de medidas descriptivas",
+          "contenido": "Interpretar las medidas descriptivas significa explicar en el lenguaje del dominio qué indican el centro, la dispersión y la forma hallados. No basta con reportar cifras: hay que señalar su significado práctico y sus limitaciones. Por ejemplo, un coeficiente de variación alto puede advertir sobre la inestabilidad de un proceso productivo."
+        },
+        {
+          "titulo": "Elaboración de informes estadísticos",
+          "contenido": "Un informe estadístico es un documento estructurado que presenta objetivos, metodología, resultados y conclusiones sustentados en evidencia numérica. Debe redactarse con precisión, citar la fuente de los datos y evitar afirmaciones que los resultados no respalden. Por ejemplo, incluye introducción, análisis descriptivo, gráficos y recomendaciones finales."
+        },
+        {
+          "titulo": "Presentación de resultados",
+          "contenido": "Presentar resultados consiste en comunicar los hallazgos de forma clara y adaptada al público destinatario, apoyándose en tablas y gráficos cuidadosamente seleccionados. Se recomienda destacar las conclusiones principales antes que los detalles técnicos. Por ejemplo, una exposición final resume en tres ideas clave lo encontrado y responde las preguntas de la investigación."
+        }
+      ],
+      "actividad": {
+        "titulo": "Actividad 2.8: Informe Estadístico Final",
+        "descripcion": "Elaborar y exponer un informe estadístico descriptivo completo con un set de datos de libre elección.",
+        "puntos_max": 2,
+        "fecha_limite": "Viernes 23:59 hrs"
+      },
+      "jefe": {
+        "titulo": "Jefe de la Unidad II",
+        "nombre_jefe": "Señor de las Frecuencias",
+        "puntos_max": 10,
+        "xp_recompensa": 300,
+        "preguntas": [
+          {
+            "enunciado": "En estadística, los datos agrupados se caracterizan porque:",
+            "opcion_a": "conservan cada valor original sin ninguna transformación",
+            "opcion_b": "se resumen en intervalos o clases que pierden el detalle individual",
+            "opcion_c": "solo pueden aplicarse a variables cualitativas",
+            "opcion_d": "no requieren ningún criterio de ordenamiento previo",
+            "opcion_correcta": "B",
+            "explicacion": "Los datos agrupados se organizan en clases o intervalos para resumir conjuntos grandes, sacrificando el detalle individual en favor de una visión global."
+          },
+          {
+            "enunciado": "Si una distribución tiene n = 50 observaciones y una categoría presenta frecuencia absoluta 10, su frecuencia relativa es:",
+            "opcion_a": "0,50",
+            "opcion_b": "5",
+            "opcion_c": "0,20",
+            "opcion_d": "10 %",
+            "opcion_correcta": "C",
+            "explicacion": "La frecuencia relativa se obtiene dividiendo la frecuencia absoluta entre el total: 10 / 50 = 0,20, equivalente al 20 %."
+          },
+          {
+            "enunciado": "La ojiva o curva de frecuencias acumuladas se utiliza principalmente para:",
+            "opcion_a": "mostrar cuántas observaciones son menores o iguales a un valor dado",
+            "opcion_b": "comparar la altura de barras separadas entre categorías",
+            "opcion_c": "representar la proporción de cada categoría dentro de un círculo",
+            "opcion_d": "medir la dispersión de los datos respecto de la media",
+            "opcion_correcta": "A",
+            "explicacion": "La ojiva grafica frecuencias acumuladas, por lo que permite saber qué cantidad o proporción de datos queda por debajo de un valor."
+          },
+          {
+            "enunciado": "Para representar el número de usuarios de cinco sistemas operativos distintos, el gráfico más adecuado es:",
+            "opcion_a": "un histograma con barras contiguas",
+            "opcion_b": "un polígono de frecuencias acumuladas",
+            "opcion_c": "una ojiva de frecuencias relativas",
+            "opcion_d": "un gráfico de barras o un gráfico circular",
+            "opcion_correcta": "D",
+            "explicacion": "El sistema operativo es una variable cualitativa sin continuidad numérica, por lo que corresponde un gráfico de barras o de sectores, no un histograma."
+          },
+          {
+            "enunciado": "En el conjunto 2, 4, 6, 8 y 100, ¿por qué la mediana representa mejor el centro que la media?",
+            "opcion_a": "porque la mediana asigna igual peso a todos los valores",
+            "opcion_b": "porque la media siempre resulta menor que la mediana",
+            "opcion_c": "porque la mediana no se ve afectada por el valor extremo 100",
+            "opcion_d": "porque ambas medidas coinciden exactamente en este conjunto",
+            "opcion_correcta": "C",
+            "explicacion": "La mediana es resistente a valores atípicos, mientras que la media se desplaza notablemente por efecto del valor 100."
+          },
+          {
+            "enunciado": "Para calcular la media aritmética de datos agrupados se emplea la expresión:",
+            "opcion_a": "x̄ = Σ f_i · m_i / n",
+            "opcion_b": "x̄ = Σ f_i / n",
+            "opcion_c": "x̄ = (x_max − x_min) / 2",
+            "opcion_d": "x̄ = Σ (x_i − x̄)² / n",
+            "opcion_correcta": "A",
+            "explicacion": "En datos agrupados cada frecuencia se pondera por la marca de clase m_i y la suma se divide entre el total de observaciones n."
+          },
+          {
+            "enunciado": "Un estudiante que se ubica en el percentil 85 de su promoción significa que:",
+            "opcion_a": "obtuvo exactamente 85 puntos en el examen",
+            "opcion_b": "pertenece al 85 % de alumnos con menor rendimiento",
+            "opcion_c": "superó solo al 15 % de sus compañeros",
+            "opcion_d": "superó aproximadamente al 85 % de sus compañeros",
+            "opcion_correcta": "D",
+            "explicacion": "El percentil 85 indica que el 85 % de las observaciones queda por debajo de ese valor, es decir, superó a cerca del 85 % del grupo."
+          },
+          {
+            "enunciado": "El coeficiente de variación resulta especialmente útil porque:",
+            "opcion_a": "mide la asimetría de la distribución",
+            "opcion_b": "expresa la dispersión como porcentaje y permite comparar variables con distintas unidades",
+            "opcion_c": "elimina por completo el efecto de los valores extremos",
+            "opcion_d": "coincide siempre con el valor de la desviación estándar",
+            "opcion_correcta": "B",
+            "explicacion": "Al ser un cociente entre la desviación estándar y la media, carece de unidades y permite comparar la variabilidad entre variables o escalas diferentes."
+          },
+          {
+            "enunciado": "Si una distribución de ingresos presenta asimetría positiva, se espera que:",
+            "opcion_a": "la cola se extienda hacia la izquierda y la media sea menor que la mediana",
+            "opcion_b": "la distribución sea perfectamente simétrica respecto de su media",
+            "opcion_c": "la cola se extienda hacia la derecha y la media supere a la mediana",
+            "opcion_d": "la curtosis sea necesariamente negativa",
+            "opcion_correcta": "C",
+            "explicacion": "La asimetría positiva alarga la cola derecha por valores altos extremos, lo que arrastra la media por encima de la mediana."
+          },
+          {
+            "enunciado": "En la elaboración de un informe estadístico, la tabla de resumen debe incluir principalmente:",
+            "opcion_a": "los descriptores relevantes de cada variable con sus unidades y tamaño de muestra",
+            "opcion_b": "únicamente los gráficos, sin ninguna cifra de apoyo",
+            "opcion_c": "todos los datos originales sin procesar ni ordenar",
+            "opcion_d": "solo las conclusiones del investigador sin evidencia numérica",
+            "opcion_correcta": "A",
+            "explicacion": "Una tabla de resumen sintetiza el análisis presentando los descriptores clave por variable, junto con unidades y el tamaño de la muestra utilizada."
+          }
+        ]
+      }
     },
     {
       "unidad_numero": 3,
       "orden": 1,
       "titulo": "Tema 3.1. Introducción al análisis bidimensional",
       "descripcion": "Estudio simultáneo de dos variables cuantitativas o cualitativas. Organización de datos bidimensionales interrelacionados.",
-      "subtemas": ["Análisis bivariado", "Unidimensional vs Bidimensional", "Interrelación de variables", "Estructura de organización"],
-      "actividad": { "titulo": "Actividad 3.1: Mapeo Bivariado", "descripcion": "Organizar un registro bivariado inicial diferenciando la naturaleza de ambas variables.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+      "subtemas": [
+        {
+          "titulo": "Concepto de análisis bidimensional",
+          "contenido": "El análisis bidimensional es el estudio simultáneo de dos variables medidas sobre una misma unidad de observación, con el fin de describir si existe alguna relación entre ellas. A diferencia del análisis de una sola variable, aquí cada individuo aporta un par ordenado de valores. Por ejemplo, en una muestra de computadoras se registra la velocidad del procesador y el consumo de energía de cada equipo, y se analiza cómo se comportan ambas juntas."
+        },
+        {
+          "titulo": "Diferencias entre análisis unidimensional y bidimensional",
+          "contenido": "El análisis unidimensional describe una variable a la vez mediante tablas de frecuencia, medias o gráficos simples, mientras que el bidimensional estudia la variación conjunta de dos variables. El primero responde a preguntas como cuál es el promedio de edad del grupo; el segundo responde si la edad se relaciona con el nivel de ingreso. En consecuencia, el análisis bidimensional requiere organizar los datos en pares y emplear herramientas como tablas cruzadas, dispersión y correlación."
+        },
+        {
+          "titulo": "Estudio de dos variables estadísticas",
+          "contenido": "Estudiar dos variables estadísticas consiste en registrar para cada individuo dos características y examinar su comportamiento conjunto. Ese registro suele expresarse como pares ordenados del tipo (x, y), donde x es el valor de la primera variable e y el de la segunda. Por ejemplo, para cada estudiante se anotan las horas de estudio semanales y la calificación obtenida, lo que permite observar si quienes estudian más tienden a obtener mejores notas."
+        },
+        {
+          "titulo": "Variables cualitativas y cuantitativas",
+          "contenido": "En el análisis bidimensional cada variable puede ser cualitativa, si expresa una categoría o atributo, o cuantitativa, si expresa una cantidad numérica. Las variables cuantitativas se dividen en discretas y continuas según tomen valores contables o medibles. Un ejemplo es cruzar el tipo de conexión a internet, variable cualitativa, con la velocidad de descarga en megabits por segundo, variable cuantitativa continua."
+        },
+        {
+          "titulo": "Relación entre dos variables",
+          "contenido": "La relación entre dos variables indica cómo cambia una cuando cambia la otra, sin que ello implique necesariamente causalidad. Puede ser directa, si ambas tienden a crecer juntas, inversa, si una crece mientras la otra disminuye, o inexistente. Por ejemplo, al comparar la temperatura ambiente y el consumo eléctrico de un edificio se observa una relación directa, mientras que entre la antigüedad de un equipo y su velocidad de proceso la relación es inversa."
+        },
+        {
+          "titulo": "Organización de datos bidimensionales",
+          "contenido": "Organizar datos bidimensionales significa disponer los pares de observaciones en una tabla de doble entrada o en una matriz, de modo que cada fila represente un individuo y cada columna una variable. Esta estructura facilita el conteo de frecuencias conjuntas y el cálculo posterior de medidas de asociación. Por ejemplo, una tabla con filas de marcas de teléfono y columnas de rangos de precio permite resumir rápidamente cómo se distribuyen los modelos del mercado."
+        }
+      ],
+      "actividad": {
+        "titulo": "Actividad 3.1: Mapeo Bivariado",
+        "descripcion": "Organizar un registro bivariado inicial diferenciando la naturaleza de ambas variables.",
+        "puntos_max": 2,
+        "fecha_limite": "Viernes 23:59 hrs"
+      }
     },
     {
       "unidad_numero": 3,
       "orden": 2,
       "titulo": "Tema 3.2. Tablas de correlación",
       "descripcion": "Construcción, ordenamiento e interpretación de frecuencias estructuradas en matrices y tablas de correlación.",
-      "subtemas": ["Matrices de datos", "Construcción de tablas", "Frecuencias cruzadas", "Interpretación matricial"],
-      "actividad": { "titulo": "Actividad 3.2: Construcción de Matrices", "descripcion": "Estructurar una tabla de correlación a partir de datos recopilados de velocidad de red y latencia.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+      "subtemas": [
+        {
+          "titulo": "Concepto de tablas de correlación",
+          "contenido": "Una tabla de correlación es una tabla de doble entrada que muestra cómo se distribuyen conjuntamente las frecuencias de dos variables, generalmente cuantitativas agrupadas en intervalos. Cada celda indica cuántas observaciones presentan a la vez una clase de la primera variable y una clase de la segunda. Por ejemplo, una tabla que cruza rangos de edad con rangos de ingreso mensual permite ver en qué combinaciones se concentra la población estudiada."
+        },
+        {
+          "titulo": "Organización de datos en tablas",
+          "contenido": "Para organizar los datos en una tabla de correlación se definen primero las clases o intervalos de cada variable y luego se cuenta cuántas observaciones caen en cada combinación. Las filas suelen corresponder a la variable X y las columnas a la variable Y, y los totales de fila y columna se anotan en los márgenes. Un ejemplo típico es clasificar los salarios en tramos de 500 a 999, de 1000 a 1499 y así sucesivamente, y cruzarlos con los años de experiencia."
+        },
+        {
+          "titulo": "Construcción de tablas de correlación",
+          "contenido": "La construcción de una tabla de correlación sigue tres pasos: elegir los intervalos de cada variable, recorrer los datos contando la frecuencia de cada par de clases y sumar los totales marginales para verificar que coincidan con el tamaño de la muestra. La suma de todas las celdas debe igualar el número total de observaciones. Por ejemplo, con 50 viviendas se cruzan los tramos de superficie con los tramos de precio, y la suma de las celdas debe dar exactamente 50."
+        },
+        {
+          "titulo": "Interpretación de resultados",
+          "contenido": "Interpretar una tabla de correlación consiste en observar dónde se concentran las frecuencias mayores y si la nube de celdas se desplaza en diagonal. Si las frecuencias altas se ubican de arriba hacia abajo a la derecha, sugiere relación inversa; si van de abajo hacia arriba a la derecha, sugiere relación directa. Por ejemplo, si las viviendas más grandes se concentran en los precios más altos, la tabla evidencia una asociación positiva entre superficie y precio."
+        },
+        {
+          "titulo": "Distribuciones de frecuencias bidimensionales",
+          "contenido": "Una distribución de frecuencias bidimensional describe, mediante una función de frecuencias f(x, y), cuántas observaciones presentan simultáneamente cada par de valores o clases. De ella se derivan las distribuciones marginales, que resumen una variable ignorando la otra, y las condicionales, que fijan un valor de una variable. Por ejemplo, al cruzar el sexo con el nivel educativo de una encuesta se obtiene una distribución bidimensional de la que pueden leerse ambos tipos de distribuciones."
+        }
+      ],
+      "actividad": {
+        "titulo": "Actividad 3.2: Construcción de Matrices",
+        "descripcion": "Estructurar una tabla de correlación a partir de datos recopilados de velocidad de red y latencia.",
+        "puntos_max": 2,
+        "fecha_limite": "Viernes 23:59 hrs"
+      }
     },
     {
       "unidad_numero": 3,
       "orden": 3,
       "titulo": "Tema 3.3. Asociación entre variables cualitativas",
       "descripcion": "Estudio de tablas de contingencia, distribuciones conjuntas, marginales y condicionales aplicadas a atributos cualitativos.",
-      "subtemas": ["Tablas de contingencia", "Distribución conjunta", "Distribución marginal", "Distribución condicional"],
-      "actividad": { "titulo": "Actividad 3.3: Tablas de Contingencia", "descripcion": "Resolver ejercicios analíticos de distribuciones marginales y condicionales.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+      "subtemas": [
+        {
+          "titulo": "Concepto de asociación estadística",
+          "contenido": "La asociación estadística es la tendencia de dos variables a presentarse juntas con cierta regularidad, de modo que la distribución de una cambia al conocer la categoría de la otra. No exige causalidad ni medición numérica, pues puede detectarse entre atributos. Por ejemplo, existe asociación si el hábito de fumar se presenta con mayor frecuencia entre quienes padecen cierta enfermedad respiratoria que entre quienes no la padecen."
+        },
+        {
+          "titulo": "Relación entre variables cualitativas",
+          "contenido": "Dos variables cualitativas se relacionan cuando las proporciones de las categorías de una varían según la categoría de la otra. Para evaluarla se comparan las distribuciones condicionales y se observa si difieren entre sí. Por ejemplo, si la preferencia por una red social cambia notablemente entre grupos de edad, se concluye que existe relación entre la edad y la red social preferida."
+        },
+        {
+          "titulo": "Tablas de contingencia",
+          "contenido": "Una tabla de contingencia es una tabla de doble entrada que clasifica las unidades según dos variables cualitativas y registra la frecuencia de cada combinación de categorías. En sus márgenes se anotan los totales de fila y de columna, que corresponden a las frecuencias marginales. Por ejemplo, una tabla que cruza el turno de trabajo con la presencia de estrés laboral permite comparar cuántos casos se presentan en cada turno."
+        },
+        {
+          "titulo": "Construcción de tablas de contingencia",
+          "contenido": "Construir una tabla de contingencia implica definir las categorías de ambas variables, contar cuántos individuos pertenecen a cada cruce y añadir los totales marginales. El total general debe coincidir con el tamaño de la muestra y conviene acompañar la tabla con porcentajes por fila o por columna. Por ejemplo, con 200 clientes se cruza el canal de compra, presencial o en línea, con el nivel de satisfacción, alto, medio o bajo."
+        },
+        {
+          "titulo": "Distribuciones conjuntas",
+          "contenido": "La distribución conjunta presenta las frecuencias o probabilidades de que dos variables tomen simultáneamente determinados valores. En una tabla de contingencia corresponde al conjunto de las celdas interiores, cuya suma total es la unidad o el total de la muestra. Por ejemplo, la probabilidad de que un cliente sea joven y compre en línea es una frecuencia conjunta que se lee directamente en la celda correspondiente."
+        },
+        {
+          "titulo": "Distribuciones marginales",
+          "contenido": "Las distribuciones marginales se obtienen sumando las frecuencias de cada fila o de cada columna de la tabla, y describen el comportamiento de una sola variable sin considerar la otra. Su nombre proviene de los márgenes de la tabla donde se anotan los totales. Por ejemplo, el total de clientes satisfechos, sin importar el canal de compra, es una frecuencia marginal de la variable satisfacción."
+        },
+        {
+          "titulo": "Distribuciones condicionales",
+          "contenido": "Una distribución condicional describe la distribución de una variable dentro de una categoría fija de la otra, dividiendo las frecuencias de la fila o columna entre su total respectivo. Permite responder qué proporción de un grupo presenta determinada característica. Por ejemplo, la proporción de compradores en línea que están satisfechos se calcula dividiendo los satisfechos en línea entre el total de compradores en línea."
+        },
+        {
+          "titulo": "Interpretación de tablas de contingencia",
+          "contenido": "Interpretar una tabla de contingencia requiere comparar las distribuciones condicionales y no solo mirar los totales, pues un total grande puede ocultar diferencias internas. Si las proporciones condicionales son semejantes, se concluye independencia; si difieren, hay asociación. Por ejemplo, si el 80 por ciento de los usuarios presenciales está satisfecho frente al 40 por ciento de los usuarios en línea, la satisfacción depende del canal de compra."
+        }
+      ],
+      "actividad": {
+        "titulo": "Actividad 3.3: Tablas de Contingencia",
+        "descripcion": "Resolver ejercicios analíticos de distribuciones marginales y condicionales.",
+        "puntos_max": 2,
+        "fecha_limite": "Viernes 23:59 hrs"
+      }
     },
     {
       "unidad_numero": 3,
       "orden": 4,
       "titulo": "Tema 3.4. Representación gráfica de datos bidimensionales",
       "descripcion": "Uso especializado de diagramas de dispersión, gráficos de burbujas y barras agrupadas para representar patrones de comportamiento.",
-      "subtemas": ["Gráficos bivariados", "Diagrama de dispersión", "Identificación de patrones", "Comportamientos visuales"],
-      "actividad": { "titulo": "Actividad 3.4: Diagramas de Dispersión", "descripcion": "Elaborar gráficos de dispersión e identificar visualmente tendencias de asociación.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+      "subtemas": [
+        {
+          "titulo": "Representación gráfica de dos variables",
+          "contenido": "La representación gráfica de dos variables busca mostrar visualmente cómo se comportan juntas las observaciones, ubicando cada individuo en un plano o en un gráfico categorizado. Esta representación facilita detectar tendencias, agrupamientos y valores atípicos que una tabla numérica podría ocultar. Por ejemplo, al graficar horas de conexión frente a datos consumidos, se aprecia de inmediato si el consumo crece con el tiempo de uso."
+        },
+        {
+          "titulo": "Gráficos para variables cualitativas",
+          "contenido": "Cuando ambas variables son cualitativas se emplean gráficos de barras agrupadas o apiladas, que comparan las categorías de una variable dentro de cada categoría de la otra. La altura de cada barra representa la frecuencia o el porcentaje condicional. Por ejemplo, un gráfico de barras agrupadas puede mostrar la preferencia de sistemas operativos separada por segmento de usuarios, hogar, empresa o educativo."
+        },
+        {
+          "titulo": "Gráficos para variables cuantitativas",
+          "contenido": "Para variables cuantitativas se utilizan diagramas de dispersión, gráficos de burbujas o líneas cuando existe un orden natural, como el tiempo. Estos gráficos conservan la información numérica de cada observación y permiten evaluar la forma de la relación. Por ejemplo, un gráfico de burbujas puede representar la potencia de un procesador en el eje horizontal, su precio en el vertical y el tamaño de la burbuja según su consumo energético."
+        },
+        {
+          "titulo": "Gráficos de dispersión",
+          "contenido": "El gráfico de dispersión ubica cada par de valores como un punto en un plano cartesiano, con una variable en el eje X y la otra en el eje Y. La forma de la nube de puntos revela si la relación es lineal, curvilínea o inexistente, y su inclinación indica el sentido. Por ejemplo, al graficar inversión publicitaria frente a ventas, una nube ascendente sugiere que a mayor inversión corresponden mayores ventas."
+        },
+        {
+          "titulo": "Gráficos agrupados",
+          "contenido": "Los gráficos agrupados comparan simultáneamente varias categorías o subgrupos, mostrando barras o series lado a lado para cada nivel de la variable principal. Son útiles cuando se desea contrastar el comportamiento de una variable cuantitativa entre distintos grupos. Por ejemplo, un gráfico de barras agrupadas puede comparar el gasto promedio en tecnología entre hombres y mujeres en cada rango de edad."
+        },
+        {
+          "titulo": "Interpretación de representaciones gráficas",
+          "contenido": "Interpretar un gráfico bidimensional exige leer los ejes, las escalas, las unidades y la leyenda antes de extraer conclusiones sobre la relación. Se observa la dirección de la nube, su grado de concentración y la presencia de puntos alejados del patrón general. Por ejemplo, si en un gráfico de dispersión la mayoría de puntos se alinea de forma ascendente y compacta, se concluye una relación lineal positiva y fuerte."
+        },
+        {
+          "titulo": "Identificación de patrones de comportamiento",
+          "contenido": "Identificar patrones consiste en reconocer estructuras repetidas en la nube de datos, como tendencias lineales, curvas, conglomerados o valores atípicos. Estos patrones orientan la elección del modelo estadístico adecuado y alertan sobre observaciones que requieren revisión. Por ejemplo, si los puntos se agrupan en dos nubes separadas, puede existir una tercera variable oculta, como el tipo de usuario, que explique esa división."
+        }
+      ],
+      "actividad": {
+        "titulo": "Actividad 3.4: Diagramas de Dispersión",
+        "descripcion": "Elaborar gráficos de dispersión e identificar visualmente tendencias de asociación.",
+        "puntos_max": 2,
+        "fecha_limite": "Viernes 23:59 hrs"
+      }
     },
     {
       "unidad_numero": 3,
       "orden": 5,
       "titulo": "Tema 3.5. Correlación entre variables",
       "descripcion": "Concepto de correlación lineal. Cálculo del coeficiente de correlación de Pearson, interpretación de signo y magnitud.",
-      "subtemas": ["Correlación positiva y negativa", "Ausencia de relación lineal", "Coeficiente de Pearson", "Cálculo e interpretación"],
-      "actividad": { "titulo": "Actividad 3.5: Coeficiente de Pearson", "descripcion": "Calcular matemáticamente e interpretar el coeficiente de correlación para dos variables físicas.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+      "subtemas": [
+        {
+          "titulo": "Concepto de correlación",
+          "contenido": "La correlación es una medida del grado en que dos variables cuantitativas varían conjuntamente de forma lineal, es decir, de cuánto se aproximan sus puntos a una recta. No indica causalidad, solo intensidad y sentido de la asociación. Por ejemplo, la correlación entre la estatura y el peso de un grupo de personas suele ser positiva y alta, sin que una variable cause directamente la otra."
+        },
+        {
+          "titulo": "Importancia del análisis de correlación",
+          "contenido": "El análisis de correlación es importante porque permite cuantificar y comparar relaciones entre variables antes de construir modelos predictivos. Ayuda a seleccionar variables relevantes, detectar redundancias y evitar conclusiones basadas en impresiones visuales. Por ejemplo, en un estudio sobre rendimiento académico, saber que las horas de estudio correlacionan con la nota justifica profundizar con un modelo de regresión."
+        },
+        {
+          "titulo": "Correlación positiva",
+          "contenido": "Existe correlación positiva cuando al aumentar una variable la otra también tiende a aumentar, de modo que la nube de puntos asciende de izquierda a derecha. Su coeficiente toma valores mayores que cero y se acerca a uno cuando la relación es más fuerte. Por ejemplo, la relación entre los años de experiencia de un programador y su productividad medida en tareas completadas suele ser positiva."
+        },
+        {
+          "titulo": "Correlación negativa",
+          "contenido": "La correlación es negativa cuando al aumentar una variable la otra tiende a disminuir, y la nube de puntos desciende de izquierda a derecha. Su coeficiente es menor que cero y se aproxima a menos uno cuando la relación inversa es más intensa. Por ejemplo, la relación entre el tiempo de respuesta de un servidor y la velocidad de conexión de los usuarios suele ser negativa, pues a mayor velocidad menor tiempo de espera."
+        },
+        {
+          "titulo": "Ausencia de correlación lineal",
+          "contenido": "La ausencia de correlación lineal ocurre cuando no existe una tendencia recta entre las variables, de modo que la nube de puntos no muestra dirección definida y el coeficiente se aproxima a cero. Esto no descarta una relación curva, pues puede existir dependencia no lineal. Por ejemplo, la relación entre la edad y el uso de redes sociales puede ser alta en jóvenes y baja en adultos, sin ajustarse a una recta."
+        },
+        {
+          "titulo": "Coeficiente de correlación",
+          "contenido": "El coeficiente de correlación de Pearson, denotado r, mide la intensidad y el sentido de la relación lineal entre dos variables y varía entre menos uno y uno. Se calcula como r igual a la covarianza de X e Y dividida entre el producto de sus desviaciones estándar. Un valor de r igual a 0,85 indica una relación positiva fuerte, mientras que r igual a menos 0,20 indica una relación negativa débil."
+        },
+        {
+          "titulo": "Cálculo e interpretación de la correlación",
+          "contenido": "Para calcular r se aplica la fórmula r igual a n por la suma de XY menos la suma de X por la suma de Y, dividido entre la raíz cuadrada del producto de dos expresiones análogas para X y para Y. Luego se interpreta su signo y su magnitud: por encima de 0,7 se considera fuerte, entre 0,3 y 0,7 moderada y por debajo de 0,3 débil. Además, la correlación no debe interpretarse como prueba de causalidad."
+        },
+        {
+          "titulo": "Relación entre variables cualitativas y cuantitativas",
+          "contenido": "Cuando una variable es cualitativa y la otra cuantitativa, la relación se estudia comparando la distribución de la variable numérica entre las categorías del atributo. Herramientas como el gráfico de cajas, las medias por grupo o el análisis de varianza permiten evaluar si existen diferencias. Por ejemplo, se puede comparar el salario promedio de los empleados según su nivel de formación, técnico, licenciado o posgrado."
+        }
+      ],
+      "actividad": {
+        "titulo": "Actividad 3.5: Coeficiente de Pearson",
+        "descripcion": "Calcular matemáticamente e interpretar el coeficiente de correlación para dos variables físicas.",
+        "puntos_max": 2,
+        "fecha_limite": "Viernes 23:59 hrs"
+      }
     },
     {
       "unidad_numero": 3,
       "orden": 6,
       "titulo": "Tema 3.6. Regresión lineal simple",
       "descripcion": "Construcción del modelo matemático lineal, determinación de variables independientes y dependientes, ecuación y predicciones.",
-      "subtemas": ["Variable dependiente e independiente", "Ecuación de la recta de regresión", "Ajuste lineal por mínimos cuadrados", "Aplicaciones y predicciones"],
-      "actividad": { "titulo": "Actividad 3.6: Ajuste de Regresión Simple", "descripcion": "Resolver problemas de regresión lineal simple y trazar la recta estimada sobre el gráfico.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" },
-      "jefe": { "titulo": "Jefe de la Unidad III", "nombre_jefe": "Espíritu de la Correlación", "puntos_max": 10, "xp_recompensa": 300 }
+      "subtemas": [
+        {
+          "titulo": "Concepto de regresión",
+          "contenido": "La regresión es una técnica estadística que modela la relación entre una variable explicativa y una variable respuesta mediante una función matemática, con el fin de describir o predecir. A diferencia de la correlación, que solo mide asociación, la regresión produce una ecuación que estima el valor de una variable a partir de la otra. Por ejemplo, permite estimar el precio de una vivienda a partir de su superficie en metros cuadrados."
+        },
+        {
+          "titulo": "Importancia de la regresión lineal",
+          "contenido": "La regresión lineal es importante porque ofrece un modelo sencillo e interpretable para cuantificar cómo cambia la variable dependiente ante variaciones de la independiente. Facilita pronósticos, la evaluación de políticas y la toma de decisiones basada en datos. Por ejemplo, una empresa puede estimar sus ventas mensuales futuras a partir del presupuesto destinado a publicidad, conociendo la ecuación ajustada."
+        },
+        {
+          "titulo": "Variable independiente",
+          "contenido": "La variable independiente, también llamada explicativa o regresora, es la que se utiliza para explicar o predecir el comportamiento de la otra y se representa con X. Sus valores se suponen conocidos o controlados por el investigador. Por ejemplo, en un estudio sobre el consumo de energía, las horas de uso diario del equipo actúan como variable independiente."
+        },
+        {
+          "titulo": "Variable dependiente",
+          "contenido": "La variable dependiente, o respuesta, es la que se desea explicar o predecir y se representa con Y. Se considera que sus valores dependen, en parte, del comportamiento de la variable independiente. Por ejemplo, en la relación entre horas de estudio y calificación, la calificación obtenida es la variable dependiente, pues se espera que dependa del tiempo dedicado al estudio."
+        },
+        {
+          "titulo": "Modelo de regresión lineal simple",
+          "contenido": "El modelo de regresión lineal simple se expresa como Y igual a a más b por X más el error, donde a es la ordenada al origen y b la pendiente de la recta. Supone que la relación entre ambas variables es lineal y que los errores tienen media cero y varianza constante. Por ejemplo, si a es 20 y b es 3, entonces por cada unidad adicional de X se espera un aumento de 3 unidades en Y."
+        },
+        {
+          "titulo": "Construcción de la ecuación de regresión",
+          "contenido": "La ecuación ajustada se obtiene por el método de mínimos cuadrados, que elige la recta que minimiza la suma de los cuadrados de las diferencias entre los valores observados y los estimados. La pendiente se calcula como b igual a la covarianza de X e Y dividida entre la varianza de X, y la ordenada como a igual a la media de Y menos b por la media de X. Por ejemplo, con esos coeficientes se escribe Y estimada igual a a más b por X."
+        },
+        {
+          "titulo": "Representación gráfica de la recta",
+          "contenido": "La recta de regresión se traza sobre el diagrama de dispersión y representa el valor esperado de Y para cada valor de X. Su pendiente indica cuánto cambia Y por unidad de X, y la ordenada al origen es el punto donde cruza el eje vertical. Por ejemplo, una recta ascendente y bien ajustada a la nube de puntos indica una relación lineal positiva y un buen ajuste del modelo."
+        },
+        {
+          "titulo": "Interpretación de resultados",
+          "contenido": "Interpretar una regresión implica explicar el signo y el valor de la pendiente, el significado de la ordenada al origen y la bondad del ajuste medida por el coeficiente de determinación R cuadrado. La pendiente indica el cambio esperado en Y por cada unidad de X, y R cuadrado la proporción de variabilidad explicada. Por ejemplo, un R cuadrado de 0,81 señala que el 81 por ciento de la variación de Y se explica por X."
+        },
+        {
+          "titulo": "Aplicaciones de la regresión",
+          "contenido": "La regresión lineal se aplica en economía, ingeniería, salud y tecnología para pronosticar, optimizar y evaluar relaciones entre variables. Permite estimar demandas, costos, rendimientos o riesgos a partir de datos históricos. Por ejemplo, un proveedor de servicios de internet puede predecir la satisfacción del cliente en función de la velocidad contratada y priorizar así sus inversiones en infraestructura."
+        }
+      ],
+      "actividad": {
+        "titulo": "Actividad 3.6: Ajuste de Regresión Simple",
+        "descripcion": "Resolver problemas de regresión lineal simple y trazar la recta estimada sobre el gráfico.",
+        "puntos_max": 2,
+        "fecha_limite": "Viernes 23:59 hrs"
+      },
+      "jefe": {
+        "titulo": "Jefe de la Unidad III",
+        "nombre_jefe": "Espíritu de la Correlación",
+        "puntos_max": 10,
+        "xp_recompensa": 300,
+        "preguntas": [
+          {
+            "enunciado": "En una investigación se registra, para cada estudiante, el número de horas de estudio y la calificación obtenida. ¿Qué tipo de análisis se está realizando?",
+            "opcion_a": "Un análisis unidimensional, porque se calcula el promedio de horas.",
+            "opcion_b": "Un análisis bidimensional, porque se estudian dos variables en la misma unidad de observación.",
+            "opcion_c": "Un análisis de series de tiempo, porque las variables cambian con el tiempo.",
+            "opcion_d": "Un análisis de números índices, porque se comparan dos periodos.",
+            "opcion_correcta": "B",
+            "explicacion": "El análisis bidimensional estudia simultáneamente dos variables medidas sobre una misma unidad, en este caso horas de estudio y calificación. Cada estudiante aporta un par ordenado de valores."
+          },
+          {
+            "enunciado": "¿Cuál es la principal diferencia entre el análisis unidimensional y el bidimensional?",
+            "opcion_a": "El unidimensional describe una variable a la vez, mientras el bidimensional estudia la variación conjunta de dos variables.",
+            "opcion_b": "El unidimensional solo usa variables cualitativas y el bidimensional solo cuantitativas.",
+            "opcion_c": "El bidimensional no requiere organizar los datos en tablas.",
+            "opcion_d": "El unidimensional permite calcular correlaciones y el bidimensional no.",
+            "opcion_correcta": "A",
+            "explicacion": "El enfoque unidimensional resume una sola variable mediante frecuencias o promedios, y el bidimensional analiza cómo se comportan dos variables en conjunto."
+          },
+          {
+            "enunciado": "Una tabla de correlación cruza tramos de superficie de vivienda con tramos de precio. Si las frecuencias más altas se ubican desde la esquina superior izquierda hacia la inferior derecha, ¿qué se concluye?",
+            "opcion_a": "Que no existe relación entre las variables.",
+            "opcion_b": "Que la relación es positiva, pues ambas variables crecen juntas.",
+            "opcion_c": "Que la tabla está mal construida porque falta el total general.",
+            "opcion_d": "Que la relación es negativa, pues al aumentar una variable la otra disminuye.",
+            "opcion_correcta": "D",
+            "explicacion": "Cuando las mayores frecuencias descienden de izquierda a derecha, los valores altos de una variable se asocian con los bajos de la otra, lo que indica relación inversa."
+          },
+          {
+            "enunciado": "En una tabla de contingencia que cruza el canal de compra con la satisfacción del cliente, ¿qué representa la suma de una columna?",
+            "opcion_a": "Una frecuencia conjunta de dos categorías específicas.",
+            "opcion_b": "Una distribución condicional de la variable satisfacción.",
+            "opcion_c": "Una frecuencia marginal de la variable correspondiente a esa columna.",
+            "opcion_d": "El coeficiente de correlación entre ambas variables.",
+            "opcion_correcta": "C",
+            "explicacion": "Los totales de fila o columna constituyen las frecuencias marginales, que describen una variable sin considerar la otra. Las celdas interiores son las frecuencias conjuntas."
+          },
+          {
+            "enunciado": "Si el 80 por ciento de los compradores presenciales está satisfecho y solo el 40 por ciento de los compradores en línea lo está, ¿qué interpretación es correcta?",
+            "opcion_a": "Las variables son independientes, porque los porcentajes se calculan por separado.",
+            "opcion_b": "Existe asociación entre el canal de compra y la satisfacción, pues las distribuciones condicionales difieren.",
+            "opcion_c": "No puede interpretarse sin conocer el total de la muestra.",
+            "opcion_d": "La satisfacción causa el canal de compra elegido.",
+            "opcion_correcta": "B",
+            "explicacion": "Al comparar distribuciones condicionales se observa una diferencia notable entre los grupos, lo que evidencia asociación entre ambas variables cualitativas."
+          },
+          {
+            "enunciado": "¿Qué gráfico es más adecuado para representar dos variables cuantitativas y evaluar visualmente si su relación es lineal?",
+            "opcion_a": "Un gráfico circular de sectores.",
+            "opcion_b": "Un histograma de frecuencias acumuladas.",
+            "opcion_c": "Un diagrama de dispersión.",
+            "opcion_d": "Una ojiva de frecuencias relativas.",
+            "opcion_correcta": "C",
+            "explicacion": "El diagrama de dispersión ubica cada par de valores como un punto en el plano y permite apreciar la forma, dirección e intensidad de la relación."
+          },
+          {
+            "enunciado": "En un diagrama de dispersión la nube de puntos desciende de izquierda a derecha y está muy concentrada alrededor de una recta. ¿Qué coeficiente de correlación es coherente con esta situación?",
+            "opcion_a": "r igual a 0,95.",
+            "opcion_b": "r igual a 0,05.",
+            "opcion_c": "r igual a menos 0,10.",
+            "opcion_d": "r igual a menos 0,92.",
+            "opcion_correcta": "D",
+            "explicacion": "Una nube descendente y compacta indica relación lineal negativa fuerte, compatible con un valor cercano a menos uno, como menos 0,92."
+          },
+          {
+            "enunciado": "¿Cuál de las siguientes afirmaciones sobre el coeficiente de correlación de Pearson es correcta?",
+            "opcion_a": "Puede tomar cualquier valor real y su magnitud indica causalidad.",
+            "opcion_b": "Varía entre menos uno y uno, y su signo indica el sentido de la relación lineal.",
+            "opcion_c": "Solo puede calcularse cuando ambas variables son cualitativas.",
+            "opcion_d": "Un valor de cero demuestra que las variables son independientes en todo sentido.",
+            "opcion_correcta": "B",
+            "explicacion": "El coeficiente r se encuentra en el intervalo de menos uno a uno; el signo señala si la relación es directa o inversa y su valor absoluto la intensidad lineal."
+          },
+          {
+            "enunciado": "En el modelo de regresión lineal simple, ¿qué representa la pendiente b de la recta ajustada?",
+            "opcion_a": "El valor esperado de Y cuando X es igual a cero.",
+            "opcion_b": "La proporción de variabilidad de Y explicada por el modelo.",
+            "opcion_c": "El cambio esperado en Y por cada unidad adicional de X.",
+            "opcion_d": "La correlación entre los residuos del modelo.",
+            "opcion_correcta": "C",
+            "explicacion": "La pendiente cuantifica la variación media de la variable dependiente ante un incremento de una unidad en la variable independiente. La ordenada al origen corresponde al caso en que X es cero."
+          },
+          {
+            "enunciado": "Un modelo de regresión presenta un coeficiente de determinación R cuadrado igual a 0,81. ¿Cómo se interpreta este resultado?",
+            "opcion_a": "El 81 por ciento de la variación de la variable dependiente se explica por la variable independiente.",
+            "opcion_b": "La correlación entre ambas variables es de 0,81 en todos los casos.",
+            "opcion_c": "El modelo predice correctamente el 81 por ciento de las observaciones futuras.",
+            "opcion_d": "La pendiente de la recta es necesariamente igual a 0,81.",
+            "opcion_correcta": "A",
+            "explicacion": "R cuadrado mide la proporción de la variabilidad de Y explicada por el modelo. Su raíz cuadrada se relaciona con la correlación, pero no es equivalente en signo."
+          }
+        ]
+      }
     },
     {
       "unidad_numero": 4,
       "orden": 1,
       "titulo": "Tema 4.1. Proporciones, razones, tasas e incrementos",
       "descripcion": "Conceptos y cálculos de indicadores básicos como proporciones, razones, tasas absolutas y relativas. Aplicación en biología y economía.",
-      "subtemas": ["Cálculo de Proporciones y Razones", "Cálculo de Tasas", "Incrementos absolutos", "Incrementos relativos"],
-      "actividad": { "titulo": "Actividad 4.1: Práctica de Tasas y Razones", "descripcion": "Resolver la guía analítica sobre el cálculo de incrementos porcentuales y proporciones.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+      "subtemas": [
+        {
+          "titulo": "Concepto de proporción",
+          "contenido": "Una proporción es la relación entre una parte y el total del conjunto al que pertenece, expresada como el cociente entre la frecuencia observada y el número total de casos. Su valor indica qué fracción del total presenta una característica y suele multiplicarse por cien para leerlo como porcentaje. Por ejemplo, si 50 de 200 estudiantes usan transporte público, la proporción es 50/200 = 0,25, equivalente a 25 %."
+        },
+        {
+          "titulo": "Cálculo de proporciones",
+          "contenido": "La proporción se calcula con la fórmula p = a / N, donde a es el número de casos con la característica y N es el total de observaciones. El resultado siempre se encuentra entre 0 y 1, y la suma de las proporciones de todas las categorías mutuamente excluyentes es igual a 1. Para expresarla en porcentaje basta multiplicar por 100, como en 18/240 = 0,075, que corresponde a 7,5 %."
+        },
+        {
+          "titulo": "Concepto de razón",
+          "contenido": "Una razón compara dos cantidades de distinta naturaleza mediante un cociente y no exige que el numerador esté contenido en el denominador. Se escribe como a:b o a/b e indica cuántas unidades de la primera magnitud corresponden a una de la segunda. A diferencia de la proporción, una razón puede superar la unidad, por ejemplo una razón de 3 médicos por cada 1000 habitantes."
+        },
+        {
+          "titulo": "Cálculo de razones",
+          "contenido": "Para calcular una razón se divide la cantidad del primer grupo entre la del segundo y se expresa el resultado como cociente o como razón unitaria. Si una localidad tiene 480 nacimientos y 12 000 habitantes, la razón de nacimientos por habitante es 480/12 000 = 0,04, es decir, 4 nacimientos por cada 100 personas. La razón no requiere que ambos grupos sumen un total común."
+        },
+        {
+          "titulo": "Concepto de tasa",
+          "contenido": "Una tasa es una medida de frecuencia que relaciona el número de eventos ocurridos con la población expuesta y con un periodo de tiempo determinado. Se multiplica por una potencia de diez, como 1000 o 100 000, para obtener un valor legible por cada grupo de referencia. La tasa de natalidad, por ejemplo, expresa nacimientos por cada mil habitantes en un año."
+        },
+        {
+          "titulo": "Cálculo de tasas",
+          "contenido": "La tasa se obtiene con la expresión T = (a / P) x k, donde a es el número de eventos, P la población expuesta y k la constante de escala, generalmente 1000 o 100 000. Si en una ciudad de 250 000 habitantes se registran 5000 nacimientos en un año, la tasa de natalidad es (5000/250 000) x 1000 = 20 nacimientos por mil habitantes. La constante permite comparar poblaciones de distinto tamaño."
+        },
+        {
+          "titulo": "Incrementos absolutos",
+          "contenido": "El incremento absoluto es la diferencia aritmética entre el valor final y el valor inicial de una variable, medida en las mismas unidades de la serie. Se calcula como Δ = Vf - Vi y conserva el signo del cambio, por lo que un resultado negativo indica una disminución. Si una acción pasó de 40 a 46 dólares, el incremento absoluto fue de 6 dólares."
+        },
+        {
+          "titulo": "Incrementos relativos",
+          "contenido": "El incremento relativo expresa la variación como proporción del valor inicial y permite comparar cambios entre series con escalas distintas. Se calcula como (Vf - Vi) / Vi y se multiplica por 100 para obtener el porcentaje de variación. Si la producción pasó de 800 a 920 unidades, el incremento relativo es (920 - 800)/800 = 0,15, es decir, 15 %."
+        },
+        {
+          "titulo": "Interpretación de resultados",
+          "contenido": "Interpretar una proporción, razón o tasa exige identificar la base de comparación, la unidad de medida y el periodo al que se refiere el cálculo. Un mismo valor puede parecer alto o bajo según el total que lo origine, por lo que conviene acompañarlo con el numerador y el denominador. También debe distinguirse entre un cambio absoluto, que conserva unidades, y uno relativo, que se expresa en porcentaje."
+        },
+        {
+          "titulo": "Aplicaciones en datos biológicos y económicos",
+          "contenido": "En biología estas medidas describen prevalencia de enfermedades, mortalidad, natalidad y crecimiento de poblaciones, mientras que en economía permiten analizar inflación, desempleo, productividad y variación del producto. Por ejemplo, una tasa de mortalidad infantil o un incremento porcentual del PIB se interpretan con la misma lógica de relación entre eventos, población y tiempo. Su utilidad radica en que resumen fenómenos complejos en valores comparables."
+        }
+      ],
+      "actividad": {
+        "titulo": "Actividad 4.1: Práctica de Tasas y Razones",
+        "descripcion": "Resolver la guía analítica sobre el cálculo de incrementos porcentuales y proporciones.",
+        "puntos_max": 2,
+        "fecha_limite": "Viernes 23:59 hrs"
+      }
     },
     {
       "unidad_numero": 4,
       "orden": 2,
       "titulo": "Tema 4.2. Introducción a los números índices",
       "descripcion": "Importancia, propiedades y características fundamentales de los números índices simples y compuestos en series de tiempo.",
-      "subtemas": ["Concepto y propiedades", "Importancia económica", "Índices simples", "Índices compuestos"],
-      "actividad": { "titulo": "Actividad 4.2: Investigación de Índices", "descripcion": "Analizar la utilidad de los números índices compuesto dentro del comercio tecnológico nacional.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+      "subtemas": [
+        {
+          "titulo": "Concepto de números índices",
+          "contenido": "Un número índice es una medida estadística que expresa el cambio relativo de una variable o de un conjunto de variables respecto a una situación de referencia llamada periodo base. La base se fija convencionalmente en 100, de modo que un índice de 125 indica un aumento del 25 % respecto de ella. Su fórmula general es I = (Xt / X0) x 100."
+        },
+        {
+          "titulo": "Importancia de los números índices",
+          "contenido": "Los números índices permiten comparar magnitudes que cambian en el tiempo o en el espacio y resumir el comportamiento de muchos bienes en un solo valor. Son la base para medir la inflación, ajustar salarios, deflactar series económicas y evaluar el poder adquisitivo. Sin ellos resultaría difícil distinguir si un aumento de ventas se debe a mayores precios o a mayores cantidades."
+        },
+        {
+          "titulo": "Características de los números índices",
+          "contenido": "Todo número índice se define por un periodo base, un periodo de comparación, una canasta de referencia y una fórmula de cálculo. Es una medida adimensional y relativa, pues no expresa niveles absolutos sino variaciones porcentuales. Además, debe ser comparable en el tiempo, representativo del fenómeno y construido con una metodología estable y documentada."
+        },
+        {
+          "titulo": "Propiedades de los números índices",
+          "contenido": "Entre las propiedades deseables están la identidad, que asigna 100 al periodo base; la proporcionalidad, que refleja cambios proporcionales en los precios; la reversibilidad, que permite invertir base y periodo; y la circularidad, que relaciona índices encadenados. En la práctica no todas se cumplen simultáneamente, por lo que la elección de la fórmula implica un compromiso metodológico."
+        },
+        {
+          "titulo": "Aplicaciones estadísticas y económicas",
+          "contenido": "En estadística los índices resumen series de tiempo y facilitan la comparación de tendencias; en economía se usan para el índice de precios al consumidor, el índice de precios al productor, la producción industrial y el comercio exterior. También sirven para actualizar valores monetarios, medir competitividad y evaluar políticas públicas. Su aplicación requiere elegir una base representativa y mantener la misma canasta durante la comparación."
+        },
+        {
+          "titulo": "Diferencias entre índices simples y compuestos",
+          "contenido": "Un índice simple describe la evolución de una sola variable, como el precio de un producto, mientras que un índice compuesto resume el comportamiento de varios elementos, como una canasta de bienes. El índice simple se obtiene con un solo cociente, en tanto que el compuesto requiere promedios o ponderaciones. Esta diferencia determina su complejidad de cálculo y su capacidad para representar fenómenos agregados."
+        }
+      ],
+      "actividad": {
+        "titulo": "Actividad 4.2: Investigación de Índices",
+        "descripcion": "Analizar la utilidad de los números índices compuesto dentro del comercio tecnológico nacional.",
+        "puntos_max": 2,
+        "fecha_limite": "Viernes 23:59 hrs"
+      }
     },
     {
       "unidad_numero": 4,
       "orden": 3,
       "titulo": "Tema 4.3. Índices simples",
       "descripcion": "Cálculo e interpretación analítica de índices simples de precios, índices de cantidad e índices de valor.",
-      "subtemas": ["Índices simples de precios", "Índices de cantidades", "Índices de valor", "Interpretación de resultados"],
-      "actividad": { "titulo": "Actividad 4.3: Ejercicios de Índices Simples", "descripcion": "Calcular los índices de precios simples para un listado histórico de hardware de computación.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+      "subtemas": [
+        {
+          "titulo": "Concepto de índice simple",
+          "contenido": "Un índice simple mide la variación de una única variable entre un periodo base y un periodo actual, sin considerar ponderaciones ni otros artículos. Se calcula como I = (Xt / X0) x 100, donde Xt es el valor del periodo comparado y X0 el del periodo base. Su resultado siempre se interpreta en relación con la base fijada en 100."
+        },
+        {
+          "titulo": "Índices simples de precios",
+          "contenido": "El índice simple de precios compara el precio de un artículo en un periodo con el precio del mismo artículo en la base, mediante Ip = (pt / p0) x 100. Si un producto costaba 50 y ahora cuesta 60, el índice es (60/50) x 100 = 120, lo que significa un encarecimiento del 20 %. Este cálculo aísla la variación de precios sin mezclarla con cambios en las cantidades."
+        },
+        {
+          "titulo": "Índices simples de cantidades",
+          "contenido": "El índice simple de cantidades mide la evolución del volumen producido, vendido o consumido de un bien respecto a la base, con Iq = (qt / q0) x 100. Si se vendían 300 unidades y se venden 345, el índice es 115, es decir, un aumento del 15 % en volumen. Se usa para analizar crecimiento productivo o demanda sin la influencia de los precios."
+        },
+        {
+          "titulo": "Índices de valor",
+          "contenido": "El índice de valor combina precio y cantidad para medir la evolución del valor monetario total de un bien, mediante Iv = (pt x qt) / (p0 x q0) x 100. También puede obtenerse como Iv = (Ip x Iq) / 100, lo que muestra que el valor depende de ambos componentes. Si precio y cantidad suben 20 % y 10 %, el valor se incrementa aproximadamente 32 %."
+        },
+        {
+          "titulo": "Cálculo de índices simples",
+          "contenido": "Para calcular un índice simple se identifica la variable, se elige un periodo base representativo, se aplica el cociente entre el valor actual y el de la base y se multiplica por 100. Conviene mantener la misma unidad de medida y la misma definición del artículo en todos los periodos. Un índice de 85 indica que el valor actual equivale al 85 % del valor de la base."
+        },
+        {
+          "titulo": "Interpretación de resultados",
+          "contenido": "Un índice igual a 100 señala que no hubo variación respecto de la base, uno mayor que 100 indica un aumento y uno menor que 100 refleja una disminución. La diferencia respecto de 100 expresa la variación porcentual, de modo que 130 corresponde a un alza del 30 % y 70 a una caída del 30 %. La interpretación siempre debe mencionar el periodo base y la variable medida."
+        }
+      ],
+      "actividad": {
+        "titulo": "Actividad 4.3: Ejercicios de Índices Simples",
+        "descripcion": "Calcular los índices de precios simples para un listado histórico de hardware de computación.",
+        "puntos_max": 2,
+        "fecha_limite": "Viernes 23:59 hrs"
+      }
     },
     {
       "unidad_numero": 4,
       "orden": 4,
       "titulo": "Tema 4.4. Índices compuestos",
       "descripcion": "Estudio de índices compuestos agregativos y aditivos. Métodos combinados para evaluar variaciones complejas de precios.",
-      "subtemas": ["Índices combinados", "Modelos agregativos", "Métodos aditivos", "Comparaciones complejas"],
-      "actividad": { "titulo": "Actividad 4.4: Cálculo de Índices Compuestos", "descripcion": "Desarrollar problemas estadísticos utilizando índices compuestos aplicados a la canasta básica.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+      "subtemas": [
+        {
+          "titulo": "Concepto de índices compuestos",
+          "contenido": "Un índice compuesto resume la evolución de varios artículos o variables en un solo valor, generalmente mediante promedios ponderados de índices simples. Se utiliza cuando interesa medir el comportamiento de una canasta, como los precios al consumidor o la producción industrial. Su construcción exige definir los elementos incluidos, sus ponderaciones y la fórmula de agregación."
+        },
+        {
+          "titulo": "Índices combinados de precios",
+          "contenido": "Los índices combinados de precios promedian los índices simples de varios productos para obtener una medida global de la variación de precios. Pueden calcularse como media aritmética simple de los índices individuales o como promedio ponderado según la importancia de cada bien. Este enfoque permite describir una canasta sin sumar precios de artículos con unidades distintas."
+        },
+        {
+          "titulo": "Índices de cantidades o cuánticos",
+          "contenido": "Los índices de cantidades o cuánticos miden la evolución conjunta del volumen de varios bienes respecto a una base. Se construyen promediando los índices simples de cantidad o agregando las cantidades ponderadas por precios. Su interpretación indica si la producción o el consumo físico de la canasta creció o disminuyó en términos relativos."
+        },
+        {
+          "titulo": "Índices agregativos",
+          "contenido": "Los índices agregativos suman precios o cantidades de varios artículos y comparan el total del periodo actual con el de la base. En precios, un ejemplo es el índice de Laspeyres, que pondera con cantidades de la base mediante (suma pt q0 / suma p0 q0) x 100. Estos índices requieren que los artículos compartan una unidad o una ponderación común."
+        },
+        {
+          "titulo": "Índices aditivos",
+          "contenido": "Los índices aditivos ponderan cada artículo por el valor que representa dentro del gasto total, de modo que los bienes más importantes influyen más en el resultado. Se calculan como la suma de valores actuales entre la suma de valores de la base, multiplicada por 100. Su ventaja es que reflejan la estructura real de consumo o de producción de la canasta."
+        },
+        {
+          "titulo": "Cálculo de índices compuestos",
+          "contenido": "El cálculo comienza por definir la canasta, el periodo base y las ponderaciones; luego se obtienen los índices o valores de cada componente y se agregan con la fórmula elegida. Es imprescindible conservar la misma composición de la canasta durante la comparación para que el índice mida solo el cambio deseado. Finalmente se multiplica por 100 y se interpreta respecto de la base."
+        },
+        {
+          "titulo": "Interpretación y comparación de índices",
+          "contenido": "Comparar índices compuestos exige verificar que compartan la misma base, la misma canasta y una metodología similar, pues de lo contrario las diferencias pueden deberse al diseño y no al fenómeno. Un índice de 140 frente a otro de 120 indica un crecimiento relativo mayor, pero no necesariamente un nivel absoluto más alto. La comparación debe acompañarse del contexto económico y del periodo analizado."
+        }
+      ],
+      "actividad": {
+        "titulo": "Actividad 4.4: Cálculo de Índices Compuestos",
+        "descripcion": "Desarrollar problemas estadísticos utilizando índices compuestos aplicados a la canasta básica.",
+        "puntos_max": 2,
+        "fecha_limite": "Viernes 23:59 hrs"
+      }
     },
     {
       "unidad_numero": 4,
       "orden": 5,
       "titulo": "Tema 4.5. Deflactación y cambio de base",
       "descripcion": "Procesos de ajuste monetario, deflactación de series de tiempo económicas y metodologías de cambio de base indexada.",
-      "subtemas": ["Concepto de deflactación", "Series económicas", "Cambio de base indexada", "Procedimientos matemáticos"],
-      "actividad": { "titulo": "Actividad 4.5: Taller de Deflactación", "descripcion": "Resolver casos prácticos de deflactación y cambio de base de indicadores inflacionarios.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+      "subtemas": [
+        {
+          "titulo": "Concepto de deflactación",
+          "contenido": "La deflactación es el procedimiento que elimina el efecto de la inflación para expresar valores monetarios en unidades de poder adquisitivo constante. Se divide el valor nominal entre un índice de precios y se multiplica por 100, obteniendo el valor real referido al periodo base. Así, un ingreso que creció 10 % con una inflación de 15 % en realidad disminuyó en términos reales."
+        },
+        {
+          "titulo": "Deflactación de series económicas",
+          "contenido": "Deflactar una serie económica consiste en aplicar el cociente entre cada valor nominal y el índice de precios correspondiente al mismo periodo, multiplicado por 100. El resultado es una serie en moneda constante que permite comparar magnitudes a lo largo del tiempo sin distorsión inflacionaria. Es habitual usar el índice de precios al consumidor o un deflactor del producto como referencia."
+        },
+        {
+          "titulo": "Importancia de la deflactación",
+          "contenido": "La deflactación es indispensable para distinguir el crecimiento nominal del crecimiento real de una economía o de un ingreso. Sin ella, un aumento de precios podría confundirse con una mejora efectiva de la producción, del salario o de las ventas. También permite comparar cifras de distintos años, evaluar el poder adquisitivo y diseñar políticas económicas con información ajustada."
+        },
+        {
+          "titulo": "Cambio de base en números índices",
+          "contenido": "Cambiar la base de un número índice significa elegir un nuevo periodo de referencia y reexpresar toda la serie para que ese periodo tome el valor 100. La operación no altera la evolución relativa de la serie, solo modifica el punto de comparación. Es frecuente cuando la base original queda demasiado alejada o deja de ser representativa."
+        },
+        {
+          "titulo": "Procedimientos para cambiar la base",
+          "contenido": "Para cambiar la base se divide cada índice de la serie entre el índice del nuevo periodo base y se multiplica por 100, aplicando I_nuevo = (I_antiguo / I_base_nueva) x 100. Si el índice del nuevo base era 125 en la escala antigua, ese valor pasa a ser 100 y los demás se reescalan proporcionalmente. El procedimiento debe aplicarse a toda la serie para conservar la coherencia."
+        },
+        {
+          "titulo": "Interpretación de series económicas",
+          "contenido": "Interpretar una serie económica requiere distinguir si los valores son nominales o reales, identificar la base y reconocer la tendencia de fondo por encima de las fluctuaciones. Una serie deflactada refleja cambios en volumen o poder adquisitivo, mientras que una nominal incorpora la inflación. Comparar ambas permite detectar periodos en que el crecimiento aparente se explica solo por los precios."
+        }
+      ],
+      "actividad": {
+        "titulo": "Actividad 4.5: Taller de Deflactación",
+        "descripcion": "Resolver casos prácticos de deflactación y cambio de base de indicadores inflacionarios.",
+        "puntos_max": 2,
+        "fecha_limite": "Viernes 23:59 hrs"
+      }
     },
     {
       "unidad_numero": 4,
       "orden": 6,
       "titulo": "Tema 4.6. Construcción de indicadores estadísticos",
       "descripcion": "Diseño y estructuración de indicadores en ámbitos socioeconómicos, ambientales y en el uso de tecnologías de la información (TIC).",
-      "subtemas": ["Concepto de indicador", "Indicadores socioeconómicos", "Indicadores ambientales", "Indicadores TIC"],
-      "actividad": { "titulo": "Actividad 4.6: Matriz de Indicadores TIC", "descripcion": "Diseñar una propuesta metodológica para evaluar el acceso a internet rural mediante indicadores.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" }
+      "subtemas": [
+        {
+          "titulo": "Concepto de indicador",
+          "contenido": "Un indicador es una variable o combinación de variables que resume cuantitativamente un fenómeno para facilitar su seguimiento y evaluación. Debe tener una definición clara, una unidad de medida, una fuente de datos y una forma de interpretación establecida. Por ejemplo, la tasa de desempleo o el porcentaje de hogares con internet son indicadores de realidades complejas."
+        },
+        {
+          "titulo": "Importancia de los indicadores",
+          "contenido": "Los indicadores permiten monitorear la evolución de un problema, comparar territorios o grupos y evaluar el impacto de políticas y proyectos. Al traducir conceptos abstractos en valores observables, facilitan la toma de decisiones basada en evidencia. Su valor aumenta cuando se construyen con criterios homogéneos y se actualizan periódicamente."
+        },
+        {
+          "titulo": "Indicadores socioeconómicos",
+          "contenido": "Los indicadores socioeconómicos describen condiciones de bienestar, producción y distribución, como el producto interno bruto per cápita, la tasa de pobreza, el nivel de empleo y la alfabetización. Suelen combinarse para construir índices de desarrollo humano o de calidad de vida. Permiten comparar países y orientar políticas sociales y económicas."
+        },
+        {
+          "titulo": "Indicadores ambientales",
+          "contenido": "Los indicadores ambientales miden el estado de los recursos naturales y la presión que las actividades humanas ejercen sobre ellos. Ejemplos son las emisiones de gases de efecto invernadero por habitante, la calidad del aire, el acceso a agua potable y la tasa de deforestación. Su seguimiento es clave para evaluar sostenibilidad y cumplir acuerdos ambientales."
+        },
+        {
+          "titulo": "Indicadores relacionados con las tecnologías de información y comunicación",
+          "contenido": "Los indicadores TIC cuantifican el acceso, el uso y las capacidades digitales de una población, como el porcentaje de hogares con internet, la penetración de banda ancha o el número de usuarios de telefonía móvil. También incluyen habilidades digitales y gasto en tecnología. Sirven para medir la brecha digital y evaluar el impacto de la digitalización."
+        },
+        {
+          "titulo": "Aplicaciones de indicadores en diferentes sectores",
+          "contenido": "En salud se usan tasas de mortalidad y cobertura; en educación, tasas de matrícula y conclusión; en agricultura, rendimientos por hectárea; y en el sector público, indicadores de gestión y transparencia. Cada sector adapta el indicador a su unidad de análisis y a sus objetivos. La comparación entre sectores exige revisar definiciones y metodologías para evitar conclusiones erróneas."
+        },
+        {
+          "titulo": "Análisis e interpretación de indicadores",
+          "contenido": "Analizar un indicador implica examinar su tendencia, compararlo con una meta o referencia y considerar el contexto que lo origina. Un mismo valor puede tener significados distintos según la población, el territorio y el periodo. Por ello conviene acompañarlo con otros indicadores, revisar la calidad de la fuente y evitar interpretaciones causales sin evidencia suficiente."
+        }
+      ],
+      "actividad": {
+        "titulo": "Actividad 4.6: Matriz de Indicadores TIC",
+        "descripcion": "Diseñar una propuesta metodológica para evaluar el acceso a internet rural mediante indicadores.",
+        "puntos_max": 2,
+        "fecha_limite": "Viernes 23:59 hrs"
+      }
     },
     {
       "unidad_numero": 4,
       "orden": 7,
       "titulo": "Tema 4.7. Índice de Gini y curva de Lorenz",
       "descripcion": "Estudio cuantitativo de la concentración y la desigualdad económica mediante la construcción de la curva de Lorenz y el cálculo del coeficiente de Gini.",
-      "subtemas": ["Concentración económica", "Curva de Lorenz gráfica", "Fórmula del Índice de Gini", "Análisis de desigualdad"],
-      "actividad": { "titulo": "Actividad 4.7: Gráfico de Lorenz", "descripcion": "Construir de manera gráfica la curva de Lorenz y calcular el índice de Gini basándose en ingresos reales.", "puntos_max": 2, "fecha_limite": "Viernes 23:59 hrs" },
-      "jefe": { "titulo": "Jefe de la Unidad IV", "nombre_jefe": "Fortaleza de Gini y Lorenz", "puntos_max": 10, "xp_recompensa": 300 }
+      "subtemas": [
+        {
+          "titulo": "Concepto de concentración económica",
+          "contenido": "La concentración económica describe cómo se distribuyen el ingreso o la riqueza entre los miembros de una población. Existe alta concentración cuando una pequeña proporción de personas acumula una gran parte del total, mientras que la equidistribución implica que todos reciben porciones similares. Este fenómeno se estudia con herramientas como la curva de Lorenz y el índice de Gini."
+        },
+        {
+          "titulo": "Distribuciones de frecuencias acumuladas",
+          "contenido": "Las distribuciones acumuladas ordenan la población de menor a mayor ingreso y suman progresivamente las proporciones de personas y de ingreso. Así se obtiene el porcentaje acumulado de población y el porcentaje acumulado del ingreso que le corresponde. Estas proporciones son la base para construir la curva de Lorenz y calcular el índice de Gini."
+        },
+        {
+          "titulo": "Concepto del índice de Gini",
+          "contenido": "El índice de Gini es una medida de desigualdad que resume la concentración de una distribución y toma valores entre 0 y 1. Un valor cercano a 0 indica igualdad perfecta y uno cercano a 1 representa concentración máxima. Se deriva del área entre la curva de Lorenz y la línea de equidistribución."
+        },
+        {
+          "titulo": "Construcción del índice de Gini",
+          "contenido": "El índice se calcula a partir de las proporciones acumuladas de población y de ingreso mediante G = 1 - suma de (p_i - p_i-1) por (L_i + L_i-1), donde p representa la población acumulada y L el ingreso acumulado. También equivale al cociente entre el área de concentración y el área total bajo la diagonal. El resultado se interpreta como proporción de la desigualdad observada."
+        },
+        {
+          "titulo": "Concepto de curva de Lorenz",
+          "contenido": "La curva de Lorenz es una representación gráfica de la distribución del ingreso que enfrenta el porcentaje acumulado de población, ordenado de menor a mayor ingreso, con el porcentaje acumulado de ingreso recibido. Si la distribución fuera perfectamente igualitaria, la curva coincidiría con la diagonal de 45 grados. Cuanto más se aleja de esa diagonal, mayor es la concentración."
+        },
+        {
+          "titulo": "Construcción gráfica de la curva de Lorenz",
+          "contenido": "Para construirla se ordenan los individuos o grupos de menor a mayor ingreso, se calculan los porcentajes acumulados de población y de ingreso y se grafican esos pares de puntos unidos por una curva. Se añade la línea diagonal de equidistribución como referencia visual. La superficie entre ambas curvas refleja el grado de desigualdad de la distribución."
+        },
+        {
+          "titulo": "Interpretación del índice de Gini",
+          "contenido": "Un índice de Gini de 0 expresa igualdad total y uno de 1 expresa que una sola persona concentra todo el ingreso. Valores intermedios indican distintos grados de desigualdad, por lo que debe compararse con cautela entre países o periodos con metodologías similares. El indicador resume la concentración, pero no describe por sí solo las causas ni la estructura de la desigualdad."
+        },
+        {
+          "titulo": "Aplicaciones en el análisis de desigualdad",
+          "contenido": "El índice de Gini y la curva de Lorenz se aplican al estudio de la distribución del ingreso, la riqueza, el consumo, la tierra y el acceso a servicios como educación o salud. Permiten comparar regiones, evaluar el efecto redistributivo de políticas fiscales y dar seguimiento a objetivos de desarrollo. Su uso combinado con otros indicadores ofrece una lectura más completa de la equidad social."
+        }
+      ],
+      "actividad": {
+        "titulo": "Actividad 4.7: Gráfico de Lorenz",
+        "descripcion": "Construir de manera gráfica la curva de Lorenz y calcular el índice de Gini basándose en ingresos reales.",
+        "puntos_max": 2,
+        "fecha_limite": "Viernes 23:59 hrs"
+      },
+      "jefe": {
+        "titulo": "Jefe de la Unidad IV",
+        "nombre_jefe": "Fortaleza de Gini y Lorenz",
+        "puntos_max": 10,
+        "xp_recompensa": 300,
+        "preguntas": [
+          {
+            "enunciado": "En un grupo de 250 estudiantes, 75 participan en un taller de programación. ¿Cuál es la proporción de estudiantes que participa en el taller?",
+            "opcion_a": "0,75",
+            "opcion_b": "0,30",
+            "opcion_c": "3,33",
+            "opcion_d": "0,33",
+            "opcion_correcta": "B",
+            "explicacion": "La proporción se obtiene dividiendo 75 entre 250, lo que da 0,30. Expresada en porcentaje corresponde al 30 % del grupo."
+          },
+          {
+            "enunciado": "Una ciudad registra 6000 nacimientos en un año y tiene 300 000 habitantes. ¿Cuál es su tasa de natalidad por cada mil habitantes?",
+            "opcion_a": "2 por mil",
+            "opcion_b": "50 por mil",
+            "opcion_c": "20 por mil",
+            "opcion_d": "200 por mil",
+            "opcion_correcta": "C",
+            "explicacion": "La tasa se calcula como (6000 / 300 000) x 1000, que equivale a 20 nacimientos por cada mil habitantes. La constante 1000 permite expresar la frecuencia en una base legible."
+          },
+          {
+            "enunciado": "Si el precio de un artículo era 80 y en el periodo actual es 100, ¿cómo se interpreta su índice simple de precios con base en el primer periodo?",
+            "opcion_a": "El índice es 125, lo que indica un aumento del 25 % respecto de la base.",
+            "opcion_b": "El índice es 80, lo que indica una caída del 20 % respecto de la base.",
+            "opcion_c": "El índice es 20, lo que indica un aumento del 20 % respecto de la base.",
+            "opcion_d": "El índice es 100, lo que indica que el precio no varió.",
+            "opcion_correcta": "A",
+            "explicacion": "El índice se obtiene como (100 / 80) x 100 = 125. Al superar 100 en 25 unidades, refleja un incremento del 25 % respecto del periodo base."
+          },
+          {
+            "enunciado": "Un producto tenía un precio de 40 y una cantidad vendida de 500; ahora su precio es 50 y la cantidad vendida es 600. ¿Cuál es el índice de valor con base en la primera situación?",
+            "opcion_a": "125",
+            "opcion_b": "120",
+            "opcion_c": "110",
+            "opcion_d": "150",
+            "opcion_correcta": "D",
+            "explicacion": "El valor inicial es 40 x 500 = 20 000 y el actual es 50 x 600 = 30 000. El índice es (30 000 / 20 000) x 100 = 150, es decir, un aumento del 50 %."
+          },
+          {
+            "enunciado": "En un índice de precios agregativo tipo Laspeyres, ¿qué se utiliza como ponderación de los precios del periodo actual?",
+            "opcion_a": "Las cantidades del periodo actual.",
+            "opcion_b": "Las cantidades del periodo base.",
+            "opcion_c": "Los precios del periodo base.",
+            "opcion_d": "El promedio simple de los precios.",
+            "opcion_correcta": "B",
+            "explicacion": "El índice de Laspeyres mantiene fijas las cantidades de la canasta del periodo base para aislar el efecto de los precios. Por eso pondera los precios actuales con las cantidades base."
+          },
+          {
+            "enunciado": "Un salario nominal aumentó de 1000 a 1100, mientras que el índice de precios pasó de 100 a 115. ¿Qué ocurrió con el salario real?",
+            "opcion_a": "Aumentó un 15 % en términos reales.",
+            "opcion_b": "Se mantuvo constante en términos reales.",
+            "opcion_c": "Disminuyó aproximadamente un 4,3 % en términos reales.",
+            "opcion_d": "Aumentó un 10 % en términos reales.",
+            "opcion_correcta": "C",
+            "explicacion": "El salario real se obtiene como (1100 / 115) x 100 = 956,5, frente a 1000 iniciales. La caída es de aproximadamente 4,3 %, porque los precios crecieron más que el salario nominal."
+          },
+          {
+            "enunciado": "¿Cuál de los siguientes es un indicador típico del acceso a las tecnologías de información y comunicación en una población?",
+            "opcion_a": "El porcentaje de hogares con conexión a internet.",
+            "opcion_b": "La tasa de mortalidad infantil.",
+            "opcion_c": "El índice de precios al consumidor.",
+            "opcion_d": "La tasa de deforestación anual.",
+            "opcion_correcta": "A",
+            "explicacion": "El porcentaje de hogares con internet mide directamente el acceso a las TIC. Los otros valores corresponden a indicadores sociales, económicos o ambientales."
+          },
+          {
+            "enunciado": "Si el índice de Gini de un país es 0,45 y el de otro es 0,28, ¿cuál es la interpretación correcta?",
+            "opcion_a": "El segundo país tiene mayor concentración del ingreso.",
+            "opcion_b": "Ambos países presentan igualdad perfecta.",
+            "opcion_c": "El primer país tiene menor desigualdad que el segundo.",
+            "opcion_d": "El primer país presenta mayor desigualdad en la distribución del ingreso.",
+            "opcion_correcta": "D",
+            "explicacion": "Cuanto más cercano a 1 es el índice de Gini, mayor es la concentración del ingreso. Por ello, 0,45 refleja más desigualdad que 0,28."
+          },
+          {
+            "enunciado": "Una serie de índices tiene base 2010 = 100 y se desea cambiar la base a 2015, cuyo índice en la escala antigua es 140. ¿Qué valor debe tomar 2015 en la nueva serie?",
+            "opcion_a": "140",
+            "opcion_b": "100",
+            "opcion_c": "40",
+            "opcion_d": "240",
+            "opcion_correcta": "B",
+            "explicacion": "Al cambiar la base, el periodo elegido como nueva referencia siempre adopta el valor 100. Los demás índices se reescalan dividiendo entre 140 y multiplicando por 100."
+          },
+          {
+            "enunciado": "En la curva de Lorenz, ¿qué representa el área comprendida entre la diagonal de equidistribución y la curva observada?",
+            "opcion_a": "El nivel absoluto de ingreso de la población.",
+            "opcion_b": "La tasa de crecimiento de la economía.",
+            "opcion_c": "El grado de concentración del ingreso, base del índice de Gini.",
+            "opcion_d": "El porcentaje de población que vive en pobreza extrema.",
+            "opcion_correcta": "C",
+            "explicacion": "Cuanto mayor es el área entre la diagonal y la curva de Lorenz, mayor es la concentración del ingreso. El índice de Gini se obtiene relacionando esa área con el área total bajo la diagonal."
+          }
+        ]
+      }
     }
   ]
 }

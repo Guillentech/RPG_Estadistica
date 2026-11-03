@@ -33,6 +33,7 @@ Plataforma web gamificada con temática RPG para la gestión y evaluación acad�
 - **Jefes Finales** — Evaluaciones de opción múltiple con corrección automática, XP variable, retroalimentación por pregunta y **un solo intento** por mazmorra.
 - **Misiones de Laboratorio** — Tareas con entregas textuales (y adjuntos PDF/Word en Base64) que el profesor califica y retroalimenta.
 - **Sistema RPG completo** — XP, niveles, HP y títulos de clase que se recalculan automáticamente con cada calificación.
+- **Logros y medallas** — 14 trofeos desbloqueables ("Primer Sangre", "Conjuro Perfecto", "Racha de Laboratorio", "Racha de 7 Días"…) con barra de progreso, galería en el perfil, toast animado y XP de bonificación.
 - **Ranking del Gremio** — Tabla de los mejores héroes ordenada por XP.
 - **Copiloto IA (Oráculo)** — Genera preguntas, ejemplos y misiones desde un tema, con respaldo local automático si no hay clave de API.
 - **Sesiones seguras en servidor** — Tokens de sesión almacenados en SQLite con cierre de sesión real.
@@ -44,6 +45,7 @@ proyecto_Estadistica/
 ├── package.json                 # Scripts de arranque unificado (npm run dev)
 ├── backend/                     # API REST (Express + better-sqlite3)
 │   ├── server.js                # Endpoints, motor de corrección RPG y Copiloto IA
+│   ├── logros.js                # Motor de medallas: reglas, progreso y desbloqueo
 │   ├── db.js                    # Esquema SQLite, migraciones y semillas
 │   ├── .env                     # Variables opcionales (PORT, GEMINI_API_KEY)
 │   └── database.sqlite          # Base de datos (se crea sola al primer arranque)
@@ -127,6 +129,7 @@ Base URL: `http://localhost:4000` (configurable con `PORT`).
 | `POST` | `/api/auth/logout` | Cierre de sesión (elimina el token) |
 | `GET` | `/api/estudiantes` | Listado del gremio ordenado por XP |
 | `POST` / `DELETE` | `/api/estudiantes/:id` | Crear / eliminar estudiante |
+| `GET` | `/api/estudiantes/:id/logros` | Catálogo de 14 medallas con estado y progreso del héroe |
 | `GET` | `/api/gremio` | Top 8 héroes para el HUD del mapa |
 | `GET` / `POST` | `/api/temas` | Listar (con ejemplos) / crear biomas-tema |
 | `POST` / `DELETE` | `/api/ejemplos/:id` | Crear / eliminar pergaminos de estudio |
@@ -148,6 +151,7 @@ El backend recalcula automáticamente XP, nivel, HP y clase del estudiante tras 
 - **XP base de bienvenida:** 150 al ingresar al Gremio.
 - **Jefes vencidos:** `puntaje% × XP de recompensa` + bonus (50 si aprueba ≥ 60 %, 15 en caso contrario).
 - **Misiones calificadas:** `nota × 2` XP por entrega.
+- **Logros desbloqueados:** XP de bonificación permanente (50–300 XP según la medalla).
 - **Niveles:** cada **250 XP** sube 1 nivel (por defecto nivel 1 con 150 XP).
 
 | Nivel | Título de clase |

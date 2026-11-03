@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { KeyRound, Swords, Sparkles, AlertCircle } from 'lucide-react';
+import { PageBackdrop } from '../components/rpg';
 
 export default function AccesoEstudiante() {
   const [codigo, setCodigo] = useState('');
@@ -9,6 +10,11 @@ export default function AccesoEstudiante() {
   const [cargando, setCargando] = useState(false);
   const { user, loginEstudiante } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.body.classList.add('auth-student-active');
+    return () => document.body.classList.remove('auth-student-active');
+  }, []);
 
   useEffect(() => {
     if (user && user.rol === 'estudiante') {
@@ -24,7 +30,7 @@ export default function AccesoEstudiante() {
     // Validación estricta de formato de token (Requisito 18)
     const tokenRegex = /^[A-Z0-9-]{4,15}$/;
     if (!codigoLimpio || !tokenRegex.test(codigoLimpio)) {
-      setError('Ingresa un código de gremio válido (ejemplo: EST-F8AO).');
+      setError('Ingresa un código de gremio válido (ejemplo: EST-LEO1).');
       return;
     }
 
@@ -52,6 +58,7 @@ export default function AccesoEstudiante() {
 
   return (
     <div className="auth-shell">
+      <PageBackdrop variant="auth-student" />
       <div className="auth-panel auth-panel--student">
         <div className="auth-head">
           <div className="auth-sprite auth-sprite--student">
@@ -103,7 +110,7 @@ export default function AccesoEstudiante() {
             Tokens rápidos de prueba:
           </span>
           <div className="token-list">
-            {['EST-F8AO', 'EST-LEO1', 'EST-SOF2', 'EST-ANA3'].map(tok => (
+            {['EST-LEO1', 'EST-SOF2', 'EST-ANA3'].map(tok => (
               <button
                 key={tok}
                 type="button"

@@ -5,3 +5,5 @@ export { default as AudioControls } from './AudioControls';
 export { default as PixelIcon } from './PixelIcon';
 export { default as PortalRunes } from './PortalRunes';
 export { default as NeonScene } from './NeonScene';
+export { default as PageBackdrop } from './PageBackdrop';
+export { default as MarkdownLite } from './MarkdownLite';

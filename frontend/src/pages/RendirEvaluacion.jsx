@@ -2,11 +2,19 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Swords, Clock, ArrowLeft, Sparkles } from 'lucide-react';
+import ToastLogros from '../components/rpg/ToastLogros';
+import { PageBackdrop } from '../components/rpg';
+import { marcarLogrosVistos } from '../utils/logros';
 
 export default function RendirEvaluacion() {
   const { id } = useParams();
   const { user, refrescarEstudiante } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.body.classList.add('combat-active');
+    return () => document.body.classList.remove('combat-active');
+  }, []);
 
   const [preguntas, setPreguntas] = useState([]);
   const [evaluacion, setEvaluacion] = useState(null); // 📚 Datos de la evaluación (puntos en la materia)
@@ -14,6 +22,7 @@ export default function RendirEvaluacion() {
   const [respuestas, setRespuestas] = useState({});
   const [animacionAtaque, setAnimacionAtaque] = useState(false);
   const [resultado, setResultado] = useState(null);
+  const [logrosNuevos, setLogrosNuevos] = useState([]);
   const [tiempoRestante, setTiempoRestante] = useState(300);
   const [enviando, setEnviando] = useState(false);
 
@@ -84,6 +93,12 @@ export default function RendirEvaluacion() {
       const data = await res.json();
       if (res.ok) {
         setResultado(data);
+        const nuevos = data.logros_desbloqueados || [];
+        if (nuevos.length > 0) {
+          setLogrosNuevos(nuevos);
+          // Evita repetir el toast al volver al panel del héroe.
+          marcarLogrosVistos(user.id, nuevos);
+        }
         await refrescarEstudiante();
       } else {
         alert(data.error || 'Error al calificar el combate.');
@@ -98,7 +113,10 @@ export default function RendirEvaluacion() {
   if (resultado) {
     const aprobado = resultado.puntaje >= 60;
     return (
-      <div className="container" style={{ maxWidth: '680px', marginTop: '1.5rem' }}>
+      <div className="panel-page panel-page--combat">
+        <PageBackdrop variant="combat" />
+        <div className="container" style={{ maxWidth: '680px', marginTop: '1.5rem' }}>
+          <ToastLogros logros={logrosNuevos} onClose={() => setLogrosNuevos([])} />
         <div className={`card-pro result-card ${aprobado ? 'result-card--win' : 'result-card--lose'}`}>
           <h2 className={`pixel-font result-title ${aprobado ? 'is-pass' : 'is-fail'}`}>
             {aprobado ? '🏆 ¡JEFE FINAL DERROTADO!' : '💀 EL JEFE RESISTIÓ EL ATAQUE'}
@@ -124,6 +142,24 @@ export default function RendirEvaluacion() {
             </span>
           </div>
 
+          {resultado.logros_desbloqueados?.length > 0 && (
+            <div className="result-logros">
+              <h4 className="result-logros__titulo">🏆 ¡MEDALLAS DESBLOQUEADAS!</h4>
+              {resultado.logros_desbloqueados.map((logro) => (
+                <div key={logro.id ?? logro.codigo} className="result-logro">
+                  <span className="result-logro__icono" aria-hidden="true">{logro.icono}</span>
+                  <div>
+                    <strong>{logro.nombre}</strong>
+                    <span>{logro.descripcion}</span>
+                  </div>
+                  {Number(logro.xp_bonus) > 0 && (
+                    <em className="result-logro__xp">+{logro.xp_bonus} XP</em>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
           {resultado.desglose && (
             <div className="result-breakdown rpg-scroll">
               {resultado.desglose.map((d, i) => (
@@ -142,14 +178,17 @@ export default function RendirEvaluacion() {
           </button>
         </div>
       </div>
+      </div>
     );
   }
 
   const preguntaActual = preguntas[turnoActual];
 
   return (
-    <div className="container" style={{ maxWidth: '880px' }}>
-      <div className="rpg-combat-shell">
+    <div className="panel-page panel-page--combat">
+      <PageBackdrop variant="combat" />
+      <div className="container" style={{ maxWidth: '880px' }}>
+        <div className="rpg-combat-shell">
         {/* ESCENARIO DE COMBATE 2D PIXEL ART */}
         <div className="rpg-combat-stage">
           {/* Barra Superior de Tiempo y Turno */}
@@ -277,6 +316,7 @@ export default function RendirEvaluacion() {
           )}
         </div>
       </div>
+    </div>
     </div>
   );
 }
