@@ -8,6 +8,7 @@
     "dev:backend": "npm --prefix backend run dev",
     "dev:frontend": "npm --prefix frontend run dev",
     "start": "npm --prefix backend start",
+    "start:prod": "npm run build && npm start",
     "build": "npm --prefix frontend run build",
     "lint": "npm --prefix frontend run lint",
     "setup": "npm install && npm --prefix backend install && npm --prefix frontend install"

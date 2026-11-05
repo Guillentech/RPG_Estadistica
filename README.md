@@ -19,6 +19,7 @@ Plataforma web gamificada con temática RPG para la gestión y evaluación acad�
 - [Estructura del proyecto](#-estructura-del-proyecto)
 - [Requisitos previos](#-requisitos-previos)
 - [Instalación y ejecución](#-instalación-y-ejecución)
+- [Despliegue y uso en PC/Android](#-despliegue-y-uso-en-pcandroid)
 - [Cuentas de demostración](#-cuentas-de-demostración)
 - [Rutas de la aplicación](#-rutas-de-la-aplicación)
 - [API REST](#-api-rest)
@@ -97,6 +98,17 @@ Un solo `Ctrl+C` detiene los dos procesos y libera los puertos `4000` y `5173`.
 
 > [!NOTE]
 > La base de datos, sus tablas y los datos semilla se crean automáticamente en el primer arranque. No hace falta configurar nada más para probar el proyecto.
+
+## 🌐 Despliegue y uso en PC/Android
+
+La app se puede publicar como servicio web y abrir desde cualquier PC o Android sin instalar Node. También incluye una **PWA instalable** (Android: “Agregar a pantalla de inicio”; PC: “Instalar”).
+
+- Guía completa: [`docs/DESPLIEGUE.md`](docs/DESPLIEGUE.md)
+- Build de producción: `npm run build && npm start` → `http://localhost:4000`
+- Docker: `docker compose up -d --build`
+- Variables de entorno: `backend/.env.example` y `frontend/.env.example`
+
+> Para que otras personas la usen, publica backend + frontend en un servidor con HTTPS y comparte la URL. El backend sirve la SPA y la API en el mismo origen; `VITE_API_URL` solo es necesario si separas el frontend en otro dominio.
 
 ## 🔑 Cuentas de demostración
 

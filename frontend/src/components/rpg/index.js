@@ -1,7 +1,11 @@
 export { default as RpgWindow } from './RpgWindow';
 export { default as StatBar } from './StatBar';
+export { default as PixelBar } from './PixelBar';
 export { default as PixelButton } from './PixelButton';
 export { default as AudioControls } from './AudioControls';
+export { default as GameHud } from './GameHud';
+export { default as GameHotbar } from './GameHotbar';
+export { default as RuneAudioPlayer } from './RuneAudioPlayer';
 export { default as PixelIcon } from './PixelIcon';
 export { default as PortalRunes } from './PortalRunes';
 export { default as NeonScene } from './NeonScene';
