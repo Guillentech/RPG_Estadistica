@@ -1,0 +1,23 @@
+services:
+  app:
+    build: .
+    image: saga-academica:latest
+    container_name: saga-academica
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    environment:
+      PORT: 4000
+      NODE_ENV: production
+      DB_PATH: /data/database.sqlite
+      UPLOADS_DIR: /data/uploads
+      CORS_ORIGIN: ${CORS_ORIGIN:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+    volumes:
+      - ./data:/data
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:4000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
