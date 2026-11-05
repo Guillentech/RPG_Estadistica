@@ -14,10 +14,29 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 4000;
 
+// 🌐 Orígenes permitidos por CORS. Sin CORS_ORIGIN se mantiene abierto en desarrollo.
+// En producción se recomienda: CORS_ORIGIN=https://app.tudominio.com
+const ORIGENES_CORS = (process.env.CORS_ORIGIN || '')
+  .split(',')
+  .map((origen) => origen.trim())
+  .filter(Boolean);
+
+const opcionesCors = ORIGENES_CORS.includes('*')
+  ? undefined
+  : ORIGENES_CORS.length > 0
+    ? {
+        origin: (origin, callback) => callback(null, !origin || ORIGENES_CORS.includes(origin))
+      }
+    : undefined;
+
 // 📎 Carpeta de adjuntos: fuera del bundle y servida como estático de solo lectura.
+// En Docker/producción se puede apuntar a un volumen persistente con UPLOADS_DIR.
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const UPLOADS_DIR = path.join(__dirname, 'uploads');
+const UPLOADS_DIR = process.env.UPLOADS_DIR
+  ? path.resolve(process.env.UPLOADS_DIR)
+  : path.join(__dirname, 'uploads');
 const ENTREGAS_DIR = path.join(UPLOADS_DIR, 'entregas');
+const FRONTEND_DIST = path.join(__dirname, '..', 'frontend', 'dist');
 fs.mkdirSync(ENTREGAS_DIR, { recursive: true });
 
 const MAX_ARCHIVO_BYTES = 10 * 1024 * 1024;
@@ -108,11 +127,16 @@ const avatarValido = (avatar) => {
   return bytes > 0 && bytes <= MAX_AVATAR_BYTES ? avatar : null;
 };
 
-app.use(cors());
+app.use(cors(opcionesCors));
 // 💡 Aumentamos el límite del body a 50mb para permitir subir PDFs/Word largos en Base64
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use('/uploads', express.static(UPLOADS_DIR, { fallthrough: true, index: false }));
+
+// ❤️ Healthcheck para monitorización y despliegues.
+app.get('/api/health', (_req, res) => {
+  res.json({ ok: true, servicio: 'Saga Académica' });
+});
 
 // Función auxiliar para calcular Nivel en base a XP (Req. 14)
 // Cada 250 XP sube 1 nivel de personaje
@@ -1159,6 +1183,26 @@ Responde ÚNICAMENTE un objeto JSON válido:
 app.post('/api/ia/generar-evaluacion', (req, res) => {
   res.redirect(307, '/api/ia/asistente');
 });
+
+// 🔎 Cualquier /api desconocida responde JSON, no el index.html de la SPA.
+app.use('/api', (_req, res) => {
+  res.status(404).json({ error: 'Endpoint no encontrado.' });
+});
+
+// 🌐 Sirve la SPA compilada. En desarrollo el frontend lo sirve Vite.
+if (fs.existsSync(FRONTEND_DIST)) {
+  app.use(express.static(FRONTEND_DIST));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/uploads/')) return next();
+    return res.sendFile(path.join(FRONTEND_DIST, 'index.html'));
+  });
+} else {
+  app.get('/', (_req, res) => {
+    res.status(404).json({
+      error: 'Frontend no compilado. Ejecuta "npm run build" o usa "npm run dev".'
+    });
+  });
+}
 
 app.listen(PORT, () => {
   console.log(`⚔️ Servidor Saga Académica corriendo en http://localhost:${PORT}`);

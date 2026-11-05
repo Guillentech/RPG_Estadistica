@@ -1,8 +1,12 @@
 import Database from 'better-sqlite3';
+import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-// Abre siempre backend/database.sqlite sin depender del directorio de ejecución
-const rutaBaseDatos = fileURLToPath(new URL('./database.sqlite', import.meta.url));
+// Abre siempre backend/database.sqlite sin depender del directorio de ejecución.
+// En Docker/producción se puede apuntar a un volumen persistente con DB_PATH.
+const rutaBaseDatos = process.env.DB_PATH
+  ? path.resolve(process.env.DB_PATH)
+  : fileURLToPath(new URL('./database.sqlite', import.meta.url));
 const db = new Database(rutaBaseDatos);
 db.pragma('foreign_keys = ON');
 
