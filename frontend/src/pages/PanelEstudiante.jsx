@@ -1,20 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { API_URL } from '../config';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import {
-  Backpack, Scroll, Users, Trophy, CloudLightning, Send, GraduationCap, UserRound, FileText
-} from 'lucide-react';
-import { StatBar, MarkdownLite, PageBackdrop } from '../components/rpg';
+import { Send } from 'lucide-react';
+import { StatBar, GameHud, GameHotbar } from '../components/rpg';
 import MapaGeneral from '../components/mapa/MapaGeneral';
 import MapaUnidad from '../components/mapa/MapaUnidad';
 import ModalTema from '../components/mapa/ModalTema';
-import ModalEntrega from '../components/mapa/ModalEntrega';
-import PerfilEstudiante from '../components/perfil/PerfilEstudiante';
-import LogrosPanel from '../components/perfil/LogrosPanel';
-import ToastLogros from '../components/rpg/ToastLogros';
-import { urlArchivo, API_URL } from '../config';
-import { detectarLogrosNuevos } from '../utils/logros';
-import { AlchemistWizard16Bit, AvatarHero16Bit } from '../components/mapa/Sprites';
+import { AlchemistWizard16Bit } from '../components/mapa/Sprites';
 import { TERRENOS, terrenoDeUnidad, ANCHO_LOGICO } from '../game/terreno';
 import { esTileTransitable, puntoInicio } from '../game/mapa';
 import { calcularProgresoUnidad, crearUnidadCampamento, temasDeUnidad } from '../game/progreso';
@@ -28,11 +21,6 @@ export default function PanelEstudiante() {
   const navigate = useNavigate();
   const wrapperMapaRef = useRef(null);  // Contenedor para medir la escala entera
   const esMovil = useMediaQuery('(max-width: 640px)');
-
-  useEffect(() => {
-    document.body.classList.add('student-panel-active');
-    return () => document.body.classList.remove('student-panel-active');
-  }, []);
 
   // 💡 Estados para la navegación de la barra inferior (Hotbar)
   const [vistaHotbar, setVistaHotbar] = useState('mapa');
@@ -49,7 +37,6 @@ export default function PanelEstudiante() {
   const [misEntregas, setMisEntregas] = useState([]);
   const [gremio, setGremio] = useState([]);
   const [boleta, setBoleta] = useState(null); // 📚 Boleta académica (nota 0-100 puntos)
-  const [logrosNuevos, setLogrosNuevos] = useState([]); // 🏆 Medallas recién desbloqueadas (toast)
 
   // 💡 Estados del Motor de Mapa 2D por Tiles y Ciudadelas
   const [heroPos, setHeroPos] = useState({ x: 15, y: 8 });
@@ -58,66 +45,45 @@ export default function PanelEstudiante() {
   const [unidadActiva, setUnidadActiva] = useState(null);
 
   // 💡 Estados de Entregas de Misiones (Trabajos Prácticos)
-  const [tareaEnEntrega, setTareaEnEntrega] = useState(null);
+  const [entregaTexto, setEntregaTexto] = useState({});
+  const [enviandoTarea, setEnviandoTarea] = useState(false);
 
   // 💡 Estados del Sabio Alquimista (Copiloto IA Estudiantil)
   const [dialogoAlquimistaAbierto, setDialogoAlquimistaAbierto] = useState(false);
   const [preguntaAlquimista, setPreguntaAlquimista] = useState('');
   const [respuestaAlquimista, setRespuestaAlquimista] = useState('');
   const [cargandoAlquimista, setCargandoAlquimista] = useState(false);
-  const dialogoAlquimistaRef = useRef(null);
-
-  // Cada respuesta nueva sustituye a la anterior dentro del mismo panel:
-  // si el alumno había bajado en la respuesta vieja, la nueva empezaría a
-  // media lectura. Se vuelve arriba al llegar.
-  useEffect(() => {
-    if (respuestaAlquimista && dialogoAlquimistaRef.current) {
-      dialogoAlquimistaRef.current.scrollTop = 0;
-    }
-  }, [respuestaAlquimista]);
-
-  // 🏆 Revisa medallas nuevas (p. ej. si el Game Master calificó una misión)
-  const revisarLogrosNuevos = async () => {
-    if (!user?.id) return;
-    try {
-      const res = await fetch(`${API_URL}/api/estudiantes/${user.id}/logros`);
-      if (!res.ok) return;
-      const data = await res.json();
-      const nuevos = detectarLogrosNuevos(user.id, data.logros || []);
-      if (nuevos.length > 0) setLogrosNuevos(nuevos);
-      if (data.nuevos?.length > 0) refrescarEstudiante();
-    } catch {
-      // Si el servidor no responde, el héroe puede seguir usando el panel.
-    }
-  };
 
   // 💡 FUNCIÓN: Cargar toda la data de la base de datos al inicio
   const cargarDatos = () => {
-    fetch('http://localhost:4000/api/unidades')
+    fetch(`${API_URL}/api/unidades`)
       .then(r => { if (!r.ok) throw new Error('No se pudieron cargar las Ciudadelas'); return r.json(); })
       .then(setUnidades)
       .catch(() => setUnidades([]));
-    fetch('http://localhost:4000/api/temas').then(r => r.json()).then(setTemas);
-    fetch('http://localhost:4000/api/evaluaciones').then(r => r.json()).then(setEvaluaciones);
-    fetch('http://localhost:4000/api/tareas').then(r => r.json()).then(setTareas);
-    fetch('http://localhost:4000/api/gremio').then(r => r.json()).then(setGremio);
+    fetch(`${API_URL}/api/temas`).then(r => r.json()).then(setTemas);
+    fetch(`${API_URL}/api/evaluaciones`).then(r => r.json()).then(setEvaluaciones);
+    fetch(`${API_URL}/api/tareas`).then(r => r.json()).then(setTareas);
+    fetch(`${API_URL}/api/gremio`).then(r => r.json()).then(setGremio);
 
     if (user?.id) {
       refrescarEstudiante();
-      fetch(`http://localhost:4000/api/calificaciones/estudiante/${user.id}`)
+      fetch(`${API_URL}/api/calificaciones/estudiante/${user.id}`)
         .then(r => r.json())
         .then(setCalificaciones);
 
-      fetch(`http://localhost:4000/api/estudiantes/${user.id}/boleta`)
+      fetch(`${API_URL}/api/estudiantes/${user.id}/boleta`)
         .then(r => r.json())
         .then(setBoleta)
         .catch(() => setBoleta(null));
 
-      fetch(`http://localhost:4000/api/entregas/estudiante/${user.id}`)
+      fetch(`${API_URL}/api/entregas/estudiante/${user.id}`)
         .then(r => r.json())
-        .then(setMisEntregas);
-
-      revisarLogrosNuevos();
+        .then(data => {
+          setMisEntregas(data);
+          const mapa = {};
+          data.forEach(e => { mapa[e.tarea_id] = e.contenido; });
+          setEntregaTexto(prev => ({ ...mapa, ...prev }));
+        });
     }
   };
 
@@ -250,6 +216,34 @@ export default function PanelEstudiante() {
     });
   };
 
+// 💡 FUNCIÓN: Enviar un Trabajo Práctico al Servidor
+  const enviarTrabajo = async (tareaId) => {
+    const contenido = entregaTexto[tareaId];
+    if (!contenido?.trim()) return alert('Redacta el pergamino de tu entrega antes de enviarlo.');
+
+    setEnviandoTarea(true);
+    try {
+      const res = await fetch(`${API_URL}/api/entregas`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tarea_id: tareaId,
+          estudiante_id: user.id,
+          contenido: contenido.trim()
+        })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        alert(data.mensaje || '¡Misión entregada con éxito!');
+        cargarDatos();
+      }
+    } catch {
+      alert('Error al enviar la misión.');
+    } finally {
+      setEnviandoTarea(false);
+    }
+  };
+
   // 💡 FUNCIÓN: Consultar al Bot AI del Sabio Alquimista
   const consultarSabioAlquimista = async (e) => {
     e.preventDefault();
@@ -257,7 +251,7 @@ export default function PanelEstudiante() {
     setCargandoAlquimista(true);
     try {
       const titulosTemas = temas.map(t => t.titulo).join(', ');
-      const res = await fetch('http://localhost:4000/api/ia/asistente', {
+      const res = await fetch(`${API_URL}/api/ia/asistente`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -286,106 +280,65 @@ export default function PanelEstudiante() {
   const tareasPendientes = tareas.filter(t => !misEntregas.some(e => e.tarea_id === t.id));
   
   const energiaActual = Math.max(35, 100 - (examenesPendientes.length * 10));
+  const hpActual = Math.min(100, 60 + nivelActual * 5);
   const hayTormenta = examenesPendientes.length > 0 || tareasPendientes.length > 0;
 
   return (
-    <div className="panel-page panel-page--student">
-      <PageBackdrop variant="student" />
-      <div className="container page-shell" style={{ maxWidth: '1220px' }}>
+    <div className="container page-shell" style={{ maxWidth: '1220px' }}>
       
       {/* =====================================================================
-          1. TOP HUD 16-BIT (AVATAR IZQ | BARRAS XP Y ENERGÍA CENTRO | CLIMA DER)
+          1. HUD SUPERIOR UNIFICADO (AVATAR + BARRAS XP/EN/HP + TABLÓN + RUNA)
          ===================================================================== */}
-      <div className="hud-panel">
-        <div className="hud-hero">
-          <div className="hud-avatar">
-            <AvatarHero16Bit clase={user?.clase_rpg || 'Arquera Lógica'} />
-          </div>
-          <div className="hud-identity">
-            <span className="hud-name">
-              {user?.nombre || 'Estudiante'}
-            </span>
-            <span className="hud-role">
-              Nvl {nivelActual} • {user?.clase_rpg || 'Aventurero'}
-            </span>
-            <span className="hud-token">
-              TOKEN: {user?.codigo_unico || 'N/A'}
-            </span>
-          </div>
-        </div>
-
-        <div className="hud-stats">
-          <StatBar label="★ EXPERIENCIA (XP)" value={xpEnNivel} max={250} color="xp" suffix=" XP" showPercent />
-          <StatBar label="⚡ ENERGÍA / STAMINA" value={energiaActual} max={100} color="stamina" suffix=" EN" showPercent />
-          <StatBar label="❤ HP DEL JUGADOR" value={Math.min(100, 60 + nivelActual * 5)} max={100} color="hp" suffix=" HP" showPercent />
-        </div>
-
-        <div className="hud-weather">
-          <div className="hud-weather__icon">
-            <CloudLightning size={22} />
-          </div>
-          <div>
-            <span className="hud-weather__label">CLIMA: 24H</span>
-            <span className={`hud-weather__state ${hayTormenta ? 'is-storm' : ''}`}>
-              {hayTormenta ? 'TORMENTA DE FECHAS' : 'CIELO DESPEJADO'}
-            </span>
-            <span className="hud-weather__meta">
-              {examenesPendientes.length} Jefes activos
-            </span>
-          </div>
-        </div>
-      </div>
+      <GameHud
+        user={user}
+        nivelActual={nivelActual}
+        xpEnNivel={xpEnNivel}
+        xpMaximo={250}
+        energiaActual={energiaActual}
+        hpActual={hpActual}
+        examenesPendientes={examenesPendientes.length}
+        tareasPendientes={tareasPendientes.length}
+        hayTormenta={hayTormenta}
+        onHablarAlquimista={() => setDialogoAlquimistaAbierto(true)}
+      />
 
             {vistaHotbar === 'mapa' && (
-        <div ref={wrapperMapaRef} className="mapa-wrapper w-full flex justify-center overflow-x-auto">
-          {!unidadActiva ? (
-            <MapaGeneral
-              unidades={unidadesVisibles}
-              terreno={TERRENOS.continental}
-              heroPos={heroPos}
-              escala={escalaMapa}
-              caminando={caminando}
-              progresoPorUnidad={progresoPorUnidad}
-              claseHeroe={user?.clase_rpg || 'Arquera Lógica'}
-              esMovil={esMovil}
-              onMoverHeroe={moverHeroe}
-              onEntrarUnidad={entrarUnidad}
-            />
-          ) : (
-            <MapaUnidad
-              unidad={unidadActiva}
-              temas={temasUnidadActiva}
-              terreno={terrenoActual}
-              heroPos={heroPos}
-              escala={escalaMapa}
-              caminando={caminando}
-              claseHeroe={user?.clase_rpg || 'Arquera Lógica'}
-              evaluaciones={evaluaciones}
-              tareas={tareas}
-              calificaciones={calificaciones}
-              entregas={misEntregas}
-              esMovil={esMovil}
-              onVolver={salirUnidad}
-              onMoverHeroe={moverHeroe}
-              onTemaClick={abrirTema}
-              onJefeClick={abrirJefeUnidad}
-            />
-          )}
-
-          {!unidadActiva && (
-            <button
-              type="button"
-              onClick={() => setDialogoAlquimistaAbierto(true)}
-              className="alchemist-bubble alchemist-bubble--compact"
-              title={examenesPendientes.length > 0
-                ? `El Jefe de "${examenesPendientes[0].titulo}" aguarda en una Ciudadela.`
-                : 'Consultar al Sabio Alquimista AI'}
-              aria-label="Abrir el Sabio Alquimista AI"
-            >
-              <span className="alchemist-bubble__sprite"><AlchemistWizard16Bit /></span>
-              <span className="alchemist-bubble__alert" aria-hidden="true">!</span>
-            </button>
-          )}
+        <div ref={wrapperMapaRef} className="mapa-wrapper flex w-full justify-center overflow-x-auto">
+          <div className="relative w-full sm:w-auto">
+            {!unidadActiva ? (
+              <MapaGeneral
+                unidades={unidadesVisibles}
+                terreno={TERRENOS.continental}
+                heroPos={heroPos}
+                escala={escalaMapa}
+                caminando={caminando}
+                progresoPorUnidad={progresoPorUnidad}
+                claseHeroe={user?.clase_rpg || 'Arquera Lógica'}
+                esMovil={esMovil}
+                onMoverHeroe={moverHeroe}
+                onEntrarUnidad={entrarUnidad}
+              />
+            ) : (
+              <MapaUnidad
+                unidad={unidadActiva}
+                temas={temasUnidadActiva}
+                terreno={terrenoActual}
+                heroPos={heroPos}
+                escala={escalaMapa}
+                caminando={caminando}
+                claseHeroe={user?.clase_rpg || 'Arquera Lógica'}
+                evaluaciones={evaluaciones}
+                tareas={tareas}
+                calificaciones={calificaciones}
+                entregas={misEntregas}
+                esMovil={esMovil}
+                onVolver={salirUnidad}
+                onMoverHeroe={moverHeroe}
+                onTemaClick={abrirTema}
+                onJefeClick={abrirJefeUnidad}
+              />
+            )}
+          </div>
 
           {zonaActivaModal && (
             <ModalTema
@@ -410,28 +363,13 @@ export default function PanelEstudiante() {
                 <button onClick={() => setDialogoAlquimistaAbierto(false)} className="btn-danger btn-sm">✕ Cerrar</button>
               </div>
 
-              <div className="rpg-modal__body rpg-modal__body--column rpg-modal__body--chat">
-                <div className="ai-dialogue" aria-live="polite" ref={dialogoAlquimistaRef}>
-                  {respuestaAlquimista ? (
-                    <MarkdownLite>{respuestaAlquimista}</MarkdownLite>
-                  ) : (
-                    <p>
-                      🧙‍♂️ &quot;¡Saludos, {user?.nombre || 'Aventurero'}! Escribe cualquier duda sobre
-                      Cálculo, Programación o Estadística y te guiaré antes de que cruces la puerta de
-                      la mazmorra.&quot;
-                    </p>
-                  )}
+              <div className="rpg-modal__body rpg-modal__body--column">
+                <div className="ai-dialogue">
+                  {respuestaAlquimista || `🧙‍♂️ "¡Saludos, ${user?.nombre || 'Aventurero'}! Escribe cualquier duda sobre Cálculo, Programación o Estadística y te guiaré antes de que cruces la puerta de la mazmorra."`}
                 </div>
 
                 <form onSubmit={consultarSabioAlquimista} className="ai-ask">
-                  <input
-                    type="text"
-                    className="input-pro"
-                    placeholder="Pregúntale al Sabio Alquimista..."
-                    value={preguntaAlquimista}
-                    onChange={(e) => setPreguntaAlquimista(e.target.value)}
-                    aria-label="Tu pregunta para el Sabio Alquimista"
-                  />
+                  <input type="text" className="input-pro" placeholder="Pregúntale al Sabio Alquimista..." value={preguntaAlquimista} onChange={(e) => setPreguntaAlquimista(e.target.value)} />
                   <button type="submit" disabled={cargandoAlquimista} className="btn-pro btn-pro-ai">
                     <Send size={16} /> {cargandoAlquimista ? 'Consultando...' : 'Consultar'}
                   </button>
@@ -481,36 +419,21 @@ export default function PanelEstudiante() {
                   </a>
                 )}
 
-                {entrega?.contenido && (
-                  <pre className="rpg-code rpg-code--tight">{entrega.contenido}</pre>
-                )}
-
-                {entrega?.archivo_ruta && (
-                  <a
-                    href={urlArchivo(entrega.archivo_ruta)}
-                    download={entrega.archivo_nombre || `Entrega_${tar.titulo}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="quest-file"
-                  >
-                    <FileText size={14} /> {entrega.archivo_nombre || 'Documento adjunto'}
-                  </a>
-                )}
-
-                <button
-                  onClick={() => setTareaEnEntrega(tar)}
-                  className="btn-pro btn-pro-primary btn-block"
-                  style={{ marginTop: '0.5rem' }}
-                >
-                  <Send size={15} /> {entrega ? 'Actualizar entrega' : 'Entregar misión'}
+                <textarea
+                  className="input-pro"
+                  rows="3"
+                  placeholder="Escribe aquí tu código o respuesta de la misión..."
+                  value={entregaTexto[tar.id] || ''}
+                  onChange={(e) => setEntregaTexto({ ...entregaTexto, [tar.id]: e.target.value })}
+                />
+                <button onClick={() => enviarTrabajo(tar.id)} disabled={enviandoTarea} className="btn-pro btn-pro-primary btn-block" style={{ marginTop: '0.5rem' }}>
+                  <Send size={15} /> {entrega ? 'Actualizar Misión' : 'Enviar Misión'}
                 </button>
               </div>
             );
           })}
         </div>
       )}
-
-      {vistaHotbar === 'perfil' && <PerfilEstudiante />}
 
       {vistaHotbar === 'pergaminos' && (
         <div className="card-pro">
@@ -646,82 +569,33 @@ export default function PanelEstudiante() {
       )}
 
       {vistaHotbar === 'logros' && (
-        <>
-          <LogrosPanel estudianteId={user?.id} />
-
-          <div className="card-pro">
-            <h3 className="pixel-font section-title section-title--gold">📜 HISTORIAL DE COMBATES</h3>
-            <p className="section-sub">
-              📚 Escala de la materia: 0 a {NOTA_MAX} puntos. Tu nota actual es <strong>{boleta?.nota_materia ?? 0} / {NOTA_MAX} pts</strong>.
-              La XP y el nivel no afectan la nota.
-            </p>
-            {calificaciones.length === 0 && (
-              <p className="rpg-empty">Todavía no has librado ningún combate. ¡Entra a un bioma y desafía a su Jefe!</p>
-            )}
-            {calificaciones.map(cal => (
-              <div key={cal.id} className="achievement-row">
-                <div>
-                  <strong className="achievement-row__title">{cal.evaluacion_titulo}</strong>
-                  <span className="achievement-row__meta">
-                    Tema: {cal.tema_titulo || '—'} • +{cal.xp_ganada || 150} XP • {cal.aciertos}/{cal.total_preguntas} aciertos • 📚 {cal.puntos_ganados ?? '—'}/{cal.puntos_max ?? '—'} pts
-                  </span>
-                </div>
-                <span className={`achievement-score ${cal.puntaje >= 60 ? 'is-pass' : 'is-fail'}`}>{cal.puntaje}%</span>
+        <div className="card-pro">
+          <h3 className="pixel-font section-title section-title--gold">🏆 LOGROS Y RESULTADOS</h3>
+          <p className="section-sub">
+            📚 Escala de la materia: 0 a {NOTA_MAX} puntos. Tu nota actual es <strong>{boleta?.nota_materia ?? 0} / {NOTA_MAX} pts</strong>.
+            La XP y el nivel no afectan la nota.
+          </p>
+          {calificaciones.length === 0 && (
+            <p className="rpg-empty">Todavía no has librado ningún combate. ¡Entra a un bioma y desafía a su Jefe!</p>
+          )}
+          {calificaciones.map(cal => (
+            <div key={cal.id} className="achievement-row">
+              <div>
+                <strong className="achievement-row__title">{cal.evaluacion_titulo}</strong>
+                <span className="achievement-row__meta">
+                  Tema: {cal.tema_titulo || '—'} • +{cal.xp_ganada || 150} XP • {cal.aciertos}/{cal.total_preguntas} aciertos • 📚 {cal.puntos_ganados ?? '—'}/{cal.puntos_max ?? '—'} pts
+                </span>
               </div>
-            ))}
-          </div>
-        </>
-      )}
-
-      <ToastLogros logros={logrosNuevos} onClose={() => setLogrosNuevos([])} />
-
-      {tareaEnEntrega && (
-        <ModalEntrega
-          tarea={tareaEnEntrega}
-          entrega={misEntregas.find(e => e.tarea_id === tareaEnEntrega.id)}
-          estudianteId={user?.id}
-          onClose={() => setTareaEnEntrega(null)}
-          onEnviada={(mensaje) => {
-            setTareaEnEntrega(null);
-            alert(mensaje);
-            cargarDatos();
-          }}
-        />
+              <span className={`achievement-score ${cal.puntaje >= 60 ? 'is-pass' : 'is-fail'}`}>{cal.puntaje}%</span>
+            </div>
+          ))}
+        </div>
       )}
 
       {/* =====================================================================
-          4. BOTTOM HUD (BARRA DE NAVEGACIÓN INFERIOR)
+          4. BOTTOM HUD (HOTBAR DE INVENTARIO CLÁSICA)
          ===================================================================== */}
-      <div className="rpg-hotbar" style={{ marginTop: '0.85rem' }}>
-        <button className={`rpg-hotbar-slot rpg-hotbar-slot--map ${vistaHotbar === 'mapa' ? 'active' : ''}`} onClick={() => setVistaHotbar('mapa')}>
-          <span className="pixel-font">Mapa</span>
-        </button>
-        <button className={`rpg-hotbar-slot rpg-hotbar-slot--bag ${vistaHotbar === 'inventario' ? 'active' : ''}`} onClick={() => setVistaHotbar('inventario')}>
-          <Backpack size={20} />
-          <span className="pixel-font">Inventario</span>
-        </button>
-        <button className={`rpg-hotbar-slot rpg-hotbar-slot--scroll ${vistaHotbar === 'pergaminos' ? 'active' : ''}`} onClick={() => setVistaHotbar('pergaminos')}>
-          <Scroll size={20} />
-          <span className="pixel-font">Pergaminos</span>
-        </button>
-        <button className={`rpg-hotbar-slot rpg-hotbar-slot--guild ${vistaHotbar === 'gremio' ? 'active' : ''}`} onClick={() => setVistaHotbar('gremio')}>
-          <Users size={20} />
-          <span className="pixel-font">Gremio</span>
-        </button>
-        <button className={`rpg-hotbar-slot rpg-hotbar-slot--boleta ${vistaHotbar === 'boleta' ? 'active' : ''}`} onClick={() => setVistaHotbar('boleta')}>
-          <GraduationCap size={20} />
-          <span className="pixel-font">Boleta</span>
-        </button>
-        <button className={`rpg-hotbar-slot rpg-hotbar-slot--trophy ${vistaHotbar === 'logros' ? 'active' : ''}`} onClick={() => setVistaHotbar('logros')}>
-          <Trophy size={20} />
-          <span className="pixel-font">Logros</span>
-        </button>
-        <button className={`rpg-hotbar-slot ${vistaHotbar === 'perfil' ? 'active' : ''}`} onClick={() => setVistaHotbar('perfil')}>
-          <UserRound size={20} />
-          <span className="pixel-font">Perfil</span>
-        </button>
-      </div>
-    </div>
+      <GameHotbar activa={vistaHotbar} onChange={setVistaHotbar} />
     </div>
   );
 }

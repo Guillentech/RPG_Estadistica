@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { API_URL } from '../config';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Swords, Clock, ArrowLeft, Sparkles } from 'lucide-react';
@@ -32,13 +33,13 @@ export default function RendirEvaluacion() {
   }, [respuestas]);
 
   useEffect(() => {
-    fetch(`http://localhost:4000/api/evaluaciones/${id}/preguntas`)
+    fetch(`${API_URL}/api/evaluaciones/${id}/preguntas`)
       .then(r => r.json())
       .then(data => setPreguntas(data))
       .catch(() => alert('Error al invocar al Jefe Final.'));
 
     // 📚 Trae los puntos que vale esta evaluación en la materia (escala 0-100)
-    fetch('http://localhost:4000/api/evaluaciones')
+    fetch(`${API_URL}/api/evaluaciones`)
       .then(r => r.json())
       .then(lista => setEvaluacion(lista.find(ev => String(ev.id) === String(id)) || null))
       .catch(() => setEvaluacion(null));
@@ -82,7 +83,7 @@ export default function RendirEvaluacion() {
     if (enviando) return;
     setEnviando(true);
     try {
-      const res = await fetch(`http://localhost:4000/api/evaluaciones/${id}/calificar`, {
+      const res = await fetch(`${API_URL}/api/evaluaciones/${id}/calificar`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

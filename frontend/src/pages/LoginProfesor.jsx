@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../config';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { AlertCircle, KeyRound, Sparkles } from 'lucide-react';
@@ -43,7 +44,7 @@ export default function LoginProfesor() {
 
     setCargando(true);
     try {
-      const res = await fetch('http://localhost:4000/api/auth/profesor', {
+      const res = await fetch(`${API_URL}/api/auth/profesor`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ correo: correo.trim(), password })

@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { StatBar, PageBackdrop } from '../components/rpg';
 import { GameMasterAvatar16Bit } from '../components/mapa/Sprites';
-import { urlArchivo } from '../config';
+import { API_URL, urlArchivo } from '../config';
 
 // ============================================================================
 // 🎨 SPRITES PIXEL ART 16-BIT (SVG CON CRISP-EDGES)
@@ -145,12 +145,12 @@ export default function PanelProfesor() {
   // 🔄 FUNCIÓN PARA CARGAR TODOS LOS DATOS DEL SERVIDOR BACKEND
   // ==========================================================================
   const cargarDatos = () => {
-    fetch('http://localhost:4000/api/estudiantes').then(r => r.json()).then(setEstudiantes);
-    fetch('http://localhost:4000/api/unidades').then(r => r.json()).then(setUnidades);
-    fetch('http://localhost:4000/api/temas').then(r => r.json()).then(setTemas);
-    fetch('http://localhost:4000/api/evaluaciones').then(r => r.json()).then(setEvaluaciones);
-    fetch('http://localhost:4000/api/calificaciones').then(r => r.json()).then(setCalificaciones);
-    fetch('http://localhost:4000/api/tareas').then(r => r.json()).then(setTareas);
+    fetch(`${API_URL}/api/estudiantes`).then(r => r.json()).then(setEstudiantes);
+    fetch(`${API_URL}/api/unidades`).then(r => r.json()).then(setUnidades);
+    fetch(`${API_URL}/api/temas`).then(r => r.json()).then(setTemas);
+    fetch(`${API_URL}/api/evaluaciones`).then(r => r.json()).then(setEvaluaciones);
+    fetch(`${API_URL}/api/calificaciones`).then(r => r.json()).then(setCalificaciones);
+    fetch(`${API_URL}/api/tareas`).then(r => r.json()).then(setTareas);
   };
 
   useEffect(() => {
@@ -194,7 +194,7 @@ export default function PanelProfesor() {
     setCargandoIA(true);
     setRespuestaIA(null);
     try {
-      const res = await fetch('http://localhost:4000/api/ia/asistente', {
+      const res = await fetch(`${API_URL}/api/ia/asistente`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ mensaje: promptIA.trim(), modo: modoIA })
@@ -211,7 +211,7 @@ export default function PanelProfesor() {
 
   const guardarPreguntaDesdeIA = async (pregunta, evaluacionId) => {
     if (!evaluacionId) return alert("Selecciona primero a qué Jefe Final deseas asignarle esta pregunta.");
-    const res = await fetch('http://localhost:4000/api/preguntas', {
+    const res = await fetch(`${API_URL}/api/preguntas`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -234,7 +234,7 @@ export default function PanelProfesor() {
 
   const guardarEjemploDesdeIA = async (temaId) => {
     if (!temaId) return alert("Selecciona a qué Bioma deseas vincular este Pergamino.");
-    const res = await fetch('http://localhost:4000/api/ejemplos', {
+    const res = await fetch(`${API_URL}/api/ejemplos`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -248,7 +248,7 @@ export default function PanelProfesor() {
 
   const guardarTareaDesdeIA = async (temaId) => {
     const idSeguro = temaId || (temas.length > 0 ? temas[0].id : 1);
-    const res = await fetch('http://localhost:4000/api/tareas', {
+    const res = await fetch(`${API_URL}/api/tareas`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -272,7 +272,7 @@ export default function PanelProfesor() {
   const registrarEstudiante = async (e) => {
     e.preventDefault();
     if (!nuevoEstudiante.trim()) return;
-    const res = await fetch('http://localhost:4000/api/estudiantes', {
+    const res = await fetch(`${API_URL}/api/estudiantes`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ nombre: nuevoEstudiante.trim(), clase_rpg: nuevaClaseRpg })
@@ -287,7 +287,7 @@ export default function PanelProfesor() {
   const crearUnidad = async (e) => {
     e.preventDefault();
     if (!unidadNombre.trim()) return alert('La Ciudadela necesita un nombre.');
-    const res = await fetch('http://localhost:4000/api/unidades', {
+    const res = await fetch(`${API_URL}/api/unidades`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -314,7 +314,7 @@ export default function PanelProfesor() {
   const crearTema = async (e) => {
     e.preventDefault();
     if (!temaTitulo.trim()) return;
-    const res = await fetch('http://localhost:4000/api/temas', {
+    const res = await fetch(`${API_URL}/api/temas`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -338,7 +338,7 @@ export default function PanelProfesor() {
   const crearEjemplo = async (e) => {
     e.preventDefault();
     if (!ejTemaId || !ejTitulo.trim() || !ejContenido.trim()) return;
-    const res = await fetch('http://localhost:4000/api/ejemplos', {
+    const res = await fetch(`${API_URL}/api/ejemplos`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ tema_id: ejTemaId, titulo: ejTitulo, contenido: ejContenido })
@@ -354,7 +354,7 @@ export default function PanelProfesor() {
   const crearEvaluacion = async (e) => {
     e.preventDefault();
     if (!evalTemaId || !evalTitulo.trim()) return;
-    const res = await fetch('http://localhost:4000/api/evaluaciones', {
+    const res = await fetch(`${API_URL}/api/evaluaciones`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -381,7 +381,7 @@ export default function PanelProfesor() {
     e.preventDefault();
     if (!pregEvalId || !enunciado.trim()) return alert('Selecciona un Jefe Final y escribe el enunciado.');
 
-    const res = await fetch('http://localhost:4000/api/preguntas', {
+    const res = await fetch(`${API_URL}/api/preguntas`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -419,7 +419,7 @@ export default function PanelProfesor() {
 
     let temaIdSeguro = temas.length > 0 ? temas[0].id : null;
     if (!temaIdSeguro) {
-      const resTema = await fetch('http://localhost:4000/api/temas', {
+      const resTema = await fetch(`${API_URL}/api/temas`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ titulo: 'Gremio General', descripcion: 'Misiones generales del curso', bioma: 'bosque' })
@@ -430,7 +430,7 @@ export default function PanelProfesor() {
 
     const prefijo = tareaCategoriaLibre.trim() ? `[${tareaCategoriaLibre.trim()}] ` : '';
 
-    const res = await fetch('http://localhost:4000/api/tareas', {
+    const res = await fetch(`${API_URL}/api/tareas`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -464,7 +464,7 @@ export default function PanelProfesor() {
   const cargarPreguntasDeJefe = async (evaluacion) => {
     setEvaluacionVerPreguntas(evaluacion);
     try {
-      const res = await fetch(`http://localhost:4000/api/evaluaciones/${evaluacion.id}/preguntas-docente`);
+      const res = await fetch(`${API_URL}/api/evaluaciones/${evaluacion.id}/preguntas-docente`);
       const data = await res.json();
       setPreguntasDeEvaluacion(data);
     } catch {
@@ -482,14 +482,14 @@ export default function PanelProfesor() {
 
   const eliminarPreguntaIndividual = async (id) => {
     if (!window.confirm('¿Eliminar esta pregunta del Jefe Final?')) return;
-    await fetch(`http://localhost:4000/api/preguntas/${id}`, { method: 'DELETE' });
+    await fetch(`${API_URL}/api/preguntas/${id}`, { method: 'DELETE' });
     cargarPreguntasDeJefe(evaluacionVerPreguntas);
     cargarDatos();
   };
 
   const verEntregasDeTarea = async (tarea) => {
     setTareaSeleccionada(tarea);
-    const res = await fetch(`http://localhost:4000/api/tareas/${tarea.id}/entregas`);
+    const res = await fetch(`${API_URL}/api/tareas/${tarea.id}/entregas`);
     const data = await res.json();
     setEntregasTarea(data);
   };
@@ -505,7 +505,7 @@ export default function PanelProfesor() {
       return alert('La calificación debe ser un número entre 0 y 100.');
     }
 
-    const res = await fetch(`http://localhost:4000/api/entregas/${entregaId}/calificar`, {
+    const res = await fetch(`${API_URL}/api/entregas/${entregaId}/calificar`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ calificacion: notaNum, retroalimentacion: feedback })
@@ -526,26 +526,26 @@ export default function PanelProfesor() {
 
   const eliminarEstudiante = async (id, nombre) => {
     if (!window.confirm(`¿Expulsar del gremio a "${nombre}"?`)) return;
-    await fetch(`http://localhost:4000/api/estudiantes/${id}`, { method: 'DELETE' });
+    await fetch(`${API_URL}/api/estudiantes/${id}`, { method: 'DELETE' });
     cargarDatos();
   };
 
   const eliminarTema = async (id, titulo) => {
     if (!window.confirm(`¿Destruir el Bioma "${titulo}"?`)) return;
-    await fetch(`http://localhost:4000/api/temas/${id}`, { method: 'DELETE' });
+    await fetch(`${API_URL}/api/temas/${id}`, { method: 'DELETE' });
     cargarDatos();
   };
 
   const eliminarEvaluacion = async (id, titulo) => {
     if (!window.confirm(`¿Eliminar al Jefe "${titulo}"?`)) return;
-    await fetch(`http://localhost:4000/api/evaluaciones/${id}`, { method: 'DELETE' });
+    await fetch(`${API_URL}/api/evaluaciones/${id}`, { method: 'DELETE' });
     if (evaluacionVerPreguntas?.id === id) setEvaluacionVerPreguntas(null);
     cargarDatos();
   };
 
   const eliminarTarea = async (id, titulo) => {
     if (!window.confirm(`¿Eliminar la misión "${titulo}"?`)) return;
-    await fetch(`http://localhost:4000/api/tareas/${id}`, { method: 'DELETE' });
+    await fetch(`${API_URL}/api/tareas/${id}`, { method: 'DELETE' });
     if (tareaSeleccionada?.id === id) setTareaSeleccionada(null);
     cargarDatos();
   };

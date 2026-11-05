@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../config';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { KeyRound, Swords, Sparkles, AlertCircle } from 'lucide-react';
@@ -36,7 +37,7 @@ export default function AccesoEstudiante() {
 
     setCargando(true);
     try {
-      const res = await fetch('http://localhost:4000/api/auth/estudiante', {
+      const res = await fetch(`${API_URL}/api/auth/estudiante`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ codigo: codigoLimpio })
