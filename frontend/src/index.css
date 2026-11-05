@@ -14,9 +14,41 @@
    ===================================================================== */
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
 
-/* Tailwind v4 sin preflight: el reset global rompería el sistema pixel-art. */
+/* Tailwind v4 sin preflight: el reset global rompería el sistema pixel-art.
+   El reset vive en la capa base para que las utilidades de Tailwind
+   (padding, margen, etc.) puedan afinarlo en la nueva UI. */
+@layer theme, base, components, utilities;
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css" layer(utilities);
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    /* Única regla con !important: anula border-radius en línea del JSX viejo. */
+    border-radius: 0 !important;
+  }
+}
+
+/* Tipografía pixel para etiquetas compactas de la nueva UI. */
+.ui-px {
+  font-family: var(--font-px);
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+@layer base {
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
+}
 
 :root {
   /* Paleta */
@@ -74,16 +106,6 @@
 /* ---------------------------------------------------------------------
    Base
    --------------------------------------------------------------------- */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  /* Única regla con !important: anula border-radius en línea del JSX viejo. */
-  border-radius: 0 !important;
-}
-
 html {
   image-rendering: pixelated;
   /* El fondo vive en <body>, pero el "canvas" del navegador usa el de <html>.
@@ -111,14 +133,6 @@ body {
   background: repeating-conic-gradient(#1f1749 0% 25%, var(--night) 0% 50%) 50% / 16px 16px;
   -webkit-font-smoothing: none;
   font-smooth: never;
-}
-
-button,
-input,
-select,
-textarea {
-  font: inherit;
-  color: inherit;
 }
 
 h1, h2, h3, h4,

@@ -15,6 +15,32 @@ import {
   LogOut, Swords, ArrowLeft, Shield, Sun, Moon, Compass
 } from 'lucide-react';
 
+const BotonHud = ({ tono = 'violeta', className = '', children, ...props }) => {
+  const TONOS = {
+    violeta: { fondo: '#8a5cf6', luz: '#c4a7ff', sombra: '#4b2fa3', texto: '#fdf9ff' },
+    rojo: { fondo: '#e8453c', luz: '#ff7a6b', sombra: '#8f1f2e', texto: '#fdf9ff' },
+    oro: { fondo: '#ffd23f', luz: '#ffe08a', sombra: '#ff8a3d', texto: '#120c2b' },
+  };
+  const t = TONOS[tono] || TONOS.violeta;
+
+  return (
+    <button
+      type="button"
+      className={`inline-flex items-center justify-center gap-1.5 border-2 border-solid border-[#0a0718] px-2.5 py-1.5 text-[8px] leading-none shadow-[inset_0_2px_0_0_var(--luz),inset_0_-3px_0_0_var(--sombra),0_3px_0_0_#0a0718] hover:-translate-y-[1px] hover:brightness-110 active:translate-y-[2px] active:shadow-[inset_0_2px_0_0_var(--sombra)] ${className}`}
+      style={{
+        '--luz': t.luz,
+        '--sombra': t.sombra,
+        backgroundColor: t.fondo,
+        color: t.texto,
+        fontFamily: 'var(--font-px)',
+      }}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+};
+
 const HeaderGlobal = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -30,6 +56,7 @@ const HeaderGlobal = () => {
 
   const enInicio = location.pathname === '/';
   const enCombate = location.pathname.startsWith('/evaluacion/');
+  const esPanelEstudiante = location.pathname === '/panel-estudiante';
 
   const obtenerTextoRetroceso = () => {
     if (enCombate) return 'Huir al Mapa 2D';
@@ -64,14 +91,15 @@ const HeaderGlobal = () => {
       <header className="header-pro header-pro--movil">
         <div className="flex min-w-0 items-center gap-2">
           {!enInicio && (
-            <button
+            <BotonHud
               onClick={manejarRetroceso}
-              className="btn-retroceso"
+              tono="violeta"
               title={obtenerTextoRetroceso()}
               aria-label={obtenerTextoRetroceso()}
+              className="px-2 py-1.5"
             >
               <ArrowLeft size={14} />
-            </button>
+            </BotonHud>
           )}
 
           <Link to="/" className="flex min-w-0 items-center gap-2" aria-label="Ir a la portada">
@@ -91,21 +119,26 @@ const HeaderGlobal = () => {
 
           {user ? (
             <>
-              <AvatarEstudiante avatar={user.avatar} size={24} className="shrink-0" />
-              <span className="pixel-font whitespace-nowrap text-[9px] text-gold">
-                NVL {nivelActual}
-              </span>
-              <span className="pixel-font whitespace-nowrap text-[9px] text-xp">
-                {xpActual} XP
-              </span>
-              <button
+              {!esPanelEstudiante && (
+                <>
+                  <AvatarEstudiante avatar={user.avatar} size={24} className="shrink-0" />
+                  <span className="pixel-font whitespace-nowrap text-[9px] text-gold">
+                    NVL {nivelActual}
+                  </span>
+                  <span className="pixel-font whitespace-nowrap text-[9px] text-xp">
+                    {xpActual} XP
+                  </span>
+                </>
+              )}
+              <BotonHud
                 onClick={handleCerrarSesion}
-                className="btn-salir"
+                tono="rojo"
                 title="Salir"
                 aria-label="Cerrar sesión"
+                className="px-2 py-1.5"
               >
                 <LogOut size={14} /><span>Salir</span>
-              </button>
+              </BotonHud>
             </>
           ) : (
             <div className="flex items-center gap-1">
@@ -126,9 +159,9 @@ const HeaderGlobal = () => {
     <header className="header-pro">
       <div className="header-left">
         {!enInicio && (
-          <button onClick={manejarRetroceso} className="btn-retroceso" title="Regresar">
+          <BotonHud onClick={manejarRetroceso} tono="violeta" title="Regresar">
             <ArrowLeft size={16} /><span>{obtenerTextoRetroceso()}</span>
-          </button>
+          </BotonHud>
         )}
 
         <Link to="/" className="brand-logo">
@@ -152,30 +185,32 @@ const HeaderGlobal = () => {
               </Link>
             )}
 
-            <div className="user-profile-badge">
-              
-              {/* 💡 AQUÍ SE MUESTRA LA FOTO DE PERFIL EN TIEMPO REAL */}
-              <div className="avatar-circle">
-                {user.rol === 'estudiante' ? (
-                  <AvatarEstudiante avatar={user.avatar} size={34} />
-                ) : user.avatar ? (
-                  <img src={user.avatar} alt="Perfil" className="avatar-img" />
-                ) : (
-                  <Shield size={16} />
-                )}
-              </div>
+            {!esPanelEstudiante && (
+              <div className="user-profile-badge">
+                
+                {/* 💡 AQUÍ SE MUESTRA LA FOTO DE PERFIL EN TIEMPO REAL */}
+                <div className="avatar-circle">
+                  {user.rol === 'estudiante' ? (
+                    <AvatarEstudiante avatar={user.avatar} size={34} />
+                  ) : user.avatar ? (
+                    <img src={user.avatar} alt="Perfil" className="avatar-img" />
+                  ) : (
+                    <Shield size={16} />
+                  )}
+                </div>
 
-              <div className="user-info">
-                <span className="user-name">{user.nombre}</span>
-                <span className="user-role">
-                  {user.rol === 'profesor' ? '🧙‍♂️ Game Master' : `🛡️ Nivel ${user.nivel || 1} • ${user.clase_rpg || 'Guerrero'}`}
-                </span>
+                <div className="user-info">
+                  <span className="user-name">{user.nombre}</span>
+                  <span className="user-role">
+                    {user.rol === 'profesor' ? '🧙‍♂️ Game Master' : `🛡️ Nivel ${user.nivel || 1} • ${user.clase_rpg || 'Guerrero'}`}
+                  </span>
+                </div>
               </div>
+            )}
 
-              <button onClick={handleCerrarSesion} className="btn-salir">
-                <LogOut size={15} /><span>Salir</span>
-              </button>
-            </div>
+            <BotonHud onClick={handleCerrarSesion} tono="rojo">
+              <LogOut size={15} /><span>Salir</span>
+            </BotonHud>
           </div>
         ) : (
           <div className="header-actions-guest">
@@ -193,6 +228,16 @@ const RutaProtegida = ({ children, rolRequerido }) => {
   if (!user) return <Navigate to="/" replace />;
   if (rolRequerido && user.rol !== rolRequerido) return <Navigate to="/" replace />;
   return children;
+};
+
+/**
+ * El panel del estudiante integra la runa musical dentro del HUD.
+ * En el resto de páginas se conserva el reproductor flotante clásico.
+ */
+const AudioGlobal = () => {
+  const { pathname } = useLocation();
+  if (pathname === '/panel-estudiante') return null;
+  return <AudioControls />;
 };
 
 export default function App() {
@@ -225,7 +270,7 @@ export default function App() {
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </main>
-            <AudioControls />
+            <AudioGlobal />
           </div>
         </BrowserRouter>
       </AudioProvider>

@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
   const refrescarEstudiante = useCallback(async () => {
     if (!user || user.rol !== 'estudiante' || !user.id) return;
     try {
-      const res = await fetch(`http://localhost:4000/api/estudiantes/${user.id}/perfil`);
+      const res = await fetch(`${API_URL}/api/estudiantes/${user.id}/perfil`);
       if (res.ok) {
         const actualizado = await res.json();
         const nuevaSesion = { ...user, ...actualizado, rol: 'estudiante' };
@@ -129,7 +129,7 @@ const actualizarAvatar = (file) => {
   const logout = async () => {
     try {
       if (user?.sessionToken) {
-        await fetch('http://localhost:4000/api/auth/logout', {
+        await fetch(`${API_URL}/api/auth/logout`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ token: user.sessionToken })
