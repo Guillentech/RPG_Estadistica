@@ -1,0 +1,17 @@
+.git
+.github
+.vscode
+node_modules
+**/node_modules
+frontend/dist
+dist
+dist-ssr
+docs
+*.log
+*.local
+backend/.env
+backend/database.sqlite
+backend/database.backup-*.sqlite
+backend/uploads
+backend/seed/*.backup-*.json
+backend/seed/silabo.backup-*.json
