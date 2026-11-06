@@ -3,7 +3,7 @@ import PixelIcon from './PixelIcon';
 
 /**
  * Hotbar de inventario clásica (Minecraft / Diablo).
- * Seis ranuras cuadradas simétricas, con relieve pixelado y foco dorado
+ * Siete ranuras cuadradas simétricas, con relieve pixelado y foco dorado
  * cuando la sección está activa. Los iconos son pixel-art (PixelIcon),
  * no emojis del navegador.
  */
@@ -14,6 +14,7 @@ const SECCIONES_HOTBAR = [
   { key: 'gremio', label: 'GREMIO', icon: 'guild', tone: '#4cc9f0', tecla: '4' },
   { key: 'boleta', label: 'BOLETA', icon: 'cap', tone: '#ffd23f', tecla: '5' },
   { key: 'logros', label: 'LOGROS', icon: 'trophy', tone: '#ffd23f', tecla: '6' },
+  { key: 'perfil', label: 'PERFIL', icon: 'perfil', tone: '#c4a7ff', tecla: '7' },
 ];
 
 export default function GameHotbar({ activa = 'mapa', onChange }) {
@@ -22,7 +23,7 @@ export default function GameHotbar({ activa = 'mapa', onChange }) {
       aria-label="Barra de navegación del aventurero"
       className="mx-auto mt-3 w-full max-w-[540px] border-4 border-solid border-[#3b2d86] bg-[#170f3d] p-1.5 shadow-[inset_0_3px_0_0_#271d5c,inset_0_-3px_0_0_#0a0718,0_4px_0_0_#0a0718]"
     >
-      <div className="grid grid-cols-6 gap-1 sm:gap-1.5">
+      <div className="grid grid-cols-7 gap-1 sm:gap-1.5">
         {SECCIONES_HOTBAR.map((slot) => {
           const isActive = activa === slot.key;
           return (

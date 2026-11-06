@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { AudioProvider } from './context/AudioContext';
@@ -47,6 +47,33 @@ const HeaderGlobal = () => {
   const location = useLocation();
   const esMovil = useMediaQuery('(max-width: 639px)');
 
+  // 📱 Ocultar el header al hacer scroll hacia abajo en móvil para liberar vista del body y el mapa 2D.
+  const [headerOculto, setHeaderOculto] = useState(false);
+  const ultimoScrollY = useRef(0);
+
+  useEffect(() => {
+    if (!esMovil) {
+      setHeaderOculto(false);
+      return;
+    }
+
+    const manejarScroll = () => {
+      const y = window.scrollY;
+      const bajando = y > ultimoScrollY.current;
+
+      if (bajando && y > 40) {
+        setHeaderOculto(true);
+      } else if (!bajando || y === 0) {
+        setHeaderOculto(false);
+      }
+
+      ultimoScrollY.current = y;
+    };
+
+    window.addEventListener('scroll', manejarScroll, { passive: true });
+    return () => window.removeEventListener('scroll', manejarScroll);
+  }, [esMovil]);
+
   const [theme, setTheme] = useState(() => localStorage.getItem('theme_lms') || 'dark');
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -88,7 +115,7 @@ const HeaderGlobal = () => {
     const xpActual = user?.xp || 0;
 
     return (
-      <header className="header-pro header-pro--movil">
+      <header className={`header-pro header-pro--movil ${headerOculto ? 'header-pro--oculto' : ''}`}>
         <div className="flex min-w-0 items-center gap-2">
           {!enInicio && (
             <BotonHud
@@ -103,7 +130,7 @@ const HeaderGlobal = () => {
           )}
 
           <Link to="/" className="flex min-w-0 items-center gap-2" aria-label="Ir a la portada">
-            <span className="brand-icon"><Swords size={16} /></span>
+            <span className="brand-icon"><img src="/favicon.svg" alt="Saga Académica" style={{ width: '100%', height: '100%', objectFit: 'contain', imageRendering: 'pixelated', borderRadius: '6px' }} /></span>
           </Link>
         </div>
 
@@ -156,7 +183,7 @@ const HeaderGlobal = () => {
   }
 
   return (
-    <header className="header-pro">
+    <header className={`header-pro ${headerOculto ? 'header-pro--oculto' : ''}`}>
       <div className="header-left">
         {!enInicio && (
           <BotonHud onClick={manejarRetroceso} tono="violeta" title="Regresar">
@@ -165,7 +192,7 @@ const HeaderGlobal = () => {
         )}
 
         <Link to="/" className="brand-logo">
-          <div className="brand-icon"><Swords size={22} /></div>
+          <div className="brand-icon"><img src="/favicon.svg" alt="Saga Académica" style={{ width: '100%', height: '100%', objectFit: 'contain', imageRendering: 'pixelated', borderRadius: '6px' }} /></div>
           <div className="brand-text">
             <span className="brand-title">SAGA ACADÉMICA</span>
             <span className="brand-subtitle">LMS RPG 2D • GREMIO UNIVERSITARIO</span>

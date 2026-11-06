@@ -3,7 +3,8 @@ import { API_URL } from '../config';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Send } from 'lucide-react';
-import { StatBar, GameHud, GameHotbar } from '../components/rpg';
+import { StatBar, GameHud, GameHotbar, PageBackdrop, MarkdownLite } from '../components/rpg';
+import PerfilEstudiante from '../components/perfil/PerfilEstudiante';
 import MapaGeneral from '../components/mapa/MapaGeneral';
 import MapaUnidad from '../components/mapa/MapaUnidad';
 import ModalTema from '../components/mapa/ModalTema';
@@ -21,6 +22,12 @@ export default function PanelEstudiante() {
   const navigate = useNavigate();
   const wrapperMapaRef = useRef(null);  // Contenedor para medir la escala entera
   const esMovil = useMediaQuery('(max-width: 640px)');
+
+  // Fondos de página: cielo sólido + escena sutil (evita que el panel se vea transparente)
+  useEffect(() => {
+    document.body.classList.add('student-panel-active');
+    return () => document.body.classList.remove('student-panel-active');
+  }, []);
 
   // 💡 Estados para la navegación de la barra inferior (Hotbar)
   const [vistaHotbar, setVistaHotbar] = useState('mapa');
@@ -282,9 +289,12 @@ export default function PanelEstudiante() {
   const energiaActual = Math.max(35, 100 - (examenesPendientes.length * 10));
   const hpActual = Math.min(100, 60 + nivelActual * 5);
   const hayTormenta = examenesPendientes.length > 0 || tareasPendientes.length > 0;
+  const estadoHeroe = energiaActual <= 35 ? 'energia-baja' : (hayTormenta ? 'combate' : 'normal');
 
   return (
-    <div className="container page-shell" style={{ maxWidth: '1220px' }}>
+    <div className="panel-page panel-page--student">
+      <PageBackdrop variant="student" />
+      <div className="container page-shell" style={{ maxWidth: '1220px' }}>
       
       {/* =====================================================================
           1. HUD SUPERIOR UNIFICADO (AVATAR + BARRAS XP/EN/HP + TABLÓN + RUNA)
@@ -314,6 +324,7 @@ export default function PanelEstudiante() {
                 caminando={caminando}
                 progresoPorUnidad={progresoPorUnidad}
                 claseHeroe={user?.clase_rpg || 'Arquera Lógica'}
+                estadoHeroe={estadoHeroe}
                 esMovil={esMovil}
                 onMoverHeroe={moverHeroe}
                 onEntrarUnidad={entrarUnidad}
@@ -327,6 +338,7 @@ export default function PanelEstudiante() {
                 escala={escalaMapa}
                 caminando={caminando}
                 claseHeroe={user?.clase_rpg || 'Arquera Lógica'}
+                estadoHeroe={estadoHeroe}
                 evaluaciones={evaluaciones}
                 tareas={tareas}
                 calificaciones={calificaciones}
@@ -365,7 +377,9 @@ export default function PanelEstudiante() {
 
               <div className="rpg-modal__body rpg-modal__body--column">
                 <div className="ai-dialogue">
-                  {respuestaAlquimista || `🧙‍♂️ "¡Saludos, ${user?.nombre || 'Aventurero'}! Escribe cualquier duda sobre Cálculo, Programación o Estadística y te guiaré antes de que cruces la puerta de la mazmorra."`}
+                  <MarkdownLite className="md-alquimista">
+                    {respuestaAlquimista || `🧙‍♂️ "¡Saludos, ${user?.nombre || 'Aventurero'}! Escribe cualquier duda sobre Cálculo, Programación o Estadística y te guiaré antes de que cruces la puerta de la mazmorra."`}
+                  </MarkdownLite>
                 </div>
 
                 <form onSubmit={consultarSabioAlquimista} className="ai-ask">
@@ -568,6 +582,8 @@ export default function PanelEstudiante() {
         </div>
       )}
 
+      {vistaHotbar === 'perfil' && <PerfilEstudiante />}
+
       {vistaHotbar === 'logros' && (
         <div className="card-pro">
           <h3 className="pixel-font section-title section-title--gold">🏆 LOGROS Y RESULTADOS</h3>
@@ -596,6 +612,7 @@ export default function PanelEstudiante() {
           4. BOTTOM HUD (HOTBAR DE INVENTARIO CLÁSICA)
          ===================================================================== */}
       <GameHotbar activa={vistaHotbar} onChange={setVistaHotbar} />
+    </div>
     </div>
   );
 }

@@ -200,6 +200,11 @@ const ICONS = {
     [7, 10, 2, 2, 'accent', 0.8],
     [7, 5, 1, 7, 'deep', 0.35],
   ],
+  perfil: [
+    [6, 2, 4, 4, 'main'],   // cabeza
+    [4, 6, 8, 4, 'main'],   // hombros
+    [7, 6, 2, 2, 'accent'], // cuello
+  ],
 };
 
 export default function PixelIcon({ name, size = 16, className = '' }) {

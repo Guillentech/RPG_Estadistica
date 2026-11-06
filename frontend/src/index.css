@@ -232,6 +232,12 @@ strong, b { font-weight: 400; }
   padding: 0.75rem 1.75rem;
   background: var(--panel-lo);
   box-shadow: 0 4px 0 0 var(--violet), 0 8px 0 0 var(--ink);
+  transition: transform 0.25s ease;
+}
+
+/* Oculta el header al hacer scroll hacia abajo en móvil. */
+.header-pro--oculto {
+  transform: translateY(-100%);
 }
 
 .header-left { display: flex; align-items: center; gap: 1rem; }
@@ -1783,6 +1789,46 @@ p, li, td, th, label { overflow-wrap: break-word; }
 }
 .map-hero__frame { line-height: 0; overflow: hidden; box-shadow: 0 0 0 2px var(--gold), 4px 4px 0 0 var(--edge); }
 .map-hero.is-walking { animation: px-saltito 0.3s steps(2) infinite; }
+
+.map-hero__shadow {
+  position: absolute;
+  left: 50%;
+  bottom: 2px;
+  width: 26px;
+  height: 7px;
+  background: rgba(0, 0, 0, 0.45);
+  filter: blur(2px);
+  border-radius: 50%;
+  transform: translateX(-50%) translateY(2px);
+  pointer-events: none;
+  z-index: 0;
+}
+.map-hero__ring {
+  position: absolute;
+  inset: -2px;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+  animation: ring-pulso 2.5s ease-in-out infinite;
+}
+.estado-normal .map-hero__ring { border-color: var(--gold); }
+.estado-energia-baja .map-hero__ring { border-color: var(--red); animation: ring-pulso 1.2s ease-in-out infinite; }
+.estado-combate .map-hero__ring { border-color: #fbbf24; }
+
+.avatar-animado[data-frame="1"] {
+  transform: translateY(2px);
+  transition: transform 0.15s ease-out;
+}
+.avatar-animado[data-frame="0"] {
+  transform: translateY(0);
+  transition: transform 0.15s ease-out;
+}
+
+@keyframes ring-pulso {
+  0%, 100% { opacity: 0.9; transform: scale(1); }
+  50% { opacity: 0.55; transform: scale(1.08); }
+}
 
 .alchemist-bubble {
   position: absolute;

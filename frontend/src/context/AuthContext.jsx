@@ -118,7 +118,11 @@ const actualizarAvatar = (file) => {
       }
       const nuevaSesion = { ...user, avatar: data.avatar ?? avatar };
       setUser(nuevaSesion);
-      localStorage.setItem('usuario_lms', JSON.stringify(nuevaSesion));
+      try {
+        localStorage.setItem('usuario_lms', JSON.stringify(nuevaSesion));
+      } catch {
+        // El avatar ya quedó guardado en SQLite; la sesión sigue disponible en memoria.
+      }
       return { ok: true, avatar: nuevaSesion.avatar };
     } catch {
       return { ok: false, error: 'No se pudo conectar con el servidor para guardar el avatar.' };

@@ -1,5 +1,6 @@
+import { useState, useEffect } from 'react';
 import MapaCanvas from './MapaCanvas';
-import { AvatarHero16Bit, BiomeStructureSprite, CastleDungeonSprite } from './Sprites';
+import { AvatarHeroAnimado, BiomeStructureSprite, CastleDungeonSprite } from './Sprites';
 import { ANCHO_LOGICO, ALTO_LOGICO } from '../../game/terreno';
 import { calcularPosicionJefe, posicionesDeTemas, tileAPorcentaje } from '../../game/mapa';
 
@@ -26,6 +27,7 @@ export default function MapaUnidad({
   escala = 2,
   caminando = false,
   claseHeroe = '',
+  estadoHeroe = 'normal',
   evaluaciones = [],
   tareas = [],
   calificaciones = [],
@@ -43,6 +45,13 @@ export default function MapaUnidad({
   const tituloUnidad = unidad.esCampamento
     ? unidad.nombre
     : `UNIDAD ${unidad.numero} · ${unidad.nombre}`;
+
+  const [frameHero, setFrameHero] = useState(0);
+  useEffect(() => {
+    if (!caminando) return undefined;
+    const id = setInterval(() => setFrameHero((f) => (f === 0 ? 1 : 0)), 200);
+    return () => clearInterval(id);
+  }, [caminando]);
 
   if (esMovil) {
     return (
@@ -159,12 +168,14 @@ export default function MapaUnidad({
       )}
 
       <div
-        className={`map-hero ${caminando ? 'is-walking' : ''}`}
+        className={`map-hero ${caminando ? 'is-walking' : ''} estado-${estadoHeroe}`}
         style={tileAPorcentaje(heroPos.x, heroPos.y)}
       >
         <span className="map-hero__alert">!</span>
+        <span className="map-hero__shadow" />
+        <span className="map-hero__ring" />
         <span className="map-hero__frame">
-          <AvatarHero16Bit clase={claseHeroe} />
+          <AvatarHeroAnimado clase={claseHeroe} frame={caminando ? frameHero : 0} />
         </span>
       </div>
 
